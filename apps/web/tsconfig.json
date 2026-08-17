@@ -3,7 +3,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"],
-      "@shurokkha/ui/*": ["../../packages/ui/src/*"]
+      "@shurokkha/ui/*": ["../../packages/ui/src/*"],
+      "@shurokkha/api-client": ["../../packages/api-client/src/index.ts"]
     },
     "plugins": [
       {

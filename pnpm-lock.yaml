@@ -124,6 +124,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@shurokkha/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@shurokkha/icons':
         specifier: workspace:*
         version: link:../../packages/icons

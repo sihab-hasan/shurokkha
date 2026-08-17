@@ -2,6 +2,7 @@ import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   transpilePackages: [
+    "@shurokkha/api-client",
     "@shurokkha/icons",
     "@shurokkha/ui",
     "@shurokkha/ui-patterns",

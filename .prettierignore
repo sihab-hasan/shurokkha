@@ -16,7 +16,8 @@ pnpm-lock.yaml
 *.gif
 *.webp
 
-# PHP backend (services/api) - ignore PHP-managed directories
+# Backend ignores
+backend/
 services/api/vendor/
 services/api/storage/
 services/api/bootstrap/cache/
