@@ -1,0 +1,82 @@
+name: Feature request
+description: Propose a capability or product/developer-experience improvement.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Focus on the outcome and the people it helps. Keep confidential information and personal data out of this public form.
+
+  - type: dropdown
+    id: product-area
+    attributes:
+      label: Product area
+      options:
+        - Public Web
+        - Authentication / account access
+        - Citizen / donor / volunteer app
+        - Admin / operations
+        - Docs / design system
+        - Shared UI / UI patterns
+        - Shared contracts / validation / utilities
+        - Backend / data (planned)
+        - Developer experience / GitHub automation
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / opportunity
+      description: Who is affected, and what outcome is difficult or impossible today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-outcome
+    attributes:
+      label: Desired outcome
+      description: Describe observable behavior without prescribing unnecessary implementation details.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      value: |
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Scope and impact
+      description: Note affected apps/packages, accessibility, security/privacy, data, performance, migrations or documentation.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Existing workarounds, simpler approaches or reasons this can wait.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Sanitized references, mockups, dependencies or related issues.
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched existing issues and the roadmap for related work.
+          required: true
+        - label: This request contains no secrets, personal data or confidential information.
+          required: true

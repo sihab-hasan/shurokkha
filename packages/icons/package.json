@@ -1,0 +1,28 @@
+{
+  "name": "@shurokkha/icons",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.tsx"
+  },
+  "scripts": {
+    "lint": "eslint src --max-warnings=0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lucide-react": "^1.24.0"
+  },
+  "peerDependencies": {
+    "react": ">=19 <20"
+  },
+  "devDependencies": {
+    "@shurokkha/eslint-config": "workspace:*",
+    "@shurokkha/typescript-config": "workspace:*",
+    "@types/react": "^19",
+    "eslint": "^9",
+    "react": "19.2.4",
+    "typescript": "^5"
+  },
+  "license": "UNLICENSED"
+}

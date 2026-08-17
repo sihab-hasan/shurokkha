@@ -1,0 +1,14 @@
+{
+  "name": "@shurokkha/prettier-config",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": "./prettier.config.mjs",
+  "peerDependencies": {
+    "prettier": ">=3.0.0"
+  },
+  "dependencies": {
+    "prettier-plugin-tailwindcss": "^0.8.0"
+  },
+  "license": "UNLICENSED"
+}

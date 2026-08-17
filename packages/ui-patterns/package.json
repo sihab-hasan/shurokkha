@@ -1,0 +1,52 @@
+{
+  "name": "@shurokkha/ui-patterns",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": [
+    "./src/styles/ui-patterns.css"
+  ],
+  "exports": {
+    "./data-table": "./src/data-table/index.ts",
+    "./forms": "./src/forms/index.ts",
+    "./attachments": "./src/attachments/index.ts",
+    "./filters": "./src/filters/index.ts",
+    "./reporting": "./src/reporting/index.ts",
+    "./entity": "./src/entity/index.ts",
+    "./activity": "./src/activity/index.ts",
+    "./selectors": "./src/selectors/index.ts",
+    "./workflow": "./src/workflow/index.ts",
+    "./navigation": "./src/navigation/index.ts",
+    "./layout": "./src/layout/index.ts",
+    "./dashboard": "./src/dashboard/index.ts",
+    "./search": "./src/search/index.ts",
+    "./overlays": "./src/overlays/index.ts",
+    "./feedback": "./src/feedback/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./auth": "./src/auth/index.ts",
+    "./collections": "./src/collections/index.ts",
+    "./messaging": "./src/messaging/index.ts",
+    "./notifications": "./src/notifications/index.ts",
+    "./progress": "./src/progress/index.ts",
+    "./ui-patterns.css": "./src/styles/ui-patterns.css"
+  },
+  "scripts": {
+    "lint": "eslint src --max-warnings=0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@shurokkha/ui": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18 <20"
+  },
+  "devDependencies": {
+    "@shurokkha/eslint-config": "workspace:*",
+    "@shurokkha/typescript-config": "workspace:*",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9",
+    "typescript": "^5"
+  },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,17 @@
+node_modules/
+.pnpm-store/
+.next/
+.turbo/
+dist/
+build/
+out/
+coverage/
+.nyc_output/
+.vercel/
+pnpm-lock.yaml
+*.ico
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp

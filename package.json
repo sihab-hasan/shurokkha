@@ -1,0 +1,36 @@
+{
+  "name": "shurokkha",
+  "private": true,
+  "scripts": {
+    "setup": "pnpm install --frozen-lockfile",
+    "clean": "node ./scripts/clean.mjs",
+    "stop": "node ./scripts/stop.mjs",
+    "dev": "pnpm exec turbo run dev",
+    "build": "pnpm exec turbo run build",
+    "lint": "pnpm exec turbo run lint",
+    "typecheck": "pnpm exec turbo run typecheck",
+    "format": "pnpm exec prettier --write .",
+    "check:shells": "node ./scripts/check-shell-architecture.mjs",
+    "check:web-ui": "node ./scripts/check-web-ui-architecture.mjs",
+    "check:architecture": "node ./scripts/check-repository-architecture.mjs && node ./scripts/check-shell-architecture.mjs && node ./scripts/check-web-ui-architecture.mjs && node ./scripts/check-design-system.mjs",
+    "check:repo": "node ./scripts/check-repository-architecture.mjs",
+    "format:check": "pnpm exec prettier --check .",
+    "verify": "pnpm check:architecture && pnpm check:github && pnpm format:check && pnpm lint && pnpm typecheck && pnpm build",
+    "check:github": "node ./scripts/check-github-readiness.mjs",
+    "check:design": "node ./scripts/check-design-system.mjs"
+  },
+  "devDependencies": {
+    "@shurokkha/eslint-config": "workspace:*",
+    "@shurokkha/prettier-config": "workspace:*",
+    "@shurokkha/typescript-config": "workspace:*",
+    "prettier": "^3.8.3",
+    "turbo": "^2.10.4",
+    "typescript": "5.9.2",
+    "prettier-plugin-tailwindcss": "^0.8.0"
+  },
+  "packageManager": "pnpm@10.18.2",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "license": "UNLICENSED"
+}

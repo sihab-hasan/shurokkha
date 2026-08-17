@@ -1,0 +1,10 @@
+{
+  "extends": "@shurokkha/typescript-config/react-library.json",
+  "compilerOptions": {
+    "paths": {
+      "@shurokkha/ui/*": ["./src/*"]
+    }
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}
