@@ -2,8 +2,15 @@
 
 import * as React from "react"
 
-type Theme = "light" | "dark" | "system"
-type ResolvedTheme = "light" | "dark"
+import {
+  isTheme,
+  SYSTEM_THEME_QUERY,
+  THEME_CHANGING_CLASS,
+  THEME_EVENT,
+  THEME_STORAGE_KEY,
+  type ResolvedTheme,
+  type Theme,
+} from "../lib/theme"
 
 interface ThemeContextValue {
   theme: Theme
@@ -15,17 +22,14 @@ const ThemeContext = React.createContext<ThemeContextValue | undefined>(
   undefined
 )
 
-const THEME_STORAGE_KEY = "theme"
-const THEME_EVENT = "shurokkha:theme-change"
-const SYSTEM_THEME_QUERY = "(prefers-color-scheme: dark)"
+let removeTransitionFrame: number | null = null
+let cleanupTransitionFrame: number | null = null
 
 function readStoredTheme(): Theme {
   if (typeof window === "undefined") return "system"
 
   const value = window.localStorage.getItem(THEME_STORAGE_KEY)
-  return value === "light" || value === "dark" || value === "system"
-    ? value
-    : "system"
+  return isTheme(value) ? value : "system"
 }
 
 function readSystemTheme(): ResolvedTheme {
@@ -37,12 +41,48 @@ function resolveTheme(theme: Theme): ResolvedTheme {
   return theme === "system" ? readSystemTheme() : theme
 }
 
+/**
+ * Keep the no-transition guard active for one painted frame. This prevents
+ * components using transition-colors from cross-fading every semantic token
+ * when the root light/dark class changes.
+ */
+function guardThemeTransition(root: HTMLElement) {
+  root.classList.add(THEME_CHANGING_CLASS)
+
+  if (removeTransitionFrame !== null) {
+    window.cancelAnimationFrame(removeTransitionFrame)
+  }
+
+  if (cleanupTransitionFrame !== null) {
+    window.cancelAnimationFrame(cleanupTransitionFrame)
+  }
+
+  removeTransitionFrame = window.requestAnimationFrame(() => {
+    cleanupTransitionFrame = window.requestAnimationFrame(() => {
+      root.classList.remove(THEME_CHANGING_CLASS)
+      removeTransitionFrame = null
+      cleanupTransitionFrame = null
+    })
+  })
+}
+
 function applyTheme(theme: Theme) {
   const resolvedTheme = resolveTheme(theme)
   const root = document.documentElement
+  const shouldBeDark = resolvedTheme === "dark"
 
-  root.classList.toggle("dark", resolvedTheme === "dark")
+  const classNeedsUpdate = root.classList.contains("dark") !== shouldBeDark
+  const schemeNeedsUpdate = root.style.colorScheme !== resolvedTheme
+  const dataThemeNeedsUpdate = root.dataset.theme !== resolvedTheme
+
+  // setTheme() applies immediately, then the store subscription re-renders.
+  // Avoid a second style recalculation when the DOM is already synchronized.
+  if (!classNeedsUpdate && !schemeNeedsUpdate && !dataThemeNeedsUpdate) return
+
+  guardThemeTransition(root)
+  root.classList.toggle("dark", shouldBeDark)
   root.style.colorScheme = resolvedTheme
+  root.dataset.theme = resolvedTheme
 }
 
 function subscribe(callback: () => void) {
@@ -77,7 +117,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   )
   const [theme, resolvedTheme] = snapshot.split(":") as [Theme, ResolvedTheme]
 
-  React.useEffect(() => {
+  // The inline ThemeScript handles the first document paint. This layout
+  // effect keeps system-theme changes synchronized before React paints.
+  React.useLayoutEffect(() => {
     applyTheme(theme)
   }, [theme, resolvedTheme])
 

@@ -6,6 +6,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Theme changes swap many semantic CSS variables at once. Components are free
+ * to use transition-colors for hover/focus states, but those transitions must
+ * not animate the entire palette during a light/dark switch. ThemeProvider
+ * keeps this guard active for one painted frame while the root theme changes.
+ */
+html.theme-changing *,
+html.theme-changing *::before,
+html.theme-changing *::after {
+  transition-property: none !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
+
 @theme inline {
   --font-heading: var(--font-heading);
   --font-sans: var(--font-sans);

@@ -7,8 +7,11 @@ import { buttonVariants } from "@shurokkha/ui/components/button"
 import { ThemeSwitcher } from "@shurokkha/ui/components/theme-switcher"
 import { cn } from "@shurokkha/ui/lib/utils"
 
+import { AccountMenu } from "@/components/auth/account-menu"
+import { useAuth } from "@/components/auth/auth-provider"
 import { BrandLogo } from "@/components/brand/brand-logo"
 import { publicSiteConfig } from "@/config/public-site-config"
+import { routes } from "@/config/routes"
 
 import { PublicContainer } from "./public-container"
 import PublicSidebar from "./public-sidebar"
@@ -21,6 +24,11 @@ function isActivePath(pathname: string, href: string) {
 
 export default function PublicNavbar() {
   const pathname = usePathname()
+  const { status, user } = useAuth()
+  const getHelpHref =
+    status === "authenticated" && user?.role === "citizen"
+      ? routes.citizen.requestHelp
+      : routes.public.getHelp
 
   return (
     <header className="sticky top-0 z-40 w-full bg-background/92 shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-xl supports-[backdrop-filter]:bg-background/82">
@@ -57,19 +65,17 @@ export default function PublicNavbar() {
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
           <ThemeSwitcher />
+          <AccountMenu />
 
-          {publicSiteConfig.actions.map((action, index) => (
-            <Link
-              key={action.href}
-              href={action.href}
-              className={cn(
-                buttonVariants({ variant: action.variant, size: "sm" }),
-                index === 0 ? "hidden sm:inline-flex" : "inline-flex"
-              )}
-            >
-              {action.label}
-            </Link>
-          ))}
+          <Link
+            href={getHelpHref}
+            className={cn(
+              buttonVariants({ variant: "default", size: "sm" }),
+              "inline-flex"
+            )}
+          >
+            Get help
+          </Link>
 
           <div className="xl:hidden">
             <PublicSidebar />

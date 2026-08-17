@@ -19,6 +19,8 @@ import { PageHeader } from "@shurokkha/ui-patterns/navigation"
 import { Badge } from "@shurokkha/ui/components/badge"
 import { Button } from "@shurokkha/ui/components/button"
 
+import { routes } from "@/config/routes"
+
 export function CitizenOverview() {
   const metrics = [
     {
@@ -50,7 +52,7 @@ export function CitizenOverview() {
           <Button
             nativeButton={false}
             size="lg"
-            render={<Link href="/get-help" />}
+            render={<Link href={routes.citizen.requestHelp} />}
           >
             <Plus data-icon="inline-start" /> Request assistance
           </Button>
@@ -106,7 +108,7 @@ export function CitizenOverview() {
               <Button
                 nativeButton={false}
                 variant="outline"
-                render={<Link href="/emergency-alerts" />}
+                render={<Link href={routes.citizen.alerts} />}
               >
                 View alert <ArrowRight data-icon="inline-end" />
               </Button>

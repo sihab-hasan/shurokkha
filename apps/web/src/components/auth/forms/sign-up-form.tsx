@@ -10,25 +10,18 @@ import { Checkbox } from "@shurokkha/ui/components/checkbox"
 import { Input } from "@shurokkha/ui/components/input"
 import { Label } from "@shurokkha/ui/components/label"
 import { cn } from "@shurokkha/ui/lib/utils"
-import { createApiClient, ApiError } from "@shurokkha/api-client"
+import { ApiError } from "@shurokkha/api-client"
 
 import { SocialAuth, type Provider } from "@/components/auth/social-auth"
 import { AuthPasswordInput } from "./auth-password-input"
 import { routes } from "@/config/routes"
-
-interface RegisterResponse {
-  status: string
-  message: string
-  user: {
-    id: number
-    name: string
-    email: string
-  }
-  token: string
-}
+import { getShurokkhaApi } from "@/lib/api"
+import { useAuth } from "@/components/auth/auth-provider"
+import { dashboardRouteForUser, safeReturnTo } from "@/lib/auth-navigation"
 
 export function SignUpForm() {
   const router = useRouter()
+  const { establishSession } = useAuth()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -36,10 +29,6 @@ export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [isSuccess, setIsSuccess] = useState(false)
-
-  const apiClient = createApiClient({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
-  })
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -53,23 +42,21 @@ export function SignUpForm() {
     setIsLoading(true)
 
     try {
-      const response = await apiClient.post<RegisterResponse>("register", {
+      const response = await getShurokkhaApi().auth.register({
         name,
         email,
         password,
       })
-
-      if (response.token) {
-        localStorage.setItem("auth_token", response.token)
-        localStorage.setItem("user", JSON.stringify(response.user))
-      }
+      establishSession(response.user)
 
       setIsSuccess(true)
-      setMessage("Account created successfully! Redirecting...")
+      setMessage("Account created successfully. Redirecting…")
 
-      setTimeout(() => {
-        router.push("/")
-      }, 1500)
+      const returnTo = safeReturnTo(
+        new URLSearchParams(window.location.search).get("returnTo")
+      )
+      router.replace(returnTo || dashboardRouteForUser(response.user))
+      router.refresh()
     } catch (error) {
       if (error instanceof ApiError) {
         setMessage(error.message)

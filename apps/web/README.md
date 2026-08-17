@@ -1,10 +1,17 @@
 # Public Web App
 
-`@shurokkha/web` is the public-facing Next.js application and the primary local entry point for Shurokkha.
+`@shurokkha/web` is the primary Next.js application for Shurokkha.
 
 ## Run locally
 
-From the repository root:
+Start Laravel first:
+
+```bash
+cd services/api
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+Then from the repository root:
 
 ```bash
 pnpm --filter @shurokkha/web dev
@@ -12,39 +19,40 @@ pnpm --filter @shurokkha/web dev
 
 Open `http://localhost:3000`.
 
-Run `pnpm dev` instead when you also need the documentation and admin applications. With all three servers running, the web app forwards:
+## API configuration
 
-- `/docs/*` to the docs app on port `3001`
-- `/admin/*` to the admin app on port `3003`
+The frontend defaults to the Laravel service at `http://127.0.0.1:8000/api`.
 
-The `/client/*` rewrite is reserved for a future client portal; no client workspace currently exists.
-
-## Scripts
+For an explicit local value:
 
 ```bash
-pnpm --filter @shurokkha/web dev
-pnpm --filter @shurokkha/web build
-pnpm --filter @shurokkha/web start
+cp apps/web/.env.example apps/web/.env.local
+```
+
+Recommended value:
+
+```env
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api
+```
+
+The shared API client also safely normalizes `http://127.0.0.1:8000` and `http://127.0.0.1:8000/api/v1`, preventing accidental `/api/v1/v1/...` requests.
+
+## Connected flows
+
+The following frontend flows are connected to Laravel:
+
+- sign up, sign in, current-session verification, sign out;
+- Citizen assistance request create/list/detail/update/cancel/delete;
+- Citizen missing-person report create/list/detail/photo/update/close/delete.
+
+Other public, donor, volunteer, alert, shelter, disaster, messaging, notification, profile, and settings screens remain product/UI scaffolds until their own backend domains are implemented. They must not invent API endpoints.
+
+## Validation
+
+```bash
+pnpm check:api-connections
+pnpm check:architecture
 pnpm --filter @shurokkha/web lint
 pnpm --filter @shurokkha/web typecheck
-pnpm --filter @shurokkha/web format
+pnpm --filter @shurokkha/web build
 ```
-
-## Shared UI
-
-The app consumes components and theme styles from `@shurokkha/ui`:
-
-```tsx
-import { Button } from "@shurokkha/ui/components/button"
-```
-
-`src/styles/app.css` imports the shared global stylesheet. Add shadcn components from this workspace so the CLI resolves monorepo paths correctly:
-
-```bash
-cd apps/web
-pnpm dlx shadcn@latest add button
-```
-
-## Current status
-
-The app currently contains a scaffold landing page. Public disaster-relief discovery, requests, donations, and volunteer flows are planned work.

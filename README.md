@@ -2,7 +2,7 @@
 
 Shurokkha is a disaster-relief and resource-coordination platform built as a pnpm/Turborepo monorepo. The repository currently contains the public Web experience, authenticated role workspaces, an Admin application, a Docs application, and reusable UI/application packages.
 
-> **Status:** active product development. Frontend architecture and public core pages are implemented; backend services, persistent data, production authentication, and hosting integrations are not yet part of this repository.
+> **Status:** active product development. The Laravel API now includes authenticated Citizen assistance-request and missing-person CRUD flows. Other product domains and production hosting integrations remain in progress.
 
 ## Workspaces
 
@@ -15,6 +15,7 @@ Shurokkha is a disaster-relief and resource-coordination platform built as a pnp
 | `packages/ui-patterns` | Reusable application-level layouts, shells and interaction patterns          | Internal                      |
 | `packages/icons`       | Shurokkha-semantic icon aliases                                              | Internal                      |
 | `packages/*`           | Contracts, auth helpers, permissions, validation, API boundary and utilities | Internal                      |
+| `services/api`         | Laravel API, persistence, bearer authentication and Citizen CRUD             | `http://localhost:8000`       |
 
 ## Toolchain
 
@@ -26,7 +27,7 @@ Shurokkha is a disaster-relief and resource-coordination platform built as a pnp
 - Tailwind CSS 4
 - shadcn-style shared UI backed by Base UI primitives
 
-The repository includes `.node-version` and `.nvmrc` with the recommended Node major.
+The repository include `.nvmrc` with the recommended Node major.
 
 ## Quick start
 
@@ -43,6 +44,17 @@ Run an individual application:
 pnpm --filter @shurokkha/web dev
 pnpm --filter @shurokkha/docs dev
 pnpm --filter @shurokkha/admin dev
+```
+
+Run the Laravel API separately:
+
+```bash
+cd services/api
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
 ```
 
 ## Validation
@@ -121,9 +133,9 @@ After the first push, complete the repository settings checklist in [docs/github
 
 ## Current boundaries
 
-- No deployable backend exists yet.
-- No database/cache/email provider is connected.
-- Auth screens and shared auth helpers exist, but no production identity provider is integrated.
+- `services/api` provides the current Laravel backend for Citizen authentication, assistance requests and missing-person reports.
+- MySQL persistence is configured through `services/api/.env`; production database/cache/email providers are environment-specific.
+- Citizen Web authentication uses API bearer tokens; broader role/identity workflows are still evolving.
 - No deployment workflow is committed until real hosting targets and secrets are selected.
 
 ## License

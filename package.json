@@ -12,12 +12,13 @@
     "format": "pnpm exec prettier --write .",
     "check:shells": "node ./scripts/check-shell-architecture.mjs",
     "check:web-ui": "node ./scripts/check-web-ui-architecture.mjs",
-    "check:architecture": "node ./scripts/check-repository-architecture.mjs && node ./scripts/check-shell-architecture.mjs && node ./scripts/check-web-ui-architecture.mjs && node ./scripts/check-design-system.mjs",
+    "check:architecture": "node ./scripts/check-repository-architecture.mjs && node ./scripts/check-shell-architecture.mjs && node ./scripts/check-web-ui-architecture.mjs && node ./scripts/check-design-system.mjs && node ./scripts/check-api-connections.mjs",
     "check:repo": "node ./scripts/check-repository-architecture.mjs",
     "format:check": "pnpm exec prettier --check .",
     "verify": "pnpm check:architecture && pnpm check:github && pnpm format:check && pnpm lint && pnpm typecheck && pnpm build",
     "check:github": "node ./scripts/check-github-readiness.mjs",
-    "check:design": "node ./scripts/check-design-system.mjs"
+    "check:design": "node ./scripts/check-design-system.mjs",
+    "check:api-connections": "node ./scripts/check-api-connections.mjs"
   },
   "devDependencies": {
     "@shurokkha/eslint-config": "workspace:*",

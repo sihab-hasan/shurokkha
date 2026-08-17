@@ -3,6 +3,8 @@ import "../styles/app.css"
 import { Inter, Manrope } from "next/font/google"
 import { cn } from "@shurokkha/ui/lib/utils"
 import { UiProvider } from "@shurokkha/ui/providers/ui-provider"
+import { ThemeInitScript } from "@/components/theme-init-script"
+import { AuthProvider } from "@/components/auth/auth-provider"
 
 const manropeHeading = Manrope({
   subsets: ["latin"],
@@ -37,7 +39,10 @@ export default function RootLayout({
       )}
     >
       <body className="flex min-h-full min-w-0 flex-col">
-        <UiProvider>{children}</UiProvider>
+        <ThemeInitScript />
+        <UiProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </UiProvider>
       </body>
     </html>
   )

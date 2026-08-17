@@ -1,12 +1,9 @@
-import AppResourceDetail from "@/components/app/app-resource-detail"
+import type { Metadata } from "next"
 
-export default function Page() {
-  return (
-    <AppResourceDetail
-      title="Create missing person report"
-      resourceLabel="New report"
-      resourceId="Generated after submission"
-      backHref="/citizen/missing-persons"
-    />
-  )
+import { MissingPersonForm } from "@/components/app/citizen/missing-persons/missing-person-form"
+
+export const metadata: Metadata = { title: "Report Missing Person" }
+
+export default function CreateMissingPersonPage() {
+  return <MissingPersonForm />
 }

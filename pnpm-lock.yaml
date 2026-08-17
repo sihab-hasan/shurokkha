@@ -127,6 +127,9 @@ importers:
       '@shurokkha/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
+      '@shurokkha/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@shurokkha/icons':
         specifier: workspace:*
         version: link:../../packages/icons
@@ -136,6 +139,9 @@ importers:
       '@shurokkha/ui-patterns':
         specifier: workspace:*
         version: link:../../packages/ui-patterns
+      '@shurokkha/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
       lucide-react:
         specifier: ^1.24.0
         version: 1.31.0(react@19.2.4)
@@ -178,6 +184,10 @@ importers:
         version: 5.9.2
 
   packages/api-client:
+    dependencies:
+      '@shurokkha/contracts':
+        specifier: workspace:*
+        version: link:../contracts
     devDependencies:
       '@shurokkha/eslint-config':
         specifier: workspace:*
