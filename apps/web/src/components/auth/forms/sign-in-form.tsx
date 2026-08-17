@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 import { buttonVariants } from "@shurokkha/ui/components/button"
 import { Checkbox } from "@shurokkha/ui/components/checkbox"
@@ -9,20 +10,68 @@ import { Alert, AlertDescription } from "@shurokkha/ui/components/alert"
 import { Input } from "@shurokkha/ui/components/input"
 import { Label } from "@shurokkha/ui/components/label"
 import { cn } from "@shurokkha/ui/lib/utils"
+import { createApiClient, ApiError } from "@shurokkha/api-client"
 
 import { SocialAuth, type Provider } from "@/components/auth/social-auth"
 import { AuthPasswordInput } from "./auth-password-input"
-
 import { routes } from "@/config/routes"
 
-export function SignInForm() {
-  const [message, setMessage] = useState<string | null>(null)
+interface LoginResponse {
+  status: string
+  message: string
+  user: {
+    id: number
+    name: string
+    email: string
+  }
+  token: string
+}
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+export function SignInForm() {
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState<string | null>(null)
+  const [isSuccess, setIsSuccess] = useState(false)
+
+  const apiClient = createApiClient({
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
+  })
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setMessage(
-      "Sign-in is not connected yet. Your entries remain on this page."
-    )
+    setMessage(null)
+    setIsLoading(true)
+
+    try {
+      const response = await apiClient.post<LoginResponse>("login", {
+        email,
+        password,
+      })
+
+      if (response.token) {
+        localStorage.setItem("auth_token", response.token)
+        localStorage.setItem("user", JSON.stringify(response.user))
+      }
+
+      setIsSuccess(true)
+      setMessage("Signed in successfully! Redirecting...")
+
+      setTimeout(() => {
+        router.push("/")
+      }, 1000)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setMessage(error.message)
+      } else if (error instanceof Error) {
+        setMessage(error.message)
+      } else {
+        setMessage("Invalid email or password.")
+      }
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   function handleProvider(provider: Provider) {
@@ -45,6 +94,12 @@ export function SignInForm() {
               placeholder="you@example.com"
               autoComplete="email"
               required
+              value={email}
+              disabled={isLoading}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                setMessage(null)
+              }}
               className="h-10 rounded-md"
             />
           </div>
@@ -56,13 +111,19 @@ export function SignInForm() {
               placeholder="Enter your password"
               autoComplete="current-password"
               required
+              value={password}
+              disabled={isLoading}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setMessage(null)
+              }}
             />
           </div>
         </div>
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
-            <Checkbox id="remember" name="remember" />
+            <Checkbox id="remember" name="remember" disabled={isLoading} />
             <Label htmlFor="remember" className="text-sm font-normal">
               Remember me
             </Label>
@@ -76,16 +137,24 @@ export function SignInForm() {
         </div>
 
         {message ? (
-          <Alert aria-live="polite">
+          <Alert
+            aria-live="polite"
+            className={
+              isSuccess
+                ? "border-green-500 text-green-600 dark:text-green-400"
+                : ""
+            }
+          >
             <AlertDescription>{message}</AlertDescription>
           </Alert>
         ) : null}
 
         <button
           type="submit"
+          disabled={isLoading}
           className={cn(buttonVariants({ size: "lg" }), "h-11 w-full")}
         >
-          Sign in
+          {isLoading ? "Signing in..." : "Sign in"}
         </button>
       </form>
     </div>

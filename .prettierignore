@@ -15,3 +15,10 @@ pnpm-lock.yaml
 *.jpeg
 *.gif
 *.webp
+
+# Backend ignores
+backend/
+services/api/vendor/
+services/api/storage/
+services/api/bootstrap/cache/
+services/api/public/build/
