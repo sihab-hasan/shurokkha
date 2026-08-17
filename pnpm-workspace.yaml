@@ -3,6 +3,7 @@ packages:
   - "packages/*"
   - "tooling/*"
   - "services/*"
+  - "!services/api"
 
 onlyBuiltDependencies:
   - esbuild
