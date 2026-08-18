@@ -3,40 +3,29 @@
 import * as React from "react"
 import { INITIAL_CITIZEN_PROFILE, type UserProfileData } from "./profile.types"
 
-const STORAGE_PREFIX = "shurokkha_profile_"
+// In-memory store for session state without storing sensitive PII / emergency contacts in plain-text localStorage
+const profileStore = new Map<string, UserProfileData>()
 
 function getInitialProfile(username: string): UserProfileData {
-  if (typeof window === "undefined") {
-    return {
-      ...INITIAL_CITIZEN_PROFILE,
-      contact: {
-        ...INITIAL_CITIZEN_PROFILE.contact,
-        username,
-      },
-    }
+  const normalizedKey = username.toLowerCase()
+  const existing = profileStore.get(normalizedKey)
+  if (existing) {
+    return existing
   }
 
-  try {
-    const storageKey = `${STORAGE_PREFIX}${username.toLowerCase()}`
-    const stored = localStorage.getItem(storageKey)
-    if (stored) {
-      return JSON.parse(stored) as UserProfileData
-    }
-  } catch {
-    // Return initial profile on error
-  }
-
-  return {
+  const initial: UserProfileData = {
     ...INITIAL_CITIZEN_PROFILE,
     contact: {
       ...INITIAL_CITIZEN_PROFILE.contact,
       username,
     },
   }
+  profileStore.set(normalizedKey, initial)
+  return initial
 }
 
 export function useProfileData(username: string = "sihab.xd") {
-  const storageKey = `${STORAGE_PREFIX}${username.toLowerCase()}`
+  const normalizedKey = username.toLowerCase()
   const [profile, setProfile] = React.useState<UserProfileData>(() =>
     getInitialProfile(username)
   )
@@ -70,35 +59,27 @@ export function useProfileData(username: string = "sihab.xd") {
           }),
         }
 
-        try {
-          localStorage.setItem(storageKey, JSON.stringify(next))
-        } catch {
-          // Fallback if storage fails
-        }
-
+        profileStore.set(normalizedKey, next)
         setSaveMessage("Profile updated successfully")
         setTimeout(() => setSaveMessage(null), 4000)
 
         return next
       })
     },
-    [storageKey]
+    [normalizedKey]
   )
 
   const deleteAccount = React.useCallback(() => {
-    try {
-      localStorage.removeItem(storageKey)
-    } catch {
-      // Ignore storage clear failure
-    }
-    setProfile({
+    const resetProfile: UserProfileData = {
       ...INITIAL_CITIZEN_PROFILE,
       contact: {
         ...INITIAL_CITIZEN_PROFILE.contact,
         username,
       },
-    })
-  }, [storageKey, username])
+    }
+    profileStore.set(normalizedKey, resetProfile)
+    setProfile(resetProfile)
+  }, [normalizedKey, username])
 
   return {
     profile,
