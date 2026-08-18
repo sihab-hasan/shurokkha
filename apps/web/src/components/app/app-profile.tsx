@@ -1,3 +1,4 @@
+import * as React from "react"
 import {
   EntityHeader,
   EntityMetadata,
@@ -20,6 +21,9 @@ export interface AppProfileProps {
   items: AppProfileItem[]
   asideTitle: string
   asideDescription: string
+  actions?: React.ReactNode
+  children?: React.ReactNode
+  dangerZone?: React.ReactNode
 }
 
 /** Account profile composition built from the shared entity family. */
@@ -30,6 +34,9 @@ export function AppProfile({
   items,
   asideTitle,
   asideDescription,
+  actions,
+  children,
+  dangerZone,
 }: AppProfileProps) {
   return (
     <div className="space-y-6">
@@ -38,26 +45,32 @@ export function AppProfile({
         subtitle={description}
         identifier={`@${username}`}
         status={<EntityStatus tone="success">Active</EntityStatus>}
+        actions={actions}
       />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(18rem,0.7fr)]">
-        <EntitySummary title="Account information">
-          <EntityMetadata
-            columns={2}
-            items={items.map((item) => ({
-              label: item.label,
-              value: item.status ? (
-                <span className="inline-flex flex-wrap items-center gap-2">
-                  <span>{item.value}</span>
-                  <EntityStatus dot={false}>{item.status}</EntityStatus>
-                </span>
-              ) : (
-                item.value
-              ),
-              hint: item.hint,
-            }))}
-          />
-        </EntitySummary>
+        <div className="space-y-6">
+          <EntitySummary title="Account information">
+            <EntityMetadata
+              columns={2}
+              items={items.map((item) => ({
+                label: item.label,
+                value: item.status ? (
+                  <span className="inline-flex flex-wrap items-center gap-2">
+                    <span>{item.value}</span>
+                    <EntityStatus dot={false}>{item.status}</EntityStatus>
+                  </span>
+                ) : (
+                  item.value
+                ),
+                hint: item.hint,
+              }))}
+            />
+          </EntitySummary>
+
+          {children}
+          {dangerZone}
+        </div>
 
         <WidgetFrame title={asideTitle} description={asideDescription}>
           <p className="text-sm leading-7 text-muted-foreground">

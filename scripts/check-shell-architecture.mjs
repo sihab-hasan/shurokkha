@@ -24,6 +24,7 @@ function walkFiles(path) {
   if (!existsSync(absolute(path))) return []
   const out = []
   for (const entry of readdirSync(absolute(path))) {
+    if (entry === "node_modules" || entry === ".next" || entry === "dist" || entry === ".turbo") continue
     const child = `${path}/${entry}`
     if (statSync(absolute(child)).isDirectory()) out.push(...walkFiles(child))
     else out.push(child)
