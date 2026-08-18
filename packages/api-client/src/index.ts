@@ -19,14 +19,23 @@ export interface ApiClientOptions {
 }
 
 export function normalizeApiBaseUrl(baseUrl: string) {
-  let normalized = baseUrl.trim().replace(/\/+$/, "")
+  let normalized = baseUrl.trim()
+
+  // Avoid regexes on externally supplied configuration values. Besides being
+  // simpler, this keeps static-analysis tools from treating URL normalization
+  // as a potentially expensive regular-expression sink.
+  while (normalized.endsWith("/")) {
+    normalized = normalized.slice(0, -1)
+  }
 
   // The typed client owns API versioning (for example `/v1/auth/login`).
   // Accept the common local configuration variants without creating
   // accidental `/api/v1/v1/...` or missing-`/api` URLs.
-  normalized = normalized.replace(/\/api\/v1$/i, "/api")
+  if (normalized.toLowerCase().endsWith("/api/v1")) {
+    normalized = normalized.slice(0, -3)
+  }
 
-  if (!/\/api$/i.test(normalized)) {
+  if (!normalized.toLowerCase().endsWith("/api")) {
     normalized = `${normalized}/api`
   }
 
