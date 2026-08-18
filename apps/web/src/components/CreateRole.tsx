@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react"
 
+import { createApiClient, ApiError } from "@shurokkha/api-client"
 import { Alert, AlertDescription } from "@shurokkha/ui/components/alert"
 import { Button } from "@shurokkha/ui/components/button"
 import {
@@ -55,20 +56,22 @@ export default function CreateRole({ onCreateRole }: CreateRoleProps) {
       return
     }
 
-    if (!onCreateRole) {
-      setStatus({
-        type: "info",
-        message:
-          "Role creation is not connected yet. Provide an onCreateRole handler when the admin role API is implemented.",
-      })
-      return
-    }
-
     setLoading(true)
     setStatus(null)
 
     try {
-      await onCreateRole({ role_name: roleName, description })
+      if (onCreateRole) {
+        await onCreateRole({ role_name: roleName, description })
+      } else {
+        const apiClient = createApiClient({
+          baseUrl:
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
+        })
+        await apiClient.post("roles", {
+          role_name: roleName,
+          description: description || undefined,
+        })
+      }
       setFormData(INITIAL_FORM)
       setStatus({ type: "success", message: "Role successfully created." })
     } catch (error) {
@@ -76,7 +79,11 @@ export default function CreateRole({ onCreateRole }: CreateRoleProps) {
       setStatus({
         type: "error",
         message:
-          error instanceof Error ? error.message : "Failed to create role.",
+          error instanceof ApiError
+            ? error.message
+            : error instanceof Error
+              ? error.message
+              : "Failed to create role.",
       })
     } finally {
       setLoading(false)
