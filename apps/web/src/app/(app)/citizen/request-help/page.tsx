@@ -1,35 +1,53 @@
 import type { Metadata } from "next"
-import { AppCollectionPage } from "@/components/app/app-collection-page"
+import { EntityHeader, EntityStatus } from "@shurokkha/ui-patterns/entity"
+import { WidgetFrame } from "@shurokkha/ui-patterns/dashboard"
+import { EmergencyRequestForm } from "@/components/app/emergency-request-form"
+
 export const metadata: Metadata = { title: "Request Emergency Help" }
+
 export default function RequestHelpPage() {
   return (
-    <AppCollectionPage
-      title="Request emergency help"
-      description="Choose the type of assistance you need and provide your current location."
-      items={[
-        {
-          title: "Rescue needed",
-          description: "Request urgent evacuation from an unsafe location.",
-          status: "Critical",
-        },
-        {
-          title: "Medical emergency",
-          description: "Request immediate medical support or transport.",
-          status: "Critical",
-        },
-        {
-          title: "Food, water, or medicine",
-          description: "Report an urgent shortage of essential supplies.",
-          status: "High",
-        },
-        {
-          title: "Temporary shelter",
-          description: "Request safe accommodation for your household.",
-          status: "High",
-        },
-      ]}
-      asideTitle="Emergency information"
-      asideDescription="Include an accurate location, contact number, urgency, and number of affected people."
-    />
+    <div className="space-y-6">
+      <EntityHeader
+        title="Request Emergency Help"
+        subtitle="Submit urgent evacuation, rescue, medical, or shelter requests directly to first responders."
+        status={<EntityStatus tone="danger">24/7 Active Response</EntityStatus>}
+      />
+
+      <EmergencyRequestForm />
+
+      <WidgetFrame
+        title="Emergency Protocol Guidance"
+        description="Tips for submitting accurate distress signals during acute disaster events"
+      >
+        <div className="grid gap-4 text-xs leading-relaxed text-muted-foreground sm:grid-cols-3">
+          <div className="space-y-1">
+            <p className="font-semibold text-foreground">
+              1. Keep phone line open
+            </p>
+            <p>
+              Rescue teams will attempt phone confirmation prior to boat or
+              ambulance dispatch.
+            </p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-semibold text-foreground">
+              2. Target Nearest Shelter
+            </p>
+            <p>
+              Selecting your nearest designated cyclone/flood shelter
+              accelerates coordination.
+            </p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-semibold text-foreground">3. Real-Time Sync</p>
+            <p>
+              Requests are immediately registered into the MySQL disaster relief
+              database.
+            </p>
+          </div>
+        </div>
+      </WidgetFrame>
+    </div>
   )
 }
