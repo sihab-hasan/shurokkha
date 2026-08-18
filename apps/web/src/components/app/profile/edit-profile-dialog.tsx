@@ -120,7 +120,7 @@ export function EditProfileDialog({
         }
       />
 
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle className="text-xl">Edit Account Profile</DialogTitle>
@@ -137,29 +137,32 @@ export function EditProfileDialog({
               className="w-full"
             >
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="contact" className="gap-1.5 text-xs sm:text-sm">
-                  <User className="size-3.5 hidden sm:inline" />
+                <TabsTrigger
+                  value="contact"
+                  className="gap-1.5 text-xs sm:text-sm"
+                >
+                  <User className="hidden size-3.5 sm:inline" />
                   <span>Contact</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="emergency"
                   className="gap-1.5 text-xs sm:text-sm"
                 >
-                  <PhoneCall className="size-3.5 hidden sm:inline" />
+                  <PhoneCall className="hidden size-3.5 sm:inline" />
                   <span>Emergency</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="household"
                   className="gap-1.5 text-xs sm:text-sm"
                 >
-                  <Home className="size-3.5 hidden sm:inline" />
+                  <Home className="hidden size-3.5 sm:inline" />
                   <span>Household</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="accessibility"
                   className="gap-1.5 text-xs sm:text-sm"
                 >
-                  <Accessibility className="size-3.5 hidden sm:inline" />
+                  <Accessibility className="hidden size-3.5 sm:inline" />
                   <span>Needs</span>
                 </TabsTrigger>
               </TabsList>
@@ -207,7 +210,9 @@ export function EditProfileDialog({
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-altPhone">Alternative phone (optional)</Label>
+                    <Label htmlFor="edit-altPhone">
+                      Alternative phone (optional)
+                    </Label>
                     <Input
                       id="edit-altPhone"
                       value={formData.contact.altPhone || ""}
@@ -262,7 +267,9 @@ export function EditProfileDialog({
               <TabsContent value="emergency" className="mt-4 space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-em-name">Emergency contact person</Label>
+                    <Label htmlFor="edit-em-name">
+                      Emergency contact person
+                    </Label>
                     <Input
                       id="edit-em-name"
                       value={formData.emergencyContact.name}
@@ -283,20 +290,36 @@ export function EditProfileDialog({
                       }
                       className="w-full"
                     >
-                      <NativeSelectOption value="Parent">Parent</NativeSelectOption>
-                      <NativeSelectOption value="Spouse">Spouse</NativeSelectOption>
-                      <NativeSelectOption value="Sibling">Sibling</NativeSelectOption>
-                      <NativeSelectOption value="Child">Child</NativeSelectOption>
-                      <NativeSelectOption value="Relative">Relative</NativeSelectOption>
-                      <NativeSelectOption value="Friend">Friend</NativeSelectOption>
-                      <NativeSelectOption value="Neighbor">Neighbor</NativeSelectOption>
+                      <NativeSelectOption value="Parent">
+                        Parent
+                      </NativeSelectOption>
+                      <NativeSelectOption value="Spouse">
+                        Spouse
+                      </NativeSelectOption>
+                      <NativeSelectOption value="Sibling">
+                        Sibling
+                      </NativeSelectOption>
+                      <NativeSelectOption value="Child">
+                        Child
+                      </NativeSelectOption>
+                      <NativeSelectOption value="Relative">
+                        Relative
+                      </NativeSelectOption>
+                      <NativeSelectOption value="Friend">
+                        Friend
+                      </NativeSelectOption>
+                      <NativeSelectOption value="Neighbor">
+                        Neighbor
+                      </NativeSelectOption>
                     </NativeSelect>
                   </div>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-em-phone">Emergency phone number</Label>
+                    <Label htmlFor="edit-em-phone">
+                      Emergency phone number
+                    </Label>
                     <Input
                       id="edit-em-phone"
                       value={formData.emergencyContact.phone}
@@ -339,7 +362,9 @@ export function EditProfileDialog({
               <TabsContent value="household" className="mt-4 space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-hh-members">Total household members</Label>
+                    <Label htmlFor="edit-hh-members">
+                      Total household members
+                    </Label>
                     <Input
                       id="edit-hh-members"
                       type="number"
@@ -357,7 +382,9 @@ export function EditProfileDialog({
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-hh-dependents">Dependents (children / disabled)</Label>
+                    <Label htmlFor="edit-hh-dependents">
+                      Dependents (children / disabled)
+                    </Label>
                     <Input
                       id="edit-hh-dependents"
                       type="number"
@@ -376,7 +403,9 @@ export function EditProfileDialog({
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-hh-elderly">Elderly members (60+ yrs)</Label>
+                    <Label htmlFor="edit-hh-elderly">
+                      Elderly members (60+ yrs)
+                    </Label>
                     <Input
                       id="edit-hh-elderly"
                       type="number"
@@ -393,7 +422,9 @@ export function EditProfileDialog({
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="edit-hh-infants">Infants / toddlers (0-4 yrs)</Label>
+                    <Label htmlFor="edit-hh-infants">
+                      Infants / toddlers (0-4 yrs)
+                    </Label>
                     <Input
                       id="edit-hh-infants"
                       type="number"
@@ -411,15 +442,14 @@ export function EditProfileDialog({
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="edit-hh-dwelling">Dwelling / shelter vulnerability</Label>
+                  <Label htmlFor="edit-hh-dwelling">
+                    Dwelling / shelter vulnerability
+                  </Label>
                   <NativeSelect
                     id="edit-hh-dwelling"
                     value={formData.household.dwellingType}
                     onChange={(e) =>
-                      handleHouseholdChange(
-                        "dwellingType",
-                        e.target.value
-                      )
+                      handleHouseholdChange("dwellingType", e.target.value)
                     }
                     className="w-full"
                   >
@@ -442,7 +472,9 @@ export function EditProfileDialog({
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="edit-hh-notes">Household evacuation notes</Label>
+                  <Label htmlFor="edit-hh-notes">
+                    Household evacuation notes
+                  </Label>
                   <Textarea
                     id="edit-hh-notes"
                     rows={2}
@@ -458,7 +490,9 @@ export function EditProfileDialog({
               {/* 4. Accessibility & Assistance Tab */}
               <TabsContent value="accessibility" className="mt-4 space-y-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="edit-acc-mobility">Mobility assistance requirements</Label>
+                  <Label htmlFor="edit-acc-mobility">
+                    Mobility assistance requirements
+                  </Label>
                   <Input
                     id="edit-acc-mobility"
                     value={formData.accessibility.mobilityAssistance}
@@ -473,7 +507,9 @@ export function EditProfileDialog({
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="edit-acc-medical">Chronic medical conditions</Label>
+                  <Label htmlFor="edit-acc-medical">
+                    Chronic medical conditions
+                  </Label>
                   <Input
                     id="edit-acc-medical"
                     value={formData.accessibility.medicalConditions}

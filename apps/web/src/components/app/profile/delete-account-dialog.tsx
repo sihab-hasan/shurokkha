@@ -69,7 +69,7 @@ export function DeleteAccountDialog({
 
       <AlertDialogContent size="default" className="sm:max-w-md">
         <AlertDialogHeader>
-          <div className="flex size-11 items-center justify-center rounded-full bg-danger/10 text-danger mb-2">
+          <div className="mb-2 flex size-11 items-center justify-center rounded-full bg-danger/10 text-danger">
             <AlertTriangle className="size-5" />
           </div>
           <AlertDialogTitle className="text-lg font-semibold text-danger">
@@ -84,8 +84,13 @@ export function DeleteAccountDialog({
 
         <div className="my-2 space-y-2 rounded-lg border border-border bg-muted/40 p-3">
           <Label htmlFor="delete-confirm-input" className="text-xs font-medium">
-            Type <span className="font-mono font-bold text-foreground">{username}</span> or{" "}
-            <span className="font-mono font-bold text-foreground">DELETE</span> to confirm:
+            Type{" "}
+            <span className="font-mono font-bold text-foreground">
+              {username}
+            </span>{" "}
+            or{" "}
+            <span className="font-mono font-bold text-foreground">DELETE</span>{" "}
+            to confirm:
           </Label>
           <Input
             id="delete-confirm-input"

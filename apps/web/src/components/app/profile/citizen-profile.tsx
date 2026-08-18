@@ -19,7 +19,12 @@ import { WidgetFrame } from "@shurokkha/ui-patterns/dashboard"
 import { Alert, AlertDescription } from "@shurokkha/ui/components/alert"
 import { Badge } from "@shurokkha/ui/components/badge"
 import { Button } from "@shurokkha/ui/components/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@shurokkha/ui/components/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@shurokkha/ui/components/card"
 
 import { useProfileData } from "./use-profile-data"
 import { EditProfileDialog } from "./edit-profile-dialog"
@@ -63,9 +68,12 @@ export default function CitizenProfile({ username }: CitizenProfileProps) {
 
       {/* Success Notification */}
       {saveMessage ? (
-        <Alert variant="default" className="border-success/30 bg-success/10 text-success">
+        <Alert
+          variant="default"
+          className="border-success/30 bg-success/10 text-success"
+        >
           <CheckCircle2 className="size-4 text-success" />
-          <AlertDescription className="text-success font-medium">
+          <AlertDescription className="font-medium text-success">
             {saveMessage}
           </AlertDescription>
         </Alert>
@@ -84,7 +92,11 @@ export default function CitizenProfile({ username }: CitizenProfileProps) {
                 profile={profile}
                 onSave={updateProfile}
                 trigger={
-                  <Button variant="ghost" size="sm" className="h-8 px-2.5 text-xs">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2.5 text-xs"
+                  >
                     Edit
                   </Button>
                 }
@@ -133,7 +145,11 @@ export default function CitizenProfile({ username }: CitizenProfileProps) {
                 profile={profile}
                 onSave={updateProfile}
                 trigger={
-                  <Button variant="ghost" size="sm" className="h-8 px-2.5 text-xs">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2.5 text-xs"
+                  >
                     Edit
                   </Button>
                 }
@@ -186,7 +202,11 @@ export default function CitizenProfile({ username }: CitizenProfileProps) {
                 profile={profile}
                 onSave={updateProfile}
                 trigger={
-                  <Button variant="ghost" size="sm" className="h-8 px-2.5 text-xs">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2.5 text-xs"
+                  >
                     Edit
                   </Button>
                 }
@@ -237,7 +257,11 @@ export default function CitizenProfile({ username }: CitizenProfileProps) {
                 profile={profile}
                 onSave={updateProfile}
                 trigger={
-                  <Button variant="ghost" size="sm" className="h-8 px-2.5 text-xs">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2.5 text-xs"
+                  >
                     Edit
                   </Button>
                 }
@@ -249,11 +273,13 @@ export default function CitizenProfile({ username }: CitizenProfileProps) {
               items={[
                 {
                   label: "Mobility Assistance",
-                  value: profile.accessibility.mobilityAssistance || "None required",
+                  value:
+                    profile.accessibility.mobilityAssistance || "None required",
                 },
                 {
                   label: "Medical Conditions",
-                  value: profile.accessibility.medicalConditions || "None recorded",
+                  value:
+                    profile.accessibility.medicalConditions || "None recorded",
                 },
                 {
                   label: "Medication Requirements",
@@ -276,7 +302,7 @@ export default function CitizenProfile({ username }: CitizenProfileProps) {
             <CardHeader className="border-b border-danger/15 pb-3">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <CardTitle className="text-base font-semibold text-danger flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-base font-semibold text-danger">
                     <AlertTriangle className="size-4" />
                     <span>Danger Zone</span>
                   </CardTitle>
@@ -292,8 +318,8 @@ export default function CitizenProfile({ username }: CitizenProfileProps) {
             </CardHeader>
             <CardContent className="pt-3 text-xs leading-relaxed text-muted-foreground">
               Permanently deleting your account will purge all contact records,
-              household details, emergency contact mappings, and active assistance
-              requests from Shurokkha.
+              household details, emergency contact mappings, and active
+              assistance requests from Shurokkha.
             </CardContent>
           </Card>
         </div>
@@ -307,37 +333,38 @@ export default function CitizenProfile({ username }: CitizenProfileProps) {
           >
             <div className="space-y-3">
               <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-3">
-                <ShieldCheck className="size-5 shrink-0 text-success mt-0.5" />
+                <ShieldCheck className="mt-0.5 size-5 shrink-0 text-success" />
                 <div className="text-xs">
                   <div className="font-semibold text-foreground">
                     Profile Verified
                   </div>
-                  <div className="text-muted-foreground mt-0.5">
+                  <div className="mt-0.5 text-muted-foreground">
                     Your contact is verified for high-priority emergency alerts.
                   </div>
                 </div>
               </div>
 
               <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-3">
-                <Users className="size-5 shrink-0 text-primary mt-0.5" />
+                <Users className="mt-0.5 size-5 shrink-0 text-primary" />
                 <div className="text-xs">
                   <div className="font-semibold text-foreground">
                     {profile.household.membersCount} Household Members
                   </div>
-                  <div className="text-muted-foreground mt-0.5">
+                  <div className="mt-0.5 text-muted-foreground">
                     Pre-registered for shelter capacity and relief allocation.
                   </div>
                 </div>
               </div>
 
               <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-3">
-                <HeartPulse className="size-5 shrink-0 text-info mt-0.5" />
+                <HeartPulse className="mt-0.5 size-5 shrink-0 text-info" />
                 <div className="text-xs">
                   <div className="font-semibold text-foreground">
                     Accessibility Needs Recorded
                   </div>
-                  <div className="text-muted-foreground mt-0.5">
-                    Field rescue units receive specialized mobility instructions.
+                  <div className="mt-0.5 text-muted-foreground">
+                    Field rescue units receive specialized mobility
+                    instructions.
                   </div>
                 </div>
               </div>

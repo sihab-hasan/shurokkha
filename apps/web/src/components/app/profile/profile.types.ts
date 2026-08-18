@@ -60,7 +60,8 @@ export const INITIAL_CITIZEN_PROFILE: UserProfileData = {
     relationship: "Brother",
     phone: "+880 1933-445566",
     altPhone: "+880 1755-667788",
-    notes: "Lives in neighboring ward; can provide immediate transport assistance.",
+    notes:
+      "Lives in neighboring ward; can provide immediate transport assistance.",
   },
   household: {
     membersCount: 4,
@@ -68,13 +69,17 @@ export const INITIAL_CITIZEN_PROFILE: UserProfileData = {
     elderlyCount: 1,
     infantsCount: 0,
     dwellingType: "Semi-pucca (Ground Level)",
-    notes: "Ground level home near riverbank; high priority evacuation during flash floods.",
+    notes:
+      "Ground level home near riverbank; high priority evacuation during flash floods.",
   },
   accessibility: {
-    mobilityAssistance: "Elderly family member requires walking aid / wheelchair assist",
+    mobilityAssistance:
+      "Elderly family member requires walking aid / wheelchair assist",
     medicalConditions: "Hypertension and mobility limitation",
-    medicationRequirements: "Daily blood pressure medication required in emergency kit",
-    specialRescueNotes: "Requires ground-floor boat assistance during evacuation warnings.",
+    medicationRequirements:
+      "Daily blood pressure medication required in emergency kit",
+    specialRescueNotes:
+      "Requires ground-floor boat assistance during evacuation warnings.",
   },
   status: "Verified",
   role: "citizen",
