@@ -30,7 +30,7 @@ Runs on pushes and pull requests to `main`:
 5. TypeScript checks;
 6. production workspace build.
 
-The workflow uses the Node major from `.node-version` and the pnpm version pinned by the repository.
+The workflow uses the Node major from `.nvmrc` and the pnpm version pinned by the repository.
 
 ### PR Title — `.github/workflows/pr-title.yml`
 

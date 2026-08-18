@@ -16,5 +16,8 @@
     "eslint": "^9",
     "typescript": "^5"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@shurokkha/contracts": "workspace:*"
+  }
 }

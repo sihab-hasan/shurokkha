@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react"
 import { EntityHeader, EntitySummary } from "@shurokkha/ui-patterns/entity"
 import { Button } from "@shurokkha/ui/components/button"
 
-import { createApiClient } from "@shurokkha/api-client"
+import { getShurokkhaApi } from "@/lib/api"
 
 interface AppResourceDetailProps {
   title: string
@@ -20,16 +20,10 @@ export default async function AppResourceDetail({
   resourceId,
   backHref,
 }: AppResourceDetailProps) {
-  const apiClient = createApiClient({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
-  })
-
-  let apiStatus = null
+  let apiStatus: { status: string; service: string; version: string } | null =
+    null
   try {
-    const data = await apiClient.get<{ status: string; message: string }>(
-      "health"
-    )
-    apiStatus = data
+    apiStatus = await getShurokkhaApi().system.health()
   } catch (error) {
     console.error("Failed to fetch from API:", error)
   }

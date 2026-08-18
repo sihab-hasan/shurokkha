@@ -13,9 +13,11 @@
   },
   "dependencies": {
     "@shurokkha/api-client": "workspace:*",
+    "@shurokkha/contracts": "workspace:*",
     "@shurokkha/icons": "workspace:*",
     "@shurokkha/ui": "workspace:*",
     "@shurokkha/ui-patterns": "workspace:*",
+    "@shurokkha/validation": "workspace:*",
     "lucide-react": "^1.24.0",
     "next": "16.2.6",
     "react": "19.2.4",

@@ -1,26 +1,32 @@
-# `@shurokkha/api-client`
+# @shurokkha/api-client
 
-Shared boundary for frontend-to-backend API access.
+Typed HTTP client shared by Shurokkha frontends.
 
-## Current API
+## Browser authentication
 
-The package currently exports `ApiClientOptions` and `createApiClient`. The function returns the supplied configuration; it does not perform HTTP requests yet.
+The web application uses Laravel session-cookie authentication. The client:
+
+- sends `credentials: "include"` on every request;
+- bootstraps Laravel's `XSRF-TOKEN` before unsafe requests;
+- mirrors that value in `X-XSRF-TOKEN`;
+- never reads or writes an authentication token in `localStorage` / `sessionStorage`;
+- never injects a browser `Authorization: Bearer ...` header.
+
+The Laravel session cookie remains HttpOnly and is managed by the browser.
 
 ```ts
-import { createApiClient } from "@shurokkha/api-client"
+import { createShurokkhaApi } from "@shurokkha/api-client"
 
-const api = createApiClient({
-  baseUrl: "http://localhost:5000",
+const api = createShurokkhaApi({
+  baseUrl: "http://localhost:8000/api",
 })
+
+await api.auth.login({
+  email: "citizen@example.com",
+  password: "password123",
+})
+
+const me = await api.auth.me()
 ```
 
-## Intended direction
-
-When a backend exists, this package should own shared request configuration, typed endpoints, error normalization, and transport concerns. Domain UI and server implementation details should remain outside this package.
-
-## Validate
-
-```bash
-pnpm --filter @shurokkha/api-client lint
-pnpm --filter @shurokkha/api-client typecheck
-```
+For local development, use the same hostname for the Next.js frontend and Laravel API (prefer `localhost` for both).

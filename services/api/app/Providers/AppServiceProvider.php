@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\AssistanceRequest;
+use App\Models\MissingPersonReport;
+use App\Policies\AssistanceRequestPolicy;
+use App\Policies\MissingPersonReportPolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::policy(AssistanceRequest::class, AssistanceRequestPolicy::class);
+        Gate::policy(MissingPersonReport::class, MissingPersonReportPolicy::class);
     }
 }

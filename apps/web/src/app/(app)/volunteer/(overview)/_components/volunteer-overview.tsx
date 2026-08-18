@@ -19,6 +19,8 @@ import { PageHeader } from "@shurokkha/ui-patterns/navigation"
 import { Badge } from "@shurokkha/ui/components/badge"
 import { Button } from "@shurokkha/ui/components/button"
 
+import { routes } from "@/config/routes"
+
 export function VolunteerOverview() {
   const metrics = [
     { value: "3", label: "Active assignments", icon: ClipboardCheck },
@@ -35,7 +37,7 @@ export function VolunteerOverview() {
           <Button
             nativeButton={false}
             size="lg"
-            render={<Link href="/volunteers" />}
+            render={<Link href={routes.volunteer.assignments} />}
           >
             <Plus data-icon="inline-start" /> Find an assignment
           </Button>
@@ -113,7 +115,7 @@ export function VolunteerOverview() {
               nativeButton={false}
               className="mt-2"
               variant="outline"
-              render={<Link href="/volunteer/assignments" />}
+              render={<Link href={routes.volunteer.assignments} />}
             >
               Open checklist
             </Button>

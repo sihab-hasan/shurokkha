@@ -32,7 +32,6 @@ for (const file of [
   ".github/ISSUE_TEMPLATE/config.yml",
   ".github/PULL_REQUEST_TEMPLATE.md",
   ".github/copilot-instructions.md",
-  ".node-version",
   ".nvmrc",
   ".gitattributes",
   ".editorconfig",

@@ -16,8 +16,11 @@ import {
 } from "@shurokkha/ui/components/sheet"
 import { cn } from "@shurokkha/ui/lib/utils"
 
+import { AccountMenu } from "@/components/auth/account-menu"
+import { useAuth } from "@/components/auth/auth-provider"
 import { BrandLogo } from "@/components/brand/brand-logo"
 import { publicSiteConfig } from "@/config/public-site-config"
+import { routes } from "@/config/routes"
 
 function isActivePath(pathname: string, href: string) {
   return href === "/"
@@ -27,6 +30,11 @@ function isActivePath(pathname: string, href: string) {
 
 export default function PublicSidebar() {
   const pathname = usePathname()
+  const { status, user } = useAuth()
+  const getHelpHref =
+    status === "authenticated" && user?.role === "citizen"
+      ? routes.citizen.requestHelp
+      : routes.public.getHelp
 
   return (
     <Sheet>
@@ -86,47 +94,48 @@ export default function PublicSidebar() {
           })}
         </nav>
 
-        <div className="mx-4 mt-auto mb-4 rounded-xl bg-muted/55 p-4">
-          <p className="mb-3 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
-            Emergency tools
-          </p>
-          <div className="mb-4 flex flex-wrap gap-2">
-            {publicSiteConfig.utilityItems.map((item) => (
-              <SheetClose
-                key={item.href}
-                nativeButton={false}
-                render={
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      buttonVariants({ variant: "ghost", size: "sm" }),
-                      "rounded-md"
-                    )}
-                  />
-                }
-              >
-                {item.label}
-              </SheetClose>
-            ))}
+        <div className="mx-4 mt-auto mb-4 space-y-4 rounded-xl bg-muted/55 p-4">
+          <div>
+            <p className="mb-3 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+              Account
+            </p>
+            <AccountMenu showIdentity />
           </div>
-          <div className="grid gap-2">
-            {publicSiteConfig.actions.map((action) => (
-              <SheetClose
-                key={action.href}
-                nativeButton={false}
-                render={
-                  <Link
-                    href={action.href}
-                    className={cn(
-                      buttonVariants({ variant: action.variant }),
-                      "w-full"
-                    )}
-                  />
-                }
-              >
-                {action.label}
-              </SheetClose>
-            ))}
+
+          <div>
+            <p className="mb-3 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+              Emergency tools
+            </p>
+            <div className="mb-4 flex flex-wrap gap-2">
+              {publicSiteConfig.utilityItems.map((item) => (
+                <SheetClose
+                  key={item.href}
+                  nativeButton={false}
+                  render={
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        buttonVariants({ variant: "ghost", size: "sm" }),
+                        "rounded-md"
+                      )}
+                    />
+                  }
+                >
+                  {item.label}
+                </SheetClose>
+              ))}
+            </div>
+            <SheetClose
+              nativeButton={false}
+              render={
+                <Link
+                  href={getHelpHref}
+                  className={cn(buttonVariants(), "w-full")}
+                />
+              }
+            >
+              Get help
+            </SheetClose>
           </div>
         </div>
       </SheetContent>

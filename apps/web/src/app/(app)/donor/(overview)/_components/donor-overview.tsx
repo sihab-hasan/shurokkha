@@ -17,6 +17,8 @@ import { PageHeader } from "@shurokkha/ui-patterns/navigation"
 import { Button } from "@shurokkha/ui/components/button"
 import { Progress } from "@shurokkha/ui/components/progress"
 
+import { routes } from "@/config/routes"
+
 export function DonorOverview() {
   const metrics = [
     { value: "$4,840", label: "Total donated", icon: CircleDollarSign },
@@ -34,7 +36,7 @@ export function DonorOverview() {
           <Button
             nativeButton={false}
             size="lg"
-            render={<Link href="/donate" />}
+            render={<Link href={routes.donor.donate} />}
           >
             <Plus data-icon="inline-start" /> Make a donation
           </Button>
@@ -97,7 +99,10 @@ export function DonorOverview() {
               <span>Goal: $50,000</span>
               <span>8 days left</span>
             </div>
-            <Button nativeButton={false} render={<Link href="/donate" />}>
+            <Button
+              nativeButton={false}
+              render={<Link href={routes.donor.donate} />}
+            >
               Support campaign
             </Button>
           </div>

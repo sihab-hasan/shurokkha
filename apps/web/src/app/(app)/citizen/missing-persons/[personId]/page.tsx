@@ -1,16 +1,14 @@
-import AppResourceDetail from "@/components/app/app-resource-detail"
-export default async function Page({
+import type { Metadata } from "next"
+
+import { MissingPersonDetail } from "@/components/app/citizen/missing-persons/missing-person-detail"
+
+export const metadata: Metadata = { title: "Missing Person Report" }
+
+export default async function MissingPersonDetailPage({
   params,
 }: {
   params: Promise<{ personId: string }>
 }) {
   const { personId } = await params
-  return (
-    <AppResourceDetail
-      title="Missing person report"
-      resourceLabel="Report"
-      resourceId={personId}
-      backHref="/citizen/missing-persons"
-    />
-  )
+  return <MissingPersonDetail id={personId} />
 }

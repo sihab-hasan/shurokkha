@@ -1,12 +1,13 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import * as React from "react"
 
 import { ChevronRight, LogOut, Settings, UserRound, X } from "lucide-react"
 
 import { appNavigation, type AppRole } from "@/config/app-navigation"
+import { useAuth } from "@/components/auth/auth-provider"
 import { routes } from "@/config/routes"
 import { cn } from "@shurokkha/ui/lib/utils"
 import { WorkspaceShellSidebar } from "@shurokkha/ui-patterns/layout"
@@ -28,10 +29,14 @@ import {
 
 export default function AppSidebar({ role }: { role: AppRole }) {
   const pathname = usePathname()
+  const router = useRouter()
+  const { signOut } = useAuth()
   const { isMobile, setOpenMobile } = useSidebar()
 
-  const appBase = `/${role}`
-  const profileHref = `${appBase}/profile`
+  const roleRoutes = routes[role]
+  const appBase = roleRoutes.home
+  const profileHref = roleRoutes.profile
+  const settingsHref = roleRoutes.settings
   const allModules = appNavigation[role]
 
   const activeModuleId = React.useMemo(() => {
@@ -81,7 +86,7 @@ export default function AppSidebar({ role }: { role: AppRole }) {
         <SidebarGroup>
           <SidebarMenu>
             {allModules.map((module) => {
-              const fullModuleHref = `${appBase}${module.href}`
+              const fullModuleHref = module.href
               const isRouteActive = activeModuleId === module.id
               const isExpanded = expandedModuleId === module.id
               const hasSubItems =
@@ -120,7 +125,7 @@ export default function AppSidebar({ role }: { role: AppRole }) {
                     <SidebarMenuSub>
                       {module.sections.flatMap((section) =>
                         section.items.map((item) => {
-                          const fullHref = `${appBase}${item.href}`
+                          const fullHref = item.href
                           const isItemActive =
                             pathname === fullHref ||
                             pathname.startsWith(`${fullHref}/`)
@@ -163,10 +168,10 @@ export default function AppSidebar({ role }: { role: AppRole }) {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
-              isActive={pathname === `${appBase}/settings`}
+              isActive={pathname === settingsHref}
               tooltip="Settings"
               className="h-10 rounded-md group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
-              render={<Link href={`${appBase}/settings`} />}
+              render={<Link href={settingsHref} />}
             >
               <Settings />
               <span>Settings</span>
@@ -176,7 +181,14 @@ export default function AppSidebar({ role }: { role: AppRole }) {
             <SidebarMenuButton
               tooltip="Log out"
               className="h-10 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
-              render={<Link href={routes.auth.signOut} />}
+              onClick={() => {
+                void signOut()
+                  .then(() => {
+                    router.replace(routes.home)
+                    router.refresh()
+                  })
+                  .catch(() => undefined)
+              }}
             >
               <LogOut />
               <span>Log out</span>

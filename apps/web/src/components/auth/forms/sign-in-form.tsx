@@ -10,34 +10,24 @@ import { Alert, AlertDescription } from "@shurokkha/ui/components/alert"
 import { Input } from "@shurokkha/ui/components/input"
 import { Label } from "@shurokkha/ui/components/label"
 import { cn } from "@shurokkha/ui/lib/utils"
-import { createApiClient, ApiError } from "@shurokkha/api-client"
+import { ApiError } from "@shurokkha/api-client"
 
 import { SocialAuth, type Provider } from "@/components/auth/social-auth"
 import { AuthPasswordInput } from "./auth-password-input"
 import { routes } from "@/config/routes"
-
-interface LoginResponse {
-  status: string
-  message: string
-  user: {
-    id: number
-    name: string
-    email: string
-  }
-  token: string
-}
+import { getShurokkhaApi } from "@/lib/api"
+import { useAuth } from "@/components/auth/auth-provider"
+import { dashboardRouteForUser, safeReturnTo } from "@/lib/auth-navigation"
 
 export function SignInForm() {
   const router = useRouter()
+  const { establishSession } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [remember, setRemember] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [isSuccess, setIsSuccess] = useState(false)
-
-  const apiClient = createApiClient({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
-  })
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -45,22 +35,21 @@ export function SignInForm() {
     setIsLoading(true)
 
     try {
-      const response = await apiClient.post<LoginResponse>("login", {
+      const response = await getShurokkhaApi().auth.login({
         email,
         password,
+        remember,
       })
-
-      if (response.token) {
-        localStorage.setItem("auth_token", response.token)
-        localStorage.setItem("user", JSON.stringify(response.user))
-      }
+      establishSession(response.user)
 
       setIsSuccess(true)
-      setMessage("Signed in successfully! Redirecting...")
+      setMessage("Signed in successfully. Redirecting…")
 
-      setTimeout(() => {
-        router.push("/")
-      }, 1000)
+      const returnTo = safeReturnTo(
+        new URLSearchParams(window.location.search).get("returnTo")
+      )
+      router.replace(returnTo || dashboardRouteForUser(response.user))
+      router.refresh()
     } catch (error) {
       if (error instanceof ApiError) {
         setMessage(error.message)
@@ -123,7 +112,13 @@ export function SignInForm() {
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
-            <Checkbox id="remember" name="remember" disabled={isLoading} />
+            <Checkbox
+              id="remember"
+              name="remember"
+              checked={remember}
+              onCheckedChange={(checked) => setRemember(checked === true)}
+              disabled={isLoading}
+            />
             <Label htmlFor="remember" className="text-sm font-normal">
               Remember me
             </Label>

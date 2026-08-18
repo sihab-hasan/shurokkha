@@ -5,6 +5,7 @@ import { Button } from "@shurokkha/ui/components/button"
 
 import { BrandLogo } from "@/components/brand/brand-logo"
 import { publicSiteConfig } from "@/config/public-site-config"
+import { routes } from "@/config/routes"
 
 import { PublicContainer } from "./public-container"
 
@@ -29,7 +30,7 @@ export default function PublicFooter() {
             <Button
               nativeButton={false}
               size="lg"
-              render={<Link href="/get-help" />}
+              render={<Link href={routes.public.getHelp} />}
             >
               <Siren data-icon="inline-start" />
               Request help
@@ -38,7 +39,7 @@ export default function PublicFooter() {
               nativeButton={false}
               variant="outline"
               size="lg"
-              render={<Link href="/shelters" />}
+              render={<Link href={routes.public.shelters} />}
             >
               <MapPinned data-icon="inline-start" />
               Find shelters
@@ -59,7 +60,7 @@ export default function PublicFooter() {
               before, during, and after an emergency.
             </p>
             <Link
-              href="/about/how-it-works"
+              href={routes.public.howItWorks}
               className="mt-5 inline-flex min-h-10 items-center gap-1.5 rounded-md text-sm font-semibold text-foreground transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               See how Shurokkha works
