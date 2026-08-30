@@ -31,4 +31,4 @@ Four public experiences currently have full route composition: About, How Shurok
 
 ## Current infrastructure boundary
 
-`services/` is reserved for a real deployable backend. Do not create a placeholder API/service. No database, cache, email provider, hosting provider or production auth integration is configured.
+`services/api/` contains the standardized Laravel backend for Citizen authentication, assistance requests, and missing-person reports. Production hosting providers, caches, or email providers are environment-specific and not yet configured.
