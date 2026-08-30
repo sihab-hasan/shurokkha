@@ -88,7 +88,7 @@ Large root barrels are intentionally not exposed for `ui` or `ui-patterns`.
 
 ## Backend boundary
 
-There is currently no deployable backend service. `services/` is reserved for real runtime services only; placeholder service packages are not created. When a backend exists, shared contracts/validation/API-client packages should remain framework-agnostic and applications should consume the backend through explicit service boundaries.
+The standardized Laravel backend service is located in `services/api/`. It provides endpoints for Citizen authentication, assistance requests, and missing-person reports. Applications consume this backend through explicit API service boundaries, while shared packages (such as contracts, validation, and api-client) remain framework-agnostic.
 
 ## Automated architecture guards
 
