@@ -113,12 +113,7 @@ export function OperationsWorkspace() {
 
   // --- STATE MANAGEMENT ---
   const [activeTab, setActiveTab] = React.useState<
-    | "areas"
-    | "teams"
-    | "assignments"
-    | "shelters"
-    | "warehouses"
-    | "donations"
+    "areas" | "teams" | "assignments" | "shelters" | "warehouses" | "donations"
   >("areas")
   const [isOffline, setIsOffline] = React.useState(false)
 
@@ -1574,8 +1569,8 @@ export function OperationsWorkspace() {
               <Card className="shadow-md">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <Home className="size-5 text-muted-foreground" />{" "}
-                    Registered Shelters
+                    <Home className="size-5 text-muted-foreground" /> Registered
+                    Shelters
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
