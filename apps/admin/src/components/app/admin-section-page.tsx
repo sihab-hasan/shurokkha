@@ -32,6 +32,7 @@ import { MetricStrip, MetricStripItem } from "@shurokkha/ui-patterns/dashboard"
 import { StatusBanner } from "@shurokkha/ui-patterns/feedback"
 import { ContentSection } from "@shurokkha/ui-patterns/layout"
 import { PageHeader } from "@shurokkha/ui-patterns/navigation"
+import { OperationsWorkspace } from "@/components/app/operations-workspace"
 
 const sections = {
   incidents: {
@@ -145,77 +146,85 @@ export function AdminSectionPage({ section }: AdminSectionPageProps) {
         }
       />
 
-      <StatusBanner
-        tone="neutral"
-        icon={<Icon />}
-        title={`${config.title} workspace is ready for domain integration.`}
-        description="The screen shell, states and responsive structure are shared. Replace the sample content with live API data without moving domain models into ui-patterns."
-        metadata="Future-proof route scaffold"
-      />
+      {key === "operations" ? (
+        <OperationsWorkspace />
+      ) : (
+        <>
+          <StatusBanner
+            tone="neutral"
+            icon={<Icon />}
+            title={`${config.title} workspace is ready for domain integration.`}
+            description="The screen shell, states and responsive structure are shared. Replace the sample content with live API data without moving domain models into ui-patterns."
+            metadata="Future-proof route scaffold"
+          />
 
-      <MetricStrip columns={3}>
-        <MetricStripItem
-          value="24"
-          label="Open items"
-          detail="Current operational queue"
-          icon={<Icon />}
-        />
-        <MetricStripItem
-          value="91%"
-          label="Within SLA"
-          detail="Across active work"
-          icon={<CheckCircle2 />}
-        />
-        <MetricStripItem
-          value="6"
-          label="Need attention"
-          detail="Prioritized for review"
-          icon={<ClipboardCheck />}
-        />
-      </MetricStrip>
+          <MetricStrip columns={3}>
+            <MetricStripItem
+              value="24"
+              label="Open items"
+              detail="Current operational queue"
+              icon={<Icon />}
+            />
+            <MetricStripItem
+              value="91%"
+              label="Within SLA"
+              detail="Across active work"
+              icon={<CheckCircle2 />}
+            />
+            <MetricStripItem
+              value="6"
+              label="Need attention"
+              detail="Prioritized for review"
+              icon={<ClipboardCheck />}
+            />
+          </MetricStrip>
 
-      <ContentSection
-        title={`${config.title} overview`}
-        description="This collection surface can switch to real cards, rows or a data table when the feature data contract is finalized."
-      >
-        <CollectionView surface="card">
-          <CollectionGrid columns={3} className="p-4 sm:p-5">
-            {["Priority queue", "Recent activity", "Operational health"].map(
-              (title, index) => (
-                <Card key={title} className="shadow-none">
-                  <CardHeader>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        <Icon />
-                      </span>
-                      <Badge
-                        variant={
-                          index === 0
-                            ? "destructive"
-                            : index === 1
-                              ? "secondary"
-                              : "outline"
-                        }
-                      >
-                        {index === 0 ? "Review" : "Ready"}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-base">{title}</CardTitle>
-                    <CardDescription>
-                      Reusable presentation shell with app-owned business
-                      content.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground">
-                    Connect this block to the relevant service when the module
-                    is implemented.
-                  </CardContent>
-                </Card>
-              )
-            )}
-          </CollectionGrid>
-        </CollectionView>
-      </ContentSection>
+          <ContentSection
+            title={`${config.title} overview`}
+            description="This collection surface can switch to real cards, rows or a data table when the feature data contract is finalized."
+          >
+            <CollectionView surface="card">
+              <CollectionGrid columns={3} className="p-4 sm:p-5">
+                {[
+                  "Priority queue",
+                  "Recent activity",
+                  "Operational health",
+                ].map((title, index) => (
+                  <Card key={title} className="shadow-none">
+                    <CardHeader>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                          <Icon />
+                        </span>
+                        <Badge
+                          variant={
+                            index === 0
+                              ? "destructive"
+                              : index === 1
+                                ? "secondary"
+                                : "outline"
+                          }
+                        >
+                          {index === 0 ? "Review" : "Ready"}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-base">{title}</CardTitle>
+                      <CardDescription>
+                        Reusable presentation shell with app-owned business
+                        content.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="text-sm text-muted-foreground">
+                      Connect this block to the relevant service when the module
+                      is implemented.
+                    </CardContent>
+                  </Card>
+                ))}
+              </CollectionGrid>
+            </CollectionView>
+          </ContentSection>
+        </>
+      )}
     </div>
   )
 }
