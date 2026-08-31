@@ -71,8 +71,6 @@ export interface AssistanceRequestRecord {
   affected_people_count: number
   contact_phone: string
   address: string
-  latitude: number | null
-  longitude: number | null
   status: AssistanceRequestStatus
   submitted_at: string | null
   cancelled_at: string | null
@@ -88,8 +86,6 @@ export interface AssistanceRequestInput {
   affected_people_count: number
   contact_phone: string
   address: string
-  latitude?: number | null
-  longitude?: number | null
 }
 
 export interface AssistanceRequestListParams {

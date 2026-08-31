@@ -58,7 +58,7 @@ class AssistanceRequestApiTest extends TestCase
         ])->assertConflict();
 
         $this->actingAs($user)->deleteJson("/api/v1/citizen/requests/{$id}")->assertNoContent();
-        $this->assertSoftDeleted('assistance_requests', ['id' => $id]);
+        $this->assertSoftDeleted('emergency_requests', ['request_id' => $id]);
     }
 
     public function test_non_citizen_roles_cannot_use_citizen_routes(): void

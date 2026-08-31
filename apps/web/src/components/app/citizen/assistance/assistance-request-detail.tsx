@@ -153,13 +153,6 @@ export function AssistanceRequestDetail({ id }: { id: string }) {
               { label: "Contact phone", value: record.contact_phone },
               { label: "Address", value: record.address },
               {
-                label: "Coordinates",
-                value:
-                  record.latitude != null && record.longitude != null
-                    ? `${record.latitude}, ${record.longitude}`
-                    : "Not provided",
-              },
-              {
                 label: "Last updated",
                 value: formatDateTime(record.updated_at),
               },

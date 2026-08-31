@@ -14,37 +14,18 @@ USE shurokkha_db;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------------------------------------------------------
--- Drop existing tables (in safe order with FK checks disabled)
+-- Drop existing ERD tables (in safe order with FK checks disabled)
 -- ----------------------------------------------------------------------------
-DROP TABLE IF EXISTS notifications;
-DROP TABLE IF EXISTS volunteer_assignments;
-DROP TABLE IF EXISTS volunteer_profiles;
-DROP TABLE IF EXISTS donations;
-DROP TABLE IF EXISTS campaigns;
-DROP TABLE IF EXISTS missing_person_reports;
-DROP TABLE IF EXISTS assistance_requests;
 DROP TABLE IF EXISTS emergency_requests;
-DROP TABLE IF EXISTS shelters;
-DROP TABLE IF EXISTS locations;
-DROP TABLE IF EXISTS disaster_types;
-DROP TABLE IF EXISTS api_tokens;
-DROP TABLE IF EXISTS sessions;
-DROP TABLE IF EXISTS password_reset_tokens;
-DROP TABLE IF EXISTS relief_distribution;
-DROP TABLE IF EXISTS resources;
-DROP TABLE IF EXISTS warehouses;
-DROP TABLE IF EXISTS team_management;
-DROP TABLE IF EXISTS rescue_teams;
-DROP TABLE IF EXISTS affected_areas;
 DROP TABLE IF EXISTS disasters;
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS roles;
+
 
 -- ----------------------------------------------------------------------------
 -- 1. ROLE Table (Assigned: Team Member 1)
 -- ERD Attributes: role_id (PK), role_name, description
 -- ----------------------------------------------------------------------------
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
     role_name VARCHAR(50) NOT NULL UNIQUE,
     description VARCHAR(255) NULL,
@@ -76,7 +57,7 @@ CREATE TABLE users (
 -- 3. DISASTER Table (Assigned: Team Member 1)
 -- ERD Attributes: disaster_id (PK), disaster_name, severity, status, start_datetime
 -- ----------------------------------------------------------------------------
-CREATE TABLE disasters (
+CREATE TABLE IF NOT EXISTS disasters (
     disaster_id INT AUTO_INCREMENT PRIMARY KEY,
     disaster_name VARCHAR(150) NOT NULL,
     severity VARCHAR(50) NOT NULL,
@@ -95,11 +76,9 @@ CREATE TABLE disasters (
 --   - SUBMITS: user_id FK (references users.user_id)
 --   - OCCURS_IN: area_id FK (references affected_areas.area_id when created by teammates)
 -- ----------------------------------------------------------------------------
-CREATE TABLE emergency_requests (
+CREATE TABLE IF NOT EXISTS emergency_requests (
     request_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT UNSIGNED NOT NULL,
-    area_id INT NULL COMMENT 'FK to affected_areas (implemented by teammates)',
-    category_id INT NULL,
     priority VARCHAR(50) NOT NULL DEFAULT 'normal',
     status VARCHAR(50) NOT NULL DEFAULT 'pending',
     request_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

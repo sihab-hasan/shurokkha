@@ -23,8 +23,6 @@ class StoreAssistanceRequest extends FormRequest
             'affected_people_count' => ['required', 'integer', 'min:1', 'max:10000'],
             'contact_phone' => ['required', 'string', 'max:32'],
             'address' => ['required', 'string', 'max:500'],
-            'latitude' => ['nullable', 'numeric', 'between:-90,90', 'required_with:longitude'],
-            'longitude' => ['nullable', 'numeric', 'between:-180,180', 'required_with:latitude'],
         ];
     }
 }
