@@ -199,3 +199,52 @@ export interface TeamAssignmentInput {
   request_id: number
   status: "assigned" | "on_route" | "completed" | "cancelled"
 }
+
+export interface ShelterRecord {
+  shelter_id: number
+  area_id: number | null
+  shelter_name: string
+  capacity: number
+  occupancy: number
+  status: "open" | "full" | "closed"
+  created_at: string | null
+  updated_at: string | null
+}
+
+export interface ShelterInput {
+  shelter_name: string
+  capacity: number
+  occupancy: number
+  area_id?: number | null
+  status?: string
+}
+
+export interface WarehouseRecord {
+  warehouse_id: number
+  warehouse_name: string
+  location_id: number | null
+  manager_id: number | null
+  created_at: string | null
+  updated_at: string | null
+}
+
+export interface WarehouseInput {
+  warehouse_name: string
+  location_id?: number | null
+  manager_id?: number | null
+}
+
+export interface DonationRecord {
+  donation_id: number
+  donation_kind: string
+  amount: number
+  status: string
+  created_at: string | null
+  updated_at: string | null
+}
+
+export interface DonationInput {
+  donation_kind: string
+  amount: number
+  status?: string
+}
