@@ -32,6 +32,9 @@ importers:
 
   apps/admin:
     dependencies:
+      '@shurokkha/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@shurokkha/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -50,6 +53,9 @@ importers:
       react-dom:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.8(@types/react@19.2.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
     devDependencies:
       '@shurokkha/eslint-config':
         specifier: workspace:^
