@@ -76,7 +76,7 @@ for (const token of ["success", "warning", "info", "danger"]) {
   )
 }
 
-for (const app of ["web", "admin", "docs"]) {
+for (const app of ["web", "admin"]) {
   const appCss = `apps/${app}/src/styles/app.css`
   expectExists(
     appCss,

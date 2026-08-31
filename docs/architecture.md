@@ -2,13 +2,12 @@
 
 ## Overview
 
-Shurokkha is a pnpm/Turborepo monorepo with three Next.js applications and focused internal packages.
+Shurokkha is a pnpm/Turborepo monorepo with two Next.js applications and focused internal packages.
 
 ```text
 apps/
   web/            public, authentication and signed-in product experiences
   admin/          internal administration workspace
-  docs/           product/design-system documentation
 
 packages/
   api-client/     future typed transport boundary
@@ -34,10 +33,9 @@ services/         reserved for real deployable backend services
 | Application | Package            | Dev port | Base path | Responsibility                              |
 | ----------- | ------------------ | -------: | --------- | ------------------------------------------- |
 | Web         | `@shurokkha/web`   |     3000 | `/`       | Public site, auth flows and role workspaces |
-| Docs        | `@shurokkha/docs`  |     3001 | `/docs`   | Documentation and design-system reference   |
 | Admin       | `@shurokkha/admin` |     3003 | `/admin`  | Internal operations and administration      |
 
-The web app proxies `/docs/*` and `/admin/*` to the local applications during development. `/client/*` remains reserved; there is no client app yet.
+The web app proxies `/admin/*` to the local Admin application during development. `/client/*` remains reserved; there is no client app yet. Durable project and design-system documentation lives in the root `docs/` directory.
 
 ## UI dependency model
 
@@ -67,7 +65,7 @@ Web uses:
 (app)    -> role layout -> AppShell -> WorkspaceShell
 ```
 
-Admin uses `(app) -> AdminShell`. Docs uses `(docs) -> DocsShell`.
+Admin uses `(app) -> AdminShell`.
 
 Experience shells own semantic `<main>` regions. `ContentContainer` handles non-semantic width/gutters. The old `PageContainer` abstraction has been removed to avoid nested main elements.
 

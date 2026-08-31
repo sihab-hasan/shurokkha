@@ -79,52 +79,6 @@ importers:
         specifier: ^5
         version: 5.9.2
 
-  apps/docs:
-    dependencies:
-      '@shurokkha/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@shurokkha/ui-patterns':
-        specifier: workspace:*
-        version: link:../../packages/ui-patterns
-      lucide-react:
-        specifier: ^1.24.0
-        version: 1.31.0(react@19.2.4)
-      next:
-        specifier: 16.2.6
-        version: 16.2.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react:
-        specifier: 19.2.4
-        version: 19.2.4
-      react-dom:
-        specifier: 19.2.4
-        version: 19.2.4(react@19.2.4)
-    devDependencies:
-      '@shurokkha/eslint-config':
-        specifier: workspace:^
-        version: link:../../tooling/eslint-config
-      '@shurokkha/typescript-config':
-        specifier: workspace:*
-        version: link:../../tooling/typescript-config
-      '@tailwindcss/postcss':
-        specifier: ^4
-        version: 4.3.3
-      '@types/node':
-        specifier: ^20
-        version: 20.19.43
-      '@types/react':
-        specifier: ^19
-        version: 19.2.18
-      '@types/react-dom':
-        specifier: ^19
-        version: 19.2.4(@types/react@19.2.18)
-      eslint:
-        specifier: ^9
-        version: 9.39.5(jiti@2.7.0)
-      typescript:
-        specifier: ^5
-        version: 5.9.2
-
   apps/web:
     dependencies:
       '@shurokkha/api-client':

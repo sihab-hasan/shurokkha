@@ -122,26 +122,6 @@ expectExists(
   "AdminShell must live under components/shells/admin."
 )
 
-// Docs keeps a semantic (docs) experience boundary.
-expectExists(
-  "apps/docs/src/app/(docs)/layout.tsx",
-  "Docs must use a (docs) route group."
-)
-expectContains(
-  "apps/docs/src/app/(docs)/layout.tsx",
-  "DocsShell",
-  "Docs layout must mount DocsShell."
-)
-expectNotContains(
-  "apps/docs/src/app/layout.tsx",
-  "DocsShell",
-  "Docs root layout must contain document/providers only."
-)
-expectExists(
-  "apps/docs/src/components/shells/docs/docs-shell.tsx",
-  "DocsShell must live under components/shells/docs."
-)
-
 // Shared pattern naming: WorkspaceShell is neutral; app-specific AppShell stays inside apps/web.
 for (const file of [
   "workspace-shell.tsx",
@@ -202,7 +182,7 @@ for (const directory of [
 }
 
 // Every Next app transpiles the shared source package.
-for (const app of ["web", "admin", "docs"]) {
+for (const app of ["web", "admin"]) {
   expectContains(
     `apps/${app}/next.config.ts`,
     '"@shurokkha/ui-patterns"',

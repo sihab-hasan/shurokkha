@@ -13,7 +13,7 @@ This directory contains concise repository-local context for coding agents. It s
 
 ## Repository snapshot
 
-- Applications: `apps/web`, `apps/docs`, `apps/admin`.
+- Applications: `apps/web`, `apps/admin`.
 - Shared packages: `api-client`, `auth`, `contracts`, `icons`, `permissions`, `ui`, `ui-patterns`, `utils`, `validation`.
 - Tooling packages: ESLint, Prettier and TypeScript configuration.
 - The standardized Laravel backend service is located under `services/api/`. Production deployment integration does not exist yet.

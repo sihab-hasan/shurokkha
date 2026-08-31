@@ -20,7 +20,6 @@ Durable technical and product documentation for the Shurokkha monorepo lives her
 ### Applications
 
 - [Web](../apps/web/README.md)
-- [Docs](../apps/docs/README.md)
 - [Admin](../apps/admin/README.md)
 
 ### Packages and tooling

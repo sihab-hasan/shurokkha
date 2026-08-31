@@ -1,6 +1,6 @@
 import { execFileSync, execSync } from "node:child_process"
 
-const ports = [3000, 3001, 3003]
+const ports = [3000, 3003]
 const stopped = new Set()
 
 function stopPid(pid, port) {
@@ -58,4 +58,4 @@ if (process.platform === "win32") {
 }
 
 if (!stopped.size)
-  console.log("No dev servers were listening on ports 3000, 3001, or 3003.")
+  console.log("No dev servers were listening on ports 3000 or 3003.")

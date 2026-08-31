@@ -36,7 +36,7 @@ function expectContains(path, value, message) {
 }
 
 // App aliases point directly at src; never use @/src/... imports.
-for (const app of ["web", "admin", "docs"]) {
+for (const app of ["web", "admin"]) {
   expectContains(
     `apps/${app}/tsconfig.json`,
     '"@/*": [',
@@ -63,7 +63,7 @@ expectExists(
   "packages/ui/src/components/theme-switcher.tsx",
   "@shurokkha/ui must own ThemeSwitcher."
 )
-for (const app of ["web", "admin", "docs"]) {
+for (const app of ["web", "admin"]) {
   expectMissing(
     `apps/${app}/src/providers/app-providers.tsx`,
     `${app} must not duplicate shared UI providers.`
@@ -164,17 +164,6 @@ expectContains(
   "AdminSectionPage",
   "Admin catch-all route must delegate to an app component."
 )
-expectContains(
-  "apps/docs/src/app/(docs)/page.tsx",
-  "DocsOverview",
-  "Docs root page must stay a thin route boundary."
-)
-expectContains(
-  "apps/docs/src/app/(docs)/[...slug]/page.tsx",
-  "DocsReferencePage",
-  "Docs catch-all route must delegate to a docs component."
-)
-
 // App package manifests should not duplicate implementation dependencies owned by @shurokkha/ui.
 const uiImplementationDeps = new Set([
   "@base-ui/react",
@@ -189,7 +178,7 @@ const uiImplementationDeps = new Set([
   "tailwind-merge",
   "tw-animate-css",
 ])
-for (const app of ["web", "admin", "docs"]) {
+for (const app of ["web", "admin"]) {
   const packageJson = JSON.parse(read(`apps/${app}/package.json`))
   for (const dependency of Object.keys(packageJson.dependencies ?? {})) {
     if (uiImplementationDeps.has(dependency))
@@ -200,7 +189,7 @@ for (const app of ["web", "admin", "docs"]) {
 }
 
 // Pattern CSS is a package responsibility and must be loaded by every pattern-consuming app.
-for (const app of ["web", "admin", "docs"]) {
+for (const app of ["web", "admin"]) {
   expectContains(
     `apps/${app}/src/styles/app.css`,
     "@shurokkha/ui-patterns/ui-patterns.css",

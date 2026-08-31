@@ -10,7 +10,7 @@ pnpm dev
 pnpm stop
 ```
 
-`pnpm setup` performs a frozen-lockfile install. `pnpm stop` targets the current app ports 3000, 3001 and 3003.
+`pnpm setup` performs a frozen-lockfile install. `pnpm stop` targets the current app ports 3000 and 3003.
 
 ## Verification
 
