@@ -17,7 +17,7 @@ import {
   Layers,
   WifiOff,
 } from "lucide-react"
-import { toast } from "sonner"
+import { toast } from "@shurokkha/ui/components/sonner"
 
 import { Badge } from "@shurokkha/ui/components/badge"
 import { Button } from "@shurokkha/ui/components/button"
