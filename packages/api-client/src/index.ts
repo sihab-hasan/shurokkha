@@ -9,6 +9,13 @@ import type {
   MissingPersonReportInput,
   MissingPersonReportRecord,
   PaginatedResource,
+  DisasterRecord,
+  AffectedAreaRecord,
+  AffectedAreaInput,
+  RescueTeamRecord,
+  RescueTeamInput,
+  TeamAssignmentRecord,
+  TeamAssignmentInput,
 } from "@shurokkha/contracts"
 
 export interface ApiClientOptions {
@@ -432,6 +439,54 @@ export function createShurokkhaApi(options: ApiClientOptions) {
           ),
         remove: (id: string) =>
           client.delete<void>(`/v1/citizen/missing-persons/${id}`),
+      },
+    },
+    admin: {
+      disasters: {
+        list: () =>
+          client.get<ApiResource<DisasterRecord[]>>("/v1/admin/disasters"),
+      },
+      affectedAreas: {
+        list: () =>
+          client.get<ApiResource<AffectedAreaRecord[]>>(
+            "/v1/admin/affected-areas"
+          ),
+        create: (input: AffectedAreaInput) =>
+          client.post<ApiResource<AffectedAreaRecord>>(
+            "/v1/admin/affected-areas",
+            input
+          ),
+        remove: (id: number) =>
+          client.delete<void>(`/v1/admin/affected-areas/${id}`),
+      },
+      rescueTeams: {
+        list: () =>
+          client.get<ApiResource<RescueTeamRecord[]>>("/v1/admin/rescue-teams"),
+        create: (input: RescueTeamInput) =>
+          client.post<ApiResource<RescueTeamRecord>>(
+            "/v1/admin/rescue-teams",
+            input
+          ),
+        remove: (id: number) =>
+          client.delete<void>(`/v1/admin/rescue-teams/${id}`),
+      },
+      assignments: {
+        list: () =>
+          client.get<ApiResource<TeamAssignmentRecord[]>>(
+            "/v1/admin/assignments"
+          ),
+        create: (input: TeamAssignmentInput) =>
+          client.post<ApiResource<TeamAssignmentRecord>>(
+            "/v1/admin/assignments",
+            input
+          ),
+        updateStatus: (id: number, status: string) =>
+          client.patch<ApiResource<TeamAssignmentRecord>>(
+            `/v1/admin/assignments/${id}/status`,
+            { status }
+          ),
+        remove: (id: number) =>
+          client.delete<void>(`/v1/admin/assignments/${id}`),
       },
     },
   }

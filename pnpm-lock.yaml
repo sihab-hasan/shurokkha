@@ -32,6 +32,9 @@ importers:
 
   apps/admin:
     dependencies:
+      '@shurokkha/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@shurokkha/ui':
         specifier: workspace:*
         version: link:../../packages/ui
