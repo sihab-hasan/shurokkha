@@ -59,18 +59,6 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('/assignments', [\App\Http\Controllers\Api\V1\Admin\TeamManagementController::class, 'store'])->name('assignments.store');
             Route::patch('/assignments/{assignment}/status', [\App\Http\Controllers\Api\V1\Admin\TeamManagementController::class, 'updateStatus'])->name('assignments.updateStatus');
             Route::delete('/assignments/{assignment}', [\App\Http\Controllers\Api\V1\Admin\TeamManagementController::class, 'destroy'])->name('assignments.destroy');
-
-            Route::get('/shelters', [\App\Http\Controllers\Api\V1\Admin\ShelterController::class, 'index'])->name('shelters.index');
-            Route::post('/shelters', [\App\Http\Controllers\Api\V1\Admin\ShelterController::class, 'store'])->name('shelters.store');
-            Route::delete('/shelters/{shelter}', [\App\Http\Controllers\Api\V1\Admin\ShelterController::class, 'destroy'])->name('shelters.destroy');
-
-            Route::get('/warehouses', [\App\Http\Controllers\Api\V1\Admin\WarehouseController::class, 'index'])->name('warehouses.index');
-            Route::post('/warehouses', [\App\Http\Controllers\Api\V1\Admin\WarehouseController::class, 'store'])->name('warehouses.store');
-            Route::delete('/warehouses/{warehouse}', [\App\Http\Controllers\Api\V1\Admin\WarehouseController::class, 'destroy'])->name('warehouses.destroy');
-
-            Route::get('/donations', [\App\Http\Controllers\Api\V1\Admin\DonationController::class, 'index'])->name('donations.index');
-            Route::post('/donations', [\App\Http\Controllers\Api\V1\Admin\DonationController::class, 'store'])->name('donations.store');
-            Route::delete('/donations/{donation}', [\App\Http\Controllers\Api\V1\Admin\DonationController::class, 'destroy'])->name('donations.destroy');
         });
     });
 });

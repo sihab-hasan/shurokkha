@@ -16,12 +16,6 @@ import type {
   RescueTeamInput,
   TeamAssignmentRecord,
   TeamAssignmentInput,
-  ShelterRecord,
-  ShelterInput,
-  WarehouseRecord,
-  WarehouseInput,
-  DonationRecord,
-  DonationInput,
 } from "@shurokkha/contracts"
 
 export interface ApiClientOptions {
@@ -493,31 +487,6 @@ export function createShurokkhaApi(options: ApiClientOptions) {
           ),
         remove: (id: number) =>
           client.delete<void>(`/v1/admin/assignments/${id}`),
-      },
-      shelters: {
-        list: () =>
-          client.get<ApiResource<ShelterRecord[]>>("/v1/admin/shelters"),
-        create: (input: ShelterInput) =>
-          client.post<ApiResource<ShelterRecord>>("/v1/admin/shelters", input),
-        remove: (id: number) => client.delete<void>(`/v1/admin/shelters/${id}`),
-      },
-      warehouses: {
-        list: () =>
-          client.get<ApiResource<WarehouseRecord[]>>("/v1/admin/warehouses"),
-        create: (input: WarehouseInput) =>
-          client.post<ApiResource<WarehouseRecord>>(
-            "/v1/admin/warehouses",
-            input
-          ),
-        remove: (id: number) =>
-          client.delete<void>(`/v1/admin/warehouses/${id}`),
-      },
-      donations: {
-        list: () =>
-          client.get<ApiResource<DonationRecord[]>>("/v1/admin/donations"),
-        create: (input: DonationInput) =>
-          client.post<ApiResource<DonationRecord>>("/v1/admin/donations", input),
-        remove: (id: number) => client.delete<void>(`/v1/admin/donations/${id}`),
       },
     },
   }
