@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { LocateFixed } from "lucide-react"
 
 import type {
   AssistanceRequestInput,
@@ -62,40 +61,9 @@ export function AssistanceRequestForm({
   )
   const [contactPhone, setContactPhone] = useState(initial?.contact_phone ?? "")
   const [address, setAddress] = useState(initial?.address ?? "")
-  const [latitude, setLatitude] = useState(
-    initial?.latitude == null ? "" : String(initial.latitude)
-  )
-  const [longitude, setLongitude] = useState(
-    initial?.longitude == null ? "" : String(initial.longitude)
-  )
   const [issues, setIssues] = useState<ValidationIssue[]>([])
   const [message, setMessage] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
-  const [isLocating, setIsLocating] = useState(false)
-
-  function useCurrentLocation() {
-    if (!navigator.geolocation) {
-      setMessage("Location access is not supported by this browser.")
-      return
-    }
-
-    setIsLocating(true)
-    setMessage(null)
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLatitude(position.coords.latitude.toFixed(7))
-        setLongitude(position.coords.longitude.toFixed(7))
-        setIsLocating(false)
-      },
-      () => {
-        setMessage(
-          "We could not read your location. Enter it manually or allow location access."
-        )
-        setIsLocating(false)
-      },
-      { enableHighAccuracy: true, timeout: 10_000 }
-    )
-  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -109,8 +77,6 @@ export function AssistanceRequestForm({
       affected_people_count: affectedPeople,
       contact_phone: contactPhone,
       address,
-      latitude: latitude === "" ? null : latitude,
-      longitude: longitude === "" ? null : longitude,
     }
 
     const parsed = assistanceRequestInputSchema.safeParse(candidate)
@@ -276,18 +242,6 @@ export function AssistanceRequestForm({
         <FormSection
           title="Location"
           description="A precise location helps a response team reach you faster."
-          actions={
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={useCurrentLocation}
-              disabled={isSaving || isLocating}
-            >
-              <LocateFixed />
-              {isLocating ? "Locating…" : "Use current location"}
-            </Button>
-          }
         >
           <FormGrid>
             <FieldGroup
@@ -303,30 +257,6 @@ export function AssistanceRequestForm({
                 onChange={(event) => setAddress(event.target.value)}
                 maxLength={500}
                 placeholder="Road, village, shelter, landmark, or nearby facility"
-                disabled={isSaving}
-              />
-            </FieldGroup>
-            <FieldGroup
-              label={<Label htmlFor="request-latitude">Latitude</Label>}
-            >
-              <Input
-                id="request-latitude"
-                inputMode="decimal"
-                value={latitude}
-                onChange={(event) => setLatitude(event.target.value)}
-                placeholder="23.8103000"
-                disabled={isSaving}
-              />
-            </FieldGroup>
-            <FieldGroup
-              label={<Label htmlFor="request-longitude">Longitude</Label>}
-            >
-              <Input
-                id="request-longitude"
-                inputMode="decimal"
-                value={longitude}
-                onChange={(event) => setLongitude(event.target.value)}
-                placeholder="90.4125000"
                 disabled={isSaving}
               />
             </FieldGroup>

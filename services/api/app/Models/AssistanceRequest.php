@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enums\AssistanceRequestPriority;
 use App\Enums\AssistanceRequestStatus;
 use App\Enums\AssistanceRequestType;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,9 +12,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AssistanceRequest extends Model
 {
-    use HasFactory, HasUlids, SoftDeletes;
+    use HasFactory, SoftDeletes;
+
+    protected $table = 'emergency_requests';
+    protected $primaryKey = 'request_id';
 
     protected $fillable = [
+        'request_id',
         'user_id',
         'type',
         'priority',
@@ -23,13 +26,29 @@ class AssistanceRequest extends Model
         'affected_people_count',
         'contact_phone',
         'address',
-        'latitude',
-        'longitude',
         'status',
+        'request_at',
         'submitted_at',
         'cancelled_at',
         'resolved_at',
     ];
+
+    public function getIdAttribute(): string
+    {
+        return (string) $this->attributes['request_id'];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (AssistanceRequest $model): void {
+            if (empty($model->request_at)) {
+                $model->request_at = now();
+            }
+            if (empty($model->submitted_at)) {
+                $model->submitted_at = now();
+            }
+        });
+    }
 
     protected function casts(): array
     {
@@ -38,8 +57,7 @@ class AssistanceRequest extends Model
             'priority' => AssistanceRequestPriority::class,
             'status' => AssistanceRequestStatus::class,
             'affected_people_count' => 'integer',
-            'latitude' => 'decimal:7',
-            'longitude' => 'decimal:7',
+            'request_at' => 'datetime',
             'submitted_at' => 'datetime',
             'cancelled_at' => 'datetime',
             'resolved_at' => 'datetime',

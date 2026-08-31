@@ -16,26 +16,14 @@ export const assistanceRequestPrioritySchema = z.enum([
   "normal",
 ])
 
-export const assistanceRequestInputSchema = z
-  .object({
-    type: assistanceRequestTypeSchema,
-    priority: assistanceRequestPrioritySchema,
-    description: z.string().trim().min(10).max(3000),
-    affected_people_count: z.coerce.number().int().min(1).max(10000),
-    contact_phone: z.string().trim().min(5).max(32),
-    address: z.string().trim().min(5).max(500),
-    latitude: z.coerce.number().min(-90).max(90).nullable().optional(),
-    longitude: z.coerce.number().min(-180).max(180).nullable().optional(),
-  })
-  .superRefine((value, context) => {
-    if ((value.latitude == null) !== (value.longitude == null)) {
-      context.addIssue({
-        code: "custom",
-        path: [value.latitude == null ? "latitude" : "longitude"],
-        message: "Latitude and longitude must be provided together.",
-      })
-    }
-  })
+export const assistanceRequestInputSchema = z.object({
+  type: assistanceRequestTypeSchema,
+  priority: assistanceRequestPrioritySchema,
+  description: z.string().trim().min(10).max(3000),
+  affected_people_count: z.coerce.number().int().min(1).max(10000),
+  contact_phone: z.string().trim().min(5).max(32),
+  address: z.string().trim().min(5).max(500),
+})
 
 export const missingPersonGenderSchema = z.enum([
   "female",

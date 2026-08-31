@@ -8,14 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('disasters', function (Blueprint $table) {
-            $table->id('disaster_id');
-            $table->string('disaster_name', 150);
-            $table->string('severity', 50);
-            $table->string('status', 50)->default('active');
-            $table->dateTime('start_datetime')->useCurrent();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('disasters')) {
+            Schema::create('disasters', function (Blueprint $table) {
+                $table->id('disaster_id');
+                $table->string('disaster_name', 150);
+                $table->string('severity', 50);
+                $table->string('status', 50)->default('active');
+                $table->dateTime('start_datetime')->useCurrent();
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void

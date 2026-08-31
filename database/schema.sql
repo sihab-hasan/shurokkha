@@ -14,37 +14,20 @@ USE shurokkha_db;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------------------------------------------------------
--- Drop existing tables (in safe order with FK checks disabled)
+-- Drop existing ERD tables (in safe order with FK checks disabled)
 -- ----------------------------------------------------------------------------
-DROP TABLE IF EXISTS notifications;
-DROP TABLE IF EXISTS volunteer_assignments;
-DROP TABLE IF EXISTS volunteer_profiles;
-DROP TABLE IF EXISTS donations;
-DROP TABLE IF EXISTS campaigns;
-DROP TABLE IF EXISTS missing_person_reports;
-DROP TABLE IF EXISTS assistance_requests;
-DROP TABLE IF EXISTS emergency_requests;
-DROP TABLE IF EXISTS shelters;
-DROP TABLE IF EXISTS locations;
-DROP TABLE IF EXISTS disaster_types;
-DROP TABLE IF EXISTS api_tokens;
-DROP TABLE IF EXISTS sessions;
-DROP TABLE IF EXISTS password_reset_tokens;
-DROP TABLE IF EXISTS relief_distribution;
-DROP TABLE IF EXISTS resources;
-DROP TABLE IF EXISTS warehouses;
 DROP TABLE IF EXISTS team_management;
 DROP TABLE IF EXISTS rescue_teams;
 DROP TABLE IF EXISTS affected_areas;
+DROP TABLE IF EXISTS emergency_requests;
 DROP TABLE IF EXISTS disasters;
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS roles;
 
 -- ----------------------------------------------------------------------------
 -- 1. ROLE Table (Assigned: Team Member 1)
 -- ERD Attributes: role_id (PK), role_name, description
 -- ----------------------------------------------------------------------------
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
     role_name VARCHAR(50) NOT NULL UNIQUE,
     description VARCHAR(255) NULL,
@@ -57,7 +40,7 @@ CREATE TABLE roles (
 -- ERD Attributes: user_id (PK), full_name, email, phone, status
 -- Relationships: HAS_ROLE with ROLE (role_id FK)
 -- ----------------------------------------------------------------------------
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     user_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     role_id INT NOT NULL,
     full_name VARCHAR(150) NOT NULL,
@@ -76,7 +59,7 @@ CREATE TABLE users (
 -- 3. DISASTER Table (Assigned: Team Member 1)
 -- ERD Attributes: disaster_id (PK), disaster_name, severity, status, start_datetime
 -- ----------------------------------------------------------------------------
-CREATE TABLE disasters (
+CREATE TABLE IF NOT EXISTS disasters (
     disaster_id INT AUTO_INCREMENT PRIMARY KEY,
     disaster_name VARCHAR(150) NOT NULL,
     severity VARCHAR(50) NOT NULL,
@@ -90,16 +73,13 @@ CREATE TABLE disasters (
 
 -- ----------------------------------------------------------------------------
 -- 4. EMERGENCY_REQUEST Table (Assigned: Team Member 1)
--- ERD Attributes: request_id (PK), category_id, priority, status, request_at
+-- ERD Attributes: request_id (PK), priority, status, request_at
 -- Relationships:
 --   - SUBMITS: user_id FK (references users.user_id)
---   - OCCURS_IN: area_id FK (references affected_areas.area_id when created by teammates)
 -- ----------------------------------------------------------------------------
-CREATE TABLE emergency_requests (
+CREATE TABLE IF NOT EXISTS emergency_requests (
     request_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT UNSIGNED NOT NULL,
-    area_id INT NULL COMMENT 'FK to affected_areas (implemented by teammates)',
-    category_id INT NULL,
     priority VARCHAR(50) NOT NULL DEFAULT 'normal',
     status VARCHAR(50) NOT NULL DEFAULT 'pending',
     request_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -121,7 +101,7 @@ CREATE TABLE emergency_requests (
 -- Relationships:
 --   - AFFECTS: disaster_id FK (references disasters.disaster_id)
 -- ----------------------------------------------------------------------------
-CREATE TABLE affected_areas (
+CREATE TABLE IF NOT EXISTS affected_areas (
     area_id INT AUTO_INCREMENT PRIMARY KEY,
     disaster_id INT NOT NULL,
     location_id INT NULL,
@@ -134,15 +114,11 @@ CREATE TABLE affected_areas (
     CONSTRAINT fk_affected_areas_disaster FOREIGN KEY (disaster_id) REFERENCES disasters (disaster_id) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Add foreign key constraint to emergency_requests for area_id
-ALTER TABLE emergency_requests
-ADD CONSTRAINT fk_emergency_requests_area FOREIGN KEY (area_id) REFERENCES affected_areas (area_id) ON UPDATE CASCADE ON DELETE SET NULL;
-
 -- ----------------------------------------------------------------------------
 -- 6. RESCUE_TEAM Table (Assigned: Teammate)
 -- ERD Attributes: team_id (PK), team_name, team_type, availability
 -- ----------------------------------------------------------------------------
-CREATE TABLE rescue_teams (
+CREATE TABLE IF NOT EXISTS rescue_teams (
     team_id INT AUTO_INCREMENT PRIMARY KEY,
     team_name VARCHAR(100) NOT NULL,
     team_type VARCHAR(50) NOT NULL,
@@ -159,7 +135,7 @@ CREATE TABLE rescue_teams (
 --   - ASSIGNED_TO: team_id FK (references rescue_teams.team_id)
 --   - GENERATES: request_id FK (references emergency_requests.request_id)
 -- ----------------------------------------------------------------------------
-CREATE TABLE team_management (
+CREATE TABLE IF NOT EXISTS team_management (
     assignment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     team_id INT NOT NULL,
     request_id BIGINT UNSIGNED NOT NULL,
@@ -177,7 +153,6 @@ CREATE TABLE team_management (
 -- ----------------------------------------------------------------------------
 -- Remaining ERD Tables (Reserved for teammates)
 -- ----------------------------------------------------------------------------
---
 -- 8. SHELTER
 --    Attributes: shelter_id (PK), area_id (FK), shelter_name, capacity, occupancy, status
 --    Relationships: [HAS] with AFFECTED_AREA, [DELIVERED_TO] with RELIEF_DISTRIBUTION

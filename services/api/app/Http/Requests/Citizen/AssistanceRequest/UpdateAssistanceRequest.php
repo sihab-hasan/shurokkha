@@ -23,8 +23,6 @@ class UpdateAssistanceRequest extends FormRequest
             'affected_people_count' => ['sometimes', 'integer', 'min:1', 'max:10000'],
             'contact_phone' => ['sometimes', 'string', 'max:32'],
             'address' => ['sometimes', 'string', 'max:500'],
-            'latitude' => ['sometimes', 'nullable', 'numeric', 'between:-90,90', 'required_with:longitude'],
-            'longitude' => ['sometimes', 'nullable', 'numeric', 'between:-180,180', 'required_with:latitude'],
         ];
     }
 }

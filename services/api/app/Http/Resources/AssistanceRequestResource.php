@@ -17,8 +17,6 @@ class AssistanceRequestResource extends JsonResource
             'affected_people_count' => $this->affected_people_count,
             'contact_phone' => $this->contact_phone,
             'address' => $this->address,
-            'latitude' => $this->latitude === null ? null : (float) $this->latitude,
-            'longitude' => $this->longitude === null ? null : (float) $this->longitude,
             'status' => $this->status->value,
             'submitted_at' => $this->submitted_at?->toIso8601String(),
             'cancelled_at' => $this->cancelled_at?->toIso8601String(),

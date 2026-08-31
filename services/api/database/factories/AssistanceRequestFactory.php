@@ -24,8 +24,6 @@ class AssistanceRequestFactory extends Factory
             'affected_people_count' => fake()->numberBetween(1, 12),
             'contact_phone' => fake()->phoneNumber(),
             'address' => fake()->address(),
-            'latitude' => fake()->latitude(),
-            'longitude' => fake()->longitude(),
             'status' => AssistanceRequestStatus::Submitted,
             'submitted_at' => now(),
         ];
