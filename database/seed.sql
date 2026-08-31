@@ -43,38 +43,9 @@ INSERT INTO disasters (disaster_id, disaster_name, severity, status, start_datet
 -- ----------------------------------------------------------------------------
 TRUNCATE TABLE emergency_requests;
 INSERT INTO emergency_requests (request_id, user_id, area_id, category_id, priority, status, request_at) VALUES
-(1, 2, 1, 1, 'critical', 'in_progress', '2026-08-30 14:30:00'),
-(2, 3, 2, 2, 'critical', 'pending', '2026-08-30 16:15:00'),
-(3, 2, 3, 3, 'high', 'rescued', '2026-08-30 17:00:00'),
-(4, 3, 4, 1, 'normal', 'closed', '2026-08-29 11:20:00');
-
--- ----------------------------------------------------------------------------
--- 5. Seed Affected Areas
--- ----------------------------------------------------------------------------
-TRUNCATE TABLE affected_areas;
-INSERT INTO affected_areas (area_id, disaster_id, location_id, affected_population, severity) VALUES
-(1, 1, 101, 25000, 'Critical'),
-(2, 1, 102, 18000, 'High'),
-(3, 2, 201, 50000, 'Critical'),
-(4, 3, 301, 8000, 'Medium');
-
--- ----------------------------------------------------------------------------
--- 6. Seed Rescue Teams
--- ----------------------------------------------------------------------------
-TRUNCATE TABLE rescue_teams;
-INSERT INTO rescue_teams (team_id, team_name, team_type, availability) VALUES
-(1, 'Dhaka Fire Service Alpha', 'Search and Rescue', 'busy'),
-(2, 'Sylhet Volunteer Group One', 'Logistics & Relief', 'available'),
-(3, 'Red Crescent Medical Team B', 'Medical Support', 'available'),
-(4, 'Coast Guard Rescue Unit 5', 'Water Rescue', 'busy');
-
--- ----------------------------------------------------------------------------
--- 7. Seed Team Management (Rescue Assignments)
--- ----------------------------------------------------------------------------
-TRUNCATE TABLE team_management;
-INSERT INTO team_management (assignment_id, team_id, request_id, status, assignment_at) VALUES
-(1, 1, 1, 'on_route', '2026-08-30 14:45:00'),
-(2, 3, 2, 'assigned', '2026-08-30 16:30:00'),
-(3, 4, 3, 'completed', '2026-08-30 17:15:00');
+(1, 2, NULL, 1, 'critical', 'in_progress', '2026-08-30 14:30:00'),
+(2, 3, NULL, 2, 'critical', 'pending', '2026-08-30 16:15:00'),
+(3, 2, NULL, 3, 'high', 'rescued', '2026-08-30 17:00:00'),
+(4, 3, NULL, 1, 'normal', 'closed', '2026-08-29 11:20:00');
 
 SET FOREIGN_KEY_CHECKS = 1;

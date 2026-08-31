@@ -112,71 +112,21 @@ CREATE TABLE emergency_requests (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
--- IMPLEMENTED TABLES (5, 6, 7) & RESERVED FOR TEAMMATES (8-12)
+-- RESERVED FOR TEAMMATES (Remaining ERD Tables)
 -- ============================================================================
-
--- ----------------------------------------------------------------------------
--- 5. AFFECTED_AREA Table (Assigned: Teammate)
--- ERD Attributes: area_id (PK), location_id, affected_population, severity
--- Relationships:
---   - AFFECTS: disaster_id FK (references disasters.disaster_id)
--- ----------------------------------------------------------------------------
-CREATE TABLE affected_areas (
-    area_id INT AUTO_INCREMENT PRIMARY KEY,
-    disaster_id INT NOT NULL,
-    location_id INT NULL,
-    affected_population INT UNSIGNED NOT NULL DEFAULT 0,
-    severity VARCHAR(50) NOT NULL DEFAULT 'Medium',
-    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_affected_areas_disaster (disaster_id),
-    INDEX idx_affected_areas_severity (severity),
-    CONSTRAINT fk_affected_areas_disaster FOREIGN KEY (disaster_id) REFERENCES disasters (disaster_id) ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Add foreign key constraint to emergency_requests for area_id
-ALTER TABLE emergency_requests
-ADD CONSTRAINT fk_emergency_requests_area FOREIGN KEY (area_id) REFERENCES affected_areas (area_id) ON UPDATE CASCADE ON DELETE SET NULL;
-
--- ----------------------------------------------------------------------------
--- 6. RESCUE_TEAM Table (Assigned: Teammate)
--- ERD Attributes: team_id (PK), team_name, team_type, availability
--- ----------------------------------------------------------------------------
-CREATE TABLE rescue_teams (
-    team_id INT AUTO_INCREMENT PRIMARY KEY,
-    team_name VARCHAR(100) NOT NULL,
-    team_type VARCHAR(50) NOT NULL,
-    availability VARCHAR(50) NOT NULL DEFAULT 'available',
-    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_rescue_teams_availability (availability)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ----------------------------------------------------------------------------
--- 7. TEAM MANAGEMENT Table (Assigned: Teammate)
--- ERD Attributes: assignment_id (PK), status, assignment_at
--- Relationships:
---   - ASSIGNED_TO: team_id FK (references rescue_teams.team_id)
---   - GENERATES: request_id FK (references emergency_requests.request_id)
--- ----------------------------------------------------------------------------
-CREATE TABLE team_management (
-    assignment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    team_id INT NOT NULL,
-    request_id BIGINT UNSIGNED NOT NULL,
-    status VARCHAR(50) NOT NULL DEFAULT 'assigned',
-    assignment_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_team_management_team (team_id),
-    INDEX idx_team_management_request (request_id),
-    INDEX idx_team_management_status (status),
-    CONSTRAINT fk_team_management_team FOREIGN KEY (team_id) REFERENCES rescue_teams (team_id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    CONSTRAINT fk_team_management_request FOREIGN KEY (request_id) REFERENCES emergency_requests (request_id) ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ----------------------------------------------------------------------------
--- Remaining ERD Tables (Reserved for teammates)
--- ----------------------------------------------------------------------------
+-- The following table definitions and specifications are allocated for teammates:
+--
+-- 5. AFFECTED_AREA
+--    Attributes: area_id (PK), disaster_id (FK), location_id, affected_population, severity
+--    Relationships: [AFFECTS] with DISASTER, [OCCURS_IN] with EMERGENCY_REQUEST, [HAS] with SHELTER
+--
+-- 6. RESCUE_TEAM
+--    Attributes: team_id (PK), team_name, team_type, availability
+--    Relationships: [ASSIGNED_TO] with TEAM MANAGEMENT
+--
+-- 7. TEAM MANAGEMENT
+--    Attributes: assignment_id (PK), team_id (FK), request_id (FK), status, assignment_at
+--    Relationships: [GENERATES] with EMERGENCY_REQUEST, [ASSIGNED_TO] with RESCUE_TEAM
 --
 -- 8. SHELTER
 --    Attributes: shelter_id (PK), area_id (FK), shelter_name, capacity, occupancy, status
