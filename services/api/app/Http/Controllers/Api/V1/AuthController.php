@@ -24,6 +24,18 @@ class AuthController extends Controller
     {
         $user = User::query()->create($request->validated());
 
+        \Illuminate\Support\Facades\DB::table('users')
+            ->where('id', $user->id)
+            ->update([
+                'user_id' => $user->id,
+                'full_name' => $user->name,
+                'phone' => '01700000000',
+                'status' => 'active',
+                'role_id' => 2,
+            ]);
+
+        $user->refresh();
+
         Auth::guard('web')->login($user);
         $request->session()->regenerate();
 

@@ -16,11 +16,15 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------------------------------------------------------
 -- Drop existing ERD tables (in safe order with FK checks disabled)
 -- ----------------------------------------------------------------------------
+DROP TABLE IF EXISTS donations;
+DROP TABLE IF EXISTS warehouses;
+DROP TABLE IF EXISTS shelters;
 DROP TABLE IF EXISTS team_management;
 DROP TABLE IF EXISTS rescue_teams;
 DROP TABLE IF EXISTS affected_areas;
 DROP TABLE IF EXISTS emergency_requests;
 DROP TABLE IF EXISTS disasters;
+DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS roles;
 
 -- ----------------------------------------------------------------------------
@@ -92,7 +96,7 @@ CREATE TABLE IF NOT EXISTS emergency_requests (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
--- IMPLEMENTED TABLES (5, 6, 7) & RESERVED FOR TEAMMATES (8-12)
+-- IMPLEMENTED TABLES (5, 6, 7, 8, 9, 10) & RESERVED FOR TEAMMATES (11-12)
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------
@@ -151,27 +155,67 @@ CREATE TABLE IF NOT EXISTS team_management (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------------------------------------------------------
+-- 8. SHELTER Table (Assigned: Teammate)
+-- ERD Attributes: shelter_id (PK), area_id (FK), shelter_name, capacity, occupancy, status
+-- Relationships:
+--   - HAS: area_id FK (references affected_areas.area_id)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS shelters (
+    shelter_id INT AUTO_INCREMENT PRIMARY KEY,
+    area_id INT NULL,
+    shelter_name VARCHAR(150) NOT NULL,
+    capacity INT UNSIGNED NOT NULL DEFAULT 0,
+    occupancy INT UNSIGNED NOT NULL DEFAULT 0,
+    status VARCHAR(50) NOT NULL DEFAULT 'open',
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_shelters_area (area_id),
+    INDEX idx_shelters_status (status),
+    CONSTRAINT fk_shelters_area FOREIGN KEY (area_id) REFERENCES affected_areas (area_id) ON UPDATE CASCADE ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------------------------------------------------------
+-- 9. WAREHOUSE Table (Assigned: Teammate)
+-- ERD Attributes: warehouse_id (PK), warehouse_name, location_id, manager_id (FK)
+-- Relationships:
+--   - STORES / MANAGED_BY: manager_id FK (references users.user_id)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS warehouses (
+    warehouse_id INT AUTO_INCREMENT PRIMARY KEY,
+    warehouse_name VARCHAR(150) NOT NULL,
+    location_id INT NULL,
+    manager_id BIGINT UNSIGNED NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_warehouses_manager (manager_id),
+    CONSTRAINT fk_warehouses_manager FOREIGN KEY (manager_id) REFERENCES users (user_id) ON UPDATE CASCADE ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------------------------------------------------------
+-- 10. DONATION Table (Assigned: Teammate)
+-- ERD Attributes: donation_id (PK), donation_kind, amount, status
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS donations (
+    donation_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    donation_kind VARCHAR(50) NOT NULL,
+    amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    status VARCHAR(50) NOT NULL DEFAULT 'received',
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_donations_kind (donation_kind),
+    INDEX idx_donations_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------------------------------------------------------
 -- Remaining ERD Tables (Reserved for teammates)
 -- ----------------------------------------------------------------------------
--- 8. SHELTER
---    Attributes: shelter_id (PK), area_id (FK), shelter_name, capacity, occupancy, status
---    Relationships: [HAS] with AFFECTED_AREA, [DELIVERED_TO] with RELIEF_DISTRIBUTION
---
--- 9. DONATION
---    Attributes: donation_id (PK), user_id (FK), donation_kind, amount, status
---    Relationships: [MAKES] with USER, [ALLOCATED_TO] with RELIEF_DISTRIBUTION
---
--- 10. RELIEF_DISTRIBUTION
+-- 11. RELIEF_DISTRIBUTION
 --     Attributes: distribution_id (PK), area_id (FK), warehouse_id (FK), status, delivered_id
 --     Relationships: [FULFILLS] with EMERGENCY_REQUEST, [ALLOCATED_TO] with DONATION, [DELIVERED_TO] with SHELTER, [INCLUDES] with RESOURCES
 --
--- 11. RESOURCES
+-- 12. RESOURCES
 --     Attributes: resource_id (PK), resource_name, category_id, unit
 --     Relationships: [INCLUDES] with RELIEF_DISTRIBUTION, [STORES] with WAREHOUSE
---
--- 12. WAREHOUSE
---     Attributes: warehouse_id (PK), warehouse_name, location_id, manager_id
---     Relationships: [STORES] with RESOURCES, RELIEF_DISTRIBUTION
 -- ============================================================================
 
 -- Re-enable foreign key checks

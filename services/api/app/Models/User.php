@@ -4,30 +4,52 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
-#[Fillable(['name', 'email', 'password', 'full_name', 'phone', 'status', 'role', 'role_id'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
+    /** @use HasFactory<UserFactory> */
+    use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'id',
+        'user_id',
+        'name',
+        'full_name',
+        'email',
+        'password',
+        'phone',
+        'status',
+        'role',
+        'role_id',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected $attributes = [
         'role' => 'citizen',
     ];
 
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
-
     protected static function booted(): void
     {
         static::created(function (User $user): void {
-            if ($user->user_id === null) {
-                $user->updateQuietly(['user_id' => $user->id, 'full_name' => $user->full_name ?? $user->name]);
-            }
+            DB::table('users')
+                ->where('id', $user->id)
+                ->update([
+                    'user_id' => $user->id,
+                    'full_name' => $user->full_name ?? $user->name,
+                    'phone' => $user->phone ?? '01700000000',
+                    'status' => $user->status ?? 'active',
+                    'role_id' => $user->role_id ?? ($user->role?->value === 'admin' ? 1 : ($user->role?->value === 'volunteer' ? 3 : ($user->role?->value === 'donor' ? 4 : 2))),
+                ]);
         });
     }
 

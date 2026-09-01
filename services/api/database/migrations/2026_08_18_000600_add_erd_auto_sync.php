@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table): void {
             if (!Schema::hasColumn('users', 'user_id')) {
-                $table->unsignedBigInteger('user_id')->nullable()->after('id');
+                $table->unsignedBigInteger('user_id')->nullable()->index()->after('id');
             }
             if (!Schema::hasColumn('users', 'full_name')) {
                 $table->string('full_name', 150)->nullable()->after('name');
