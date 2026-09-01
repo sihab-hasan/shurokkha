@@ -3,7 +3,7 @@
 Shurokkha applications follow a three-layer UI architecture:
 
 ```text
-apps/web | apps/admin | apps/docs
+apps/web | apps/admin
               ↓
       @shurokkha/ui-patterns
               ↓
@@ -22,8 +22,7 @@ apps/web | apps/admin | apps/docs
 
 - **Web:** `SiteShell` for public chrome, `WorkspaceShell` for signed-in roles, `AuthShell`/`AuthHeader`/`AuthState` for access flows, plus collection, entity, dashboard, reporting, messaging, notification, feedback, and progress patterns selected by page archetype.
 - **Admin:** layout-level `WorkspaceShell`, shared navigation/dashboard/feedback/collection patterns, plus future route scaffolds.
-- **Docs:** layout-level `SiteShell`, `ContentContainer`, and `SidebarLayout`, shared navigation/collection/feedback/progress patterns, plus reference route scaffolds.
 
 ## Future routes
 
-Admin and Docs include catch-all route scaffolds. A dedicated route file can replace a scaffold at any time without changing the shared shell or package architecture.
+Admin includes catch-all route scaffolds. A dedicated route file can replace a scaffold at any time without changing the shared shell or package architecture.

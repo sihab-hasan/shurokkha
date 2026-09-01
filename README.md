@@ -1,6 +1,6 @@
 # Shurokkha
 
-Shurokkha is a disaster-relief and resource-coordination platform built as a pnpm/Turborepo monorepo. The repository currently contains the public Web experience, authenticated role workspaces, an Admin application, a Docs application, and reusable UI/application packages.
+Shurokkha is a disaster-relief and resource-coordination platform built as a pnpm/Turborepo monorepo. The repository currently contains the public Web experience, authenticated role workspaces, an Admin application, durable project documentation, and reusable UI/application packages.
 
 > **Status:** active product development. The Laravel API now includes authenticated Citizen assistance-request and missing-person CRUD flows. Other product domains and production hosting integrations remain in progress.
 
@@ -9,7 +9,6 @@ Shurokkha is a disaster-relief and resource-coordination platform built as a pnp
 | Workspace              | Purpose                                                                      | Local URL                     |
 | ---------------------- | ---------------------------------------------------------------------------- | ----------------------------- |
 | `apps/web`             | Public site, authentication flows, citizen/donor/volunteer product areas     | `http://localhost:3000`       |
-| `apps/docs`            | Product and design-system documentation                                      | `http://localhost:3001/docs`  |
 | `apps/admin`           | Internal administration and operations workspace                             | `http://localhost:3003/admin` |
 | `packages/ui`          | Domain-agnostic UI primitives, theme, providers, hooks and utilities         | Internal                      |
 | `packages/ui-patterns` | Reusable application-level layouts, shells and interaction patterns          | Internal                      |
@@ -42,7 +41,6 @@ Run an individual application:
 
 ```bash
 pnpm --filter @shurokkha/web dev
-pnpm --filter @shurokkha/docs dev
 pnpm --filter @shurokkha/admin dev
 ```
 
@@ -69,15 +67,15 @@ It runs architecture guards, Prettier verification, ESLint, TypeScript checks, a
 
 Useful focused commands:
 
-| Command                   | Purpose                                             |
-| ------------------------- | --------------------------------------------------- |
-| `pnpm check:architecture` | Validate repository, shell and Web UI boundaries    |
-| `pnpm format:check`       | Verify formatting without changing files            |
-| `pnpm lint`               | Run ESLint across workspaces                        |
-| `pnpm typecheck`          | Run TypeScript checks                               |
-| `pnpm build`              | Build all buildable workspaces                      |
-| `pnpm clean`              | Remove generated build/dependency directories       |
-| `pnpm stop`               | Stop local app servers on ports 3000, 3001 and 3003 |
+| Command                   | Purpose                                          |
+| ------------------------- | ------------------------------------------------ |
+| `pnpm check:architecture` | Validate repository, shell and Web UI boundaries |
+| `pnpm format:check`       | Verify formatting without changing files         |
+| `pnpm lint`               | Run ESLint across workspaces                     |
+| `pnpm typecheck`          | Run TypeScript checks                            |
+| `pnpm build`              | Build all buildable workspaces                   |
+| `pnpm clean`              | Remove generated build/dependency directories    |
+| `pnpm stop`               | Stop local app servers on ports 3000 and 3003    |
 
 ## Repository architecture
 

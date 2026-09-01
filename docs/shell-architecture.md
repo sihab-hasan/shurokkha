@@ -62,19 +62,15 @@ The app-specific names intentionally match their route-group experience: `Public
 
 `AuthShell` remains in `@shurokkha/ui-patterns/auth` as the reusable authentication composition; `apps/web` wraps it with its own `AuthShell` to add Shurokkha branding, story content and navigation.
 
-## Admin and Docs
+## Admin
 
 ```text
 apps/admin/src/app/
 ├── layout.tsx                 # RootLayout
 └── (app)/layout.tsx           # AdminLayout -> AdminShell
-
-apps/docs/src/app/
-├── layout.tsx                 # RootLayout
-└── (docs)/layout.tsx          # DocsLayout -> DocsShell
 ```
 
-Shell chrome is colocated under `src/components/shells/admin` and `src/components/shells/docs` respectively.
+Admin shell chrome is colocated under `src/components/shells/admin`.
 
 ## Config naming
 
@@ -86,8 +82,6 @@ web/config/app-navigation.tsx       # signed-in role navigation
 web/config/public-site-config.ts    # public brand/nav/actions/announcements
 admin/config/shell-config.ts
 admin/config/admin-navigation.tsx
-docs/config/shell-config.ts
-docs/config/docs-navigation.tsx
 ```
 
 Do not put route navigation arrays inside `shell-config.ts`.

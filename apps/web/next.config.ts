@@ -54,10 +54,6 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/docs/:path*",
-        destination: "http://localhost:3001/docs/:path*",
-      },
-      {
         source: "/client/:path*",
         destination: "http://localhost:3002/client/:path*",
       },
