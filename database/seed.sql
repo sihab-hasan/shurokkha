@@ -1,6 +1,6 @@
 -- ============================================================================
 -- SHUROKKHA - Master Seed Data (DML)
--- Data for the first 7 tables aligned with the ERD
+-- Data for tables 1 to 10 aligned with the ERD
 -- ============================================================================
 
 USE shurokkha_db;
@@ -56,7 +56,11 @@ INSERT INTO affected_areas (area_id, disaster_id, location_id, affected_populati
 (1, 1, 101, 25000, 'Critical'),
 (2, 1, 102, 18000, 'High'),
 (3, 2, 201, 50000, 'Critical'),
-(4, 3, 301, 8000, 'Medium');
+(4, 3, 301, 8000, 'Medium'),
+(5, 1, 103, 32000, 'Critical'),
+(6, 2, 202, 41000, 'High'),
+(7, 4, 401, 6500, 'Medium'),
+(8, 1, 104, 12000, 'High');
 
 -- ----------------------------------------------------------------------------
 -- 6. Seed Rescue Teams
@@ -76,5 +80,48 @@ INSERT INTO team_management (assignment_id, team_id, request_id, status, assignm
 (1, 1, 1, 'on_route', '2026-08-30 14:45:00'),
 (2, 3, 2, 'assigned', '2026-08-30 16:30:00'),
 (3, 4, 3, 'completed', '2026-08-30 17:15:00');
+
+-- ----------------------------------------------------------------------------
+-- 8. Seed Shelters
+-- ----------------------------------------------------------------------------
+TRUNCATE TABLE shelters;
+INSERT INTO shelters (shelter_id, area_id, shelter_name, capacity, occupancy, status) VALUES
+(1, 1, 'Sunamganj Government College Shelter', 1200, 980, 'open'),
+(2, 1, 'Sadar Upazila Parishad Flood Shelter', 600, 600, 'full'),
+(3, 3, 'Bhola Coastal Multipurpose Shelter Centre', 2500, 1850, 'open'),
+(4, 3, 'Char Fasson Government High School Shelter', 900, 900, 'full'),
+(5, 3, 'Lalmohan Cyclone Shelter Complex', 1500, 420, 'open'),
+(6, 5, 'Companiganj Model School Flood Shelter', 800, 760, 'open'),
+(7, 5, 'Bishwamvarpur Community Shelter Hall', 500, 150, 'open'),
+(8, 6, 'Teknaf Relief Camp Shelter Block A', 700, 690, 'open'),
+(9, 6, 'Teknaf Relief Camp Shelter Block B', 700, 0, 'closed'),
+(10, 1, 'Jagannathpur Union Flood Centre', 350, 0, 'closed');
+
+-- ----------------------------------------------------------------------------
+-- 9. Seed Warehouses
+-- ----------------------------------------------------------------------------
+TRUNCATE TABLE warehouses;
+INSERT INTO warehouses (warehouse_id, warehouse_name, location_id, manager_id) VALUES
+(1, 'Sylhet Central Relief Warehouse', 101, 1),
+(2, 'Sunamganj District Relief Godown', 102, 4),
+(3, 'Bhola Coastal Supply Depot', 201, 5),
+(4, 'Kurigram Emergency Storage', 301, 4),
+(5, 'Dhaka Central Relief Depot', 103, 1);
+
+-- ----------------------------------------------------------------------------
+-- 10. Seed Donations
+-- ----------------------------------------------------------------------------
+TRUNCATE TABLE donations;
+INSERT INTO donations (donation_id, donation_kind, amount, status) VALUES
+(1, 'Rice (5kg pack)', 2500.00, 'stored'),
+(2, 'Drinking Water (L)', 8000.00, 'distributed'),
+(3, 'Tarpaulin Sheet', 1200.00, 'stored'),
+(4, 'Medicine Kit', 650.00, 'received'),
+(5, 'Dry Food Packet', 4500.00, 'distributed'),
+(6, 'Blanket', 900.00, 'received'),
+(7, 'Saline & ORS Box', 750.00, 'stored'),
+(8, 'Cash Relief Fund (BDT)', 250000.00, 'received'),
+(9, 'Baby Food & Milk', 320.00, 'stored'),
+(10, 'Emergency Lantern & Torch', 200.00, 'distributed');
 
 SET FOREIGN_KEY_CHECKS = 1;
