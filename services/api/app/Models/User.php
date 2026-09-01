@@ -76,4 +76,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(MissingPersonReport::class);
     }
+
+    public function donations(): HasMany
+    {
+        return $this->hasMany(Donation::class);
+    }
+
+    public function managedWarehouses(): HasMany
+    {
+        return $this->hasMany(Warehouse::class, 'manager_id');
+    }
 }

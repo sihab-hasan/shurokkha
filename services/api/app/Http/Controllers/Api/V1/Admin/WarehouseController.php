@@ -12,6 +12,7 @@ class WarehouseController extends Controller
     public function index(): JsonResponse
     {
         $warehouses = Warehouse::latest()->get();
+
         return response()->json(['data' => $warehouses]);
     }
 
@@ -20,16 +21,18 @@ class WarehouseController extends Controller
         $validated = $request->validate([
             'warehouse_name' => 'required|string|max:150',
             'location_id' => 'nullable|integer',
-            'manager_id' => 'nullable|integer',
+            'manager_id' => 'nullable|integer|exists:users,id',
         ]);
 
         $warehouse = Warehouse::create($validated);
+
         return response()->json(['data' => $warehouse], 201);
     }
 
     public function destroy(Warehouse $warehouse): JsonResponse
     {
         $warehouse->delete();
+
         return response()->json(null, 204);
     }
 }

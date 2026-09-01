@@ -17,6 +17,7 @@ class UpdateAssistanceRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'area_id' => ['sometimes', 'nullable', 'integer', 'exists:affected_areas,area_id'],
             'type' => ['sometimes', Rule::enum(AssistanceRequestType::class)],
             'priority' => ['sometimes', Rule::enum(AssistanceRequestPriority::class)],
             'description' => ['sometimes', 'string', 'min:10', 'max:3000'],

@@ -17,6 +17,7 @@ class StoreAssistanceRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'area_id' => ['nullable', 'integer', 'exists:affected_areas,area_id'],
             'type' => ['required', Rule::enum(AssistanceRequestType::class)],
             'priority' => ['required', Rule::enum(AssistanceRequestPriority::class)],
             'description' => ['required', 'string', 'min:10', 'max:3000'],

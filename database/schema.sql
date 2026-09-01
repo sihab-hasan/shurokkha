@@ -16,13 +16,19 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------------------------------------------------------
 -- Drop existing ERD tables (in safe order with FK checks disabled)
 -- ----------------------------------------------------------------------------
+DROP TABLE IF EXISTS warehouse_resources;
+DROP TABLE IF EXISTS distribution_resources;
+DROP TABLE IF EXISTS donation_allocations;
+DROP TABLE IF EXISTS distribution_requests;
+DROP TABLE IF EXISTS relief_distributions;
+DROP TABLE IF EXISTS resources;
 DROP TABLE IF EXISTS donations;
 DROP TABLE IF EXISTS warehouses;
 DROP TABLE IF EXISTS shelters;
 DROP TABLE IF EXISTS team_management;
 DROP TABLE IF EXISTS rescue_teams;
-DROP TABLE IF EXISTS affected_areas;
 DROP TABLE IF EXISTS emergency_requests;
+DROP TABLE IF EXISTS affected_areas;
 DROP TABLE IF EXISTS disasters;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS roles;
@@ -84,20 +90,19 @@ CREATE TABLE IF NOT EXISTS disasters (
 CREATE TABLE IF NOT EXISTS emergency_requests (
     request_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT UNSIGNED NOT NULL,
+    area_id INT NULL,
+    type VARCHAR(40) NOT NULL DEFAULT 'essentials',
     priority VARCHAR(50) NOT NULL DEFAULT 'normal',
     status VARCHAR(50) NOT NULL DEFAULT 'pending',
     request_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_emergency_requests_user (user_id),
+    INDEX idx_emergency_requests_area (area_id),
     INDEX idx_emergency_requests_status (status),
     INDEX idx_emergency_requests_priority (priority),
     CONSTRAINT fk_emergency_requests_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================================
--- IMPLEMENTED TABLES (5, 6, 7, 8, 9, 10) & RESERVED FOR TEAMMATES (11-12)
--- ============================================================================
 
 -- ----------------------------------------------------------------------------
 -- 5. AFFECTED_AREA Table (Assigned: Teammate)
@@ -117,6 +122,10 @@ CREATE TABLE IF NOT EXISTS affected_areas (
     INDEX idx_affected_areas_severity (severity),
     CONSTRAINT fk_affected_areas_disaster FOREIGN KEY (disaster_id) REFERENCES disasters (disaster_id) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE emergency_requests
+    ADD CONSTRAINT fk_emergency_requests_area FOREIGN KEY (area_id)
+    REFERENCES affected_areas (area_id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 -- ----------------------------------------------------------------------------
 -- 6. RESCUE_TEAM Table (Assigned: Teammate)
@@ -171,7 +180,8 @@ CREATE TABLE IF NOT EXISTS shelters (
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_shelters_area (area_id),
     INDEX idx_shelters_status (status),
-    CONSTRAINT fk_shelters_area FOREIGN KEY (area_id) REFERENCES affected_areas (area_id) ON UPDATE CASCADE ON DELETE SET NULL
+    CONSTRAINT fk_shelters_area FOREIGN KEY (area_id) REFERENCES affected_areas (area_id) ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT chk_shelter_occupancy CHECK (occupancy <= capacity)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------------------------------------------------------
@@ -193,30 +203,99 @@ CREATE TABLE IF NOT EXISTS warehouses (
 
 -- ----------------------------------------------------------------------------
 -- 10. DONATION Table (Assigned: Teammate)
--- ERD Attributes: donation_id (PK), donation_kind, amount, status
+-- ERD Attributes: donation_id (PK), user_id (FK), donation_kind, amount, status
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS donations (
     donation_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NULL,
     donation_kind VARCHAR(50) NOT NULL,
     amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
     status VARCHAR(50) NOT NULL DEFAULT 'received',
     created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_donations_kind (donation_kind),
-    INDEX idx_donations_status (status)
+    INDEX idx_donations_status (status),
+    CONSTRAINT fk_donations_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------------------------------------------------------
--- Remaining ERD Tables (Reserved for teammates)
+-- 11. RESOURCES Table
+-- ERD Attributes: resource_id (PK), resource_name, category_id, unit
 -- ----------------------------------------------------------------------------
--- 11. RELIEF_DISTRIBUTION
---     Attributes: distribution_id (PK), area_id (FK), warehouse_id (FK), status, delivered_id
---     Relationships: [FULFILLS] with EMERGENCY_REQUEST, [ALLOCATED_TO] with DONATION, [DELIVERED_TO] with SHELTER, [INCLUDES] with RESOURCES
---
--- 12. RESOURCES
---     Attributes: resource_id (PK), resource_name, category_id, unit
---     Relationships: [INCLUDES] with RELIEF_DISTRIBUTION, [STORES] with WAREHOUSE
--- ============================================================================
+CREATE TABLE IF NOT EXISTS resources (
+    resource_id INT AUTO_INCREMENT PRIMARY KEY,
+    resource_name VARCHAR(150) NOT NULL,
+    category_id INT NULL,
+    unit VARCHAR(30) NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ----------------------------------------------------------------------------
+-- 12. RELIEF_DISTRIBUTIONS Table
+-- ERD Attributes: distribution_id (PK), area_id (FK), warehouse_id (FK), shelter_id (FK), status, delivered_at
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS relief_distributions (
+    distribution_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    area_id INT NOT NULL,
+    warehouse_id INT NULL,
+    shelter_id INT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'planned',
+    delivered_at DATETIME NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_distributions_area FOREIGN KEY (area_id) REFERENCES affected_areas (area_id) ON DELETE CASCADE,
+    CONSTRAINT fk_distributions_warehouse FOREIGN KEY (warehouse_id) REFERENCES warehouses (warehouse_id) ON DELETE SET NULL,
+    CONSTRAINT fk_distributions_shelter FOREIGN KEY (shelter_id) REFERENCES shelters (shelter_id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------------------------------------------------------
+-- 13. DISTRIBUTION_REQUESTS (Relationship Table)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS distribution_requests (
+    distribution_id BIGINT UNSIGNED NOT NULL,
+    request_id BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (distribution_id, request_id),
+    FOREIGN KEY (distribution_id) REFERENCES relief_distributions (distribution_id) ON DELETE CASCADE,
+    FOREIGN KEY (request_id) REFERENCES emergency_requests (request_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ----------------------------------------------------------------------------
+-- 14. DONATION_ALLOCATIONS (Relationship Table)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS donation_allocations (
+    donation_id BIGINT UNSIGNED NOT NULL,
+    distribution_id BIGINT UNSIGNED NOT NULL,
+    allocated_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+    PRIMARY KEY (donation_id, distribution_id),
+    FOREIGN KEY (donation_id) REFERENCES donations (donation_id) ON DELETE CASCADE,
+    FOREIGN KEY (distribution_id) REFERENCES relief_distributions (distribution_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ----------------------------------------------------------------------------
+-- 15. DISTRIBUTION_RESOURCES (Relationship Table)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS distribution_resources (
+    distribution_id BIGINT UNSIGNED NOT NULL,
+    resource_id INT NOT NULL,
+    quantity DECIMAL(12,2) NOT NULL DEFAULT 0,
+    PRIMARY KEY (distribution_id, resource_id),
+    FOREIGN KEY (distribution_id) REFERENCES relief_distributions (distribution_id) ON DELETE CASCADE,
+    FOREIGN KEY (resource_id) REFERENCES resources (resource_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ----------------------------------------------------------------------------
+-- 16. WAREHOUSE_RESOURCES (Relationship Table)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS warehouse_resources (
+    warehouse_id INT NOT NULL,
+    resource_id INT NOT NULL,
+    quantity DECIMAL(12,2) NOT NULL DEFAULT 0,
+    PRIMARY KEY (warehouse_id, resource_id),
+    FOREIGN KEY (warehouse_id) REFERENCES warehouses (warehouse_id) ON DELETE CASCADE,
+    FOREIGN KEY (resource_id) REFERENCES resources (resource_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================================================
 -- Re-enable foreign key checks
 SET FOREIGN_KEY_CHECKS = 1;

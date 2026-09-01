@@ -12,14 +12,15 @@ class TeamManagementController extends Controller
     public function index(): JsonResponse
     {
         $assignments = TeamManagement::latest()->get();
+
         return response()->json(['data' => $assignments]);
     }
 
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'team_id' => 'required|integer',
-            'request_id' => 'required|integer',
+            'team_id' => 'required|integer|exists:rescue_teams,team_id',
+            'request_id' => 'required|integer|exists:emergency_requests,request_id',
             'status' => 'required|string|max:50',
         ]);
 
@@ -47,6 +48,7 @@ class TeamManagementController extends Controller
     public function destroy(TeamManagement $assignment): JsonResponse
     {
         $assignment->delete();
+
         return response()->json(null, 204);
     }
 }

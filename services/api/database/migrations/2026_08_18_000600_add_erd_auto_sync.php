@@ -10,19 +10,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table): void {
-            if (!Schema::hasColumn('users', 'user_id')) {
+            if (! Schema::hasColumn('users', 'user_id')) {
                 $table->unsignedBigInteger('user_id')->nullable()->index()->after('id');
             }
-            if (!Schema::hasColumn('users', 'full_name')) {
+            if (! Schema::hasColumn('users', 'full_name')) {
                 $table->string('full_name', 150)->nullable()->after('name');
             }
-            if (!Schema::hasColumn('users', 'phone')) {
+            if (! Schema::hasColumn('users', 'phone')) {
                 $table->string('phone', 30)->nullable()->default('01700000000')->after('email');
             }
-            if (!Schema::hasColumn('users', 'status')) {
+            if (! Schema::hasColumn('users', 'status')) {
                 $table->string('status', 50)->default('active')->after('password');
             }
-            if (!Schema::hasColumn('users', 'role_id')) {
+            if (! Schema::hasColumn('users', 'role_id')) {
                 $table->integer('role_id')->default(2)->after('role');
             }
         });
@@ -38,8 +38,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (DB::getDriverName() === 'mysql') {
-            DB::unprepared('DROP TRIGGER IF EXISTS trg_sync_user_to_erd');
-        }
+        // Compatibility columns are retained on rollback because other lab SQL
+        // files may still reference them.
     }
 };
