@@ -27,34 +27,12 @@ return new class extends Migration
             }
         });
 
+        // Backfill existing rows: user_id = id, full_name = name
         DB::statement('UPDATE users SET user_id = id, full_name = name WHERE user_id IS NULL OR full_name IS NULL');
 
+        // Drop legacy trigger if it exists (new registrations handled by Laravel model booted())
         if (DB::getDriverName() === 'mysql') {
-            DB::unprepared('
-                DROP TRIGGER IF EXISTS trg_sync_user_to_erd;
-                CREATE TRIGGER trg_sync_user_to_erd BEFORE INSERT ON users
-                FOR EACH ROW
-                BEGIN
-                    IF NEW.full_name IS NULL THEN
-                        SET NEW.full_name = NEW.name;
-                    END IF;
-                    IF NEW.role_id IS NULL THEN
-                        SET NEW.role_id = CASE NEW.role
-                            WHEN "admin" THEN 1
-                            WHEN "citizen" THEN 2
-                            WHEN "volunteer" THEN 3
-                            WHEN "donor" THEN 4
-                            ELSE 2
-                        END;
-                    END IF;
-                    IF NEW.phone IS NULL THEN
-                        SET NEW.phone = "01700000000";
-                    END IF;
-                    IF NEW.status IS NULL THEN
-                        SET NEW.status = "active";
-                    END IF;
-                END;
-            ');
+            DB::unprepared('DROP TRIGGER IF EXISTS trg_sync_user_to_erd');
         }
     }
 
