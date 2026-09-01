@@ -33,10 +33,10 @@ export function FieldGroup({
       {label || description ? (
         <div className="space-y-0.5">
           {label ? (
-            <div className="text-sm leading-none font-medium">
+            <div className="inline-flex items-center gap-1 text-sm leading-none font-medium">
               {label}
               {required ? (
-                <span className="ml-1 text-danger" aria-hidden="true">
+                <span className="text-danger" aria-hidden="true">
                   *
                 </span>
               ) : null}

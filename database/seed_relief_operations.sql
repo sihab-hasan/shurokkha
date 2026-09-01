@@ -57,16 +57,48 @@ INSERT INTO warehouses (warehouse_id, warehouse_name, location_id, manager_id) V
 -- 4. Seed Donations (relief goods and cash received for the flood response)
 -- ----------------------------------------------------------------------------
 TRUNCATE TABLE donations;
-INSERT INTO donations (donation_id, donation_kind, amount, status) VALUES
-(1, 'Rice (5kg pack)', 2500.00, 'stored'),
-(2, 'Drinking Water (L)', 8000.00, 'distributed'),
-(3, 'Tarpaulin Sheet', 1200.00, 'stored'),
-(4, 'Medicine Kit', 650.00, 'received'),
-(5, 'Dry Food Packet', 4500.00, 'distributed'),
-(6, 'Blanket', 900.00, 'received'),
-(7, 'Saline & ORS Box', 750.00, 'stored'),
-(8, 'Cash Relief Fund (BDT)', 250000.00, 'received'),
-(9, 'Baby Food & Milk', 320.00, 'stored'),
-(10, 'Emergency Lantern & Torch', 200.00, 'distributed');
+INSERT INTO donations (donation_id, user_id, donation_kind, amount, status) VALUES
+(1, 4, 'Rice (5kg pack)', 2500.00, 'stored'),
+(2, 4, 'Drinking Water (L)', 8000.00, 'distributed'),
+(3, 4, 'Tarpaulin Sheet', 1200.00, 'stored'),
+(4, 4, 'Medicine Kit', 650.00, 'received'),
+(5, 4, 'Dry Food Packet', 4500.00, 'distributed'),
+(6, 4, 'Blanket', 900.00, 'received'),
+(7, 4, 'Saline & ORS Box', 750.00, 'stored'),
+(8, 4, 'Cash Relief Fund (BDT)', 250000.00, 'received'),
+(9, 4, 'Baby Food & Milk', 320.00, 'stored'),
+(10, 4, 'Emergency Lantern & Torch', 200.00, 'distributed');
+
+TRUNCATE TABLE resources;
+INSERT INTO resources (resource_id, resource_name, category_id, unit) VALUES
+(1, 'Rice', 1, 'kg'),
+(2, 'Drinking Water', 1, 'litre'),
+(3, 'Medicine Kit', 2, 'kit'),
+(4, 'Blanket', 3, 'piece');
+
+TRUNCATE TABLE warehouse_resources;
+INSERT INTO warehouse_resources (warehouse_id, resource_id, quantity) VALUES
+(1, 1, 5000), (1, 2, 12000), (1, 3, 400),
+(2, 1, 3000), (2, 4, 900), (3, 2, 7000);
+
+TRUNCATE TABLE relief_distributions;
+INSERT INTO relief_distributions
+    (distribution_id, area_id, warehouse_id, shelter_id, status, delivered_at)
+VALUES
+(1, 1, 1, 1, 'delivered', '2026-08-30 18:00:00'),
+(2, 3, 3, 3, 'in_transit', NULL),
+(3, 5, 2, 6, 'planned', NULL);
+
+TRUNCATE TABLE distribution_requests;
+INSERT INTO distribution_requests (distribution_id, request_id) VALUES
+(1, 1), (2, 2), (3, 3);
+
+TRUNCATE TABLE donation_allocations;
+INSERT INTO donation_allocations (donation_id, distribution_id, allocated_amount) VALUES
+(1, 1, 1000), (2, 1, 3000), (4, 2, 250), (5, 3, 1500);
+
+TRUNCATE TABLE distribution_resources;
+INSERT INTO distribution_resources (distribution_id, resource_id, quantity) VALUES
+(1, 1, 1000), (1, 2, 3000), (2, 3, 250), (3, 1, 1500);
 
 SET FOREIGN_KEY_CHECKS = 1;

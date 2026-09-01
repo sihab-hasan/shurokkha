@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Shelter extends Model
 {
@@ -23,5 +24,10 @@ class Shelter extends Model
     public function affectedArea(): BelongsTo
     {
         return $this->belongsTo(AffectedArea::class, 'area_id', 'area_id');
+    }
+
+    public function distributions(): HasMany
+    {
+        return $this->hasMany(ReliefDistribution::class, 'shelter_id', 'shelter_id');
     }
 }

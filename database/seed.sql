@@ -42,11 +42,11 @@ INSERT INTO disasters (disaster_id, disaster_name, severity, status, start_datet
 -- 4. Seed Emergency Requests
 -- ----------------------------------------------------------------------------
 TRUNCATE TABLE emergency_requests;
-INSERT INTO emergency_requests (request_id, user_id, priority, status, request_at) VALUES
-(1, 2, 'critical', 'in_progress', '2026-08-30 14:30:00'),
-(2, 3, 'critical', 'pending', '2026-08-30 16:15:00'),
-(3, 2, 'high', 'rescued', '2026-08-30 17:00:00'),
-(4, 3, 'normal', 'closed', '2026-08-29 11:20:00');
+INSERT INTO emergency_requests (request_id, user_id, area_id, priority, status, request_at) VALUES
+(1, 2, 1, 'critical', 'in_progress', '2026-08-30 14:30:00'),
+(2, 3, 3, 'critical', 'pending', '2026-08-30 16:15:00'),
+(3, 2, 2, 'high', 'rescued', '2026-08-30 17:00:00'),
+(4, 3, 4, 'normal', 'closed', '2026-08-29 11:20:00');
 
 -- ----------------------------------------------------------------------------
 -- 5. Seed Affected Areas

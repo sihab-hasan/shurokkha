@@ -8,6 +8,8 @@ use App\Enums\AssistanceRequestType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AssistanceRequest extends Model
@@ -15,11 +17,13 @@ class AssistanceRequest extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'emergency_requests';
+
     protected $primaryKey = 'request_id';
 
     protected $fillable = [
         'request_id',
         'user_id',
+        'area_id',
         'type',
         'priority',
         'description',
@@ -67,5 +71,20 @@ class AssistanceRequest extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function affectedArea(): BelongsTo
+    {
+        return $this->belongsTo(AffectedArea::class, 'area_id', 'area_id');
+    }
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(TeamManagement::class, 'request_id', 'request_id');
+    }
+
+    public function distributions(): BelongsToMany
+    {
+        return $this->belongsToMany(ReliefDistribution::class, 'distribution_requests', 'request_id', 'distribution_id');
     }
 }

@@ -11,6 +11,7 @@ class TeamManagement extends Model
     use HasFactory;
 
     protected $table = 'team_management';
+
     protected $primaryKey = 'assignment_id';
 
     protected $fillable = [
@@ -27,5 +28,10 @@ class TeamManagement extends Model
     public function team(): BelongsTo
     {
         return $this->belongsTo(RescueTeam::class, 'team_id', 'team_id');
+    }
+
+    public function request(): BelongsTo
+    {
+        return $this->belongsTo(AssistanceRequest::class, 'request_id', 'request_id');
     }
 }

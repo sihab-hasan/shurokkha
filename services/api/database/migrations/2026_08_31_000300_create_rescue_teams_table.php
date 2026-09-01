@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id('team_id');
             $table->string('team_name', 100);
             $table->string('team_type', 50);
-            $table->string('availability', 50)->default('available');
+            $table->string('availability', 50)->default('available')->index();
             $table->timestamps();
         });
     }

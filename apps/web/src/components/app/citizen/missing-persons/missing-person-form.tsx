@@ -235,7 +235,7 @@ export function MissingPersonForm({
         >
           <FormGrid columns={4}>
             <FieldGroup
-              className="md:col-span-2 xl:col-span-2"
+              className="col-span-1 md:col-span-2 lg:col-span-2"
               label={<Label htmlFor="missing-name">Full name</Label>}
               required
               error={fieldError("full_name")}
@@ -253,8 +253,8 @@ export function MissingPersonForm({
             </FieldGroup>
 
             <FieldGroup
+              className="col-span-1 md:col-span-1 lg:col-span-1"
               label={<Label htmlFor="missing-age">Age</Label>}
-              description="Approximate is okay."
               error={fieldError("age")}
             >
               <Input
@@ -271,6 +271,7 @@ export function MissingPersonForm({
             </FieldGroup>
 
             <FieldGroup
+              className="col-span-1 md:col-span-1 lg:col-span-1"
               label={<Label htmlFor="missing-gender">Gender</Label>}
               error={fieldError("gender")}
             >
@@ -293,7 +294,7 @@ export function MissingPersonForm({
             </FieldGroup>
 
             <FieldGroup
-              className="md:col-span-2 xl:col-span-4"
+              className="col-span-1 md:col-span-2 lg:col-span-4"
               label={<Label htmlFor="missing-photo">Recent photo</Label>}
               description="JPG, PNG, or WebP; maximum 5 MB. A clear, recent face photo works best."
               error={fieldError("photo")}
@@ -389,7 +390,7 @@ export function MissingPersonForm({
             </FieldGroup>
 
             <FieldGroup
-              className="md:col-span-2 xl:col-span-2"
+              className="col-span-1 md:col-span-2 lg:col-span-2"
               label={
                 <Label htmlFor="physical-description">
                   Physical description
@@ -411,7 +412,7 @@ export function MissingPersonForm({
             </FieldGroup>
 
             <FieldGroup
-              className="md:col-span-2 xl:col-span-2"
+              className="col-span-1 md:col-span-2 lg:col-span-2"
               label={
                 <Label htmlFor="distinguishing-features">
                   Distinguishing features

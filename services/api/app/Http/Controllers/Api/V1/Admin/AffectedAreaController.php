@@ -12,25 +12,28 @@ class AffectedAreaController extends Controller
     public function index(): JsonResponse
     {
         $areas = AffectedArea::latest()->get();
+
         return response()->json(['data' => $areas]);
     }
 
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'disaster_id' => 'required|integer',
-            'location_id' => 'required|integer',
+            'disaster_id' => 'required|integer|exists:disasters,disaster_id',
+            'location_id' => 'nullable|integer',
             'affected_population' => 'required|integer|min:0',
             'severity' => 'required|string|max:50',
         ]);
 
         $area = AffectedArea::create($validated);
+
         return response()->json(['data' => $area], 201);
     }
 
     public function destroy(AffectedArea $affectedArea): JsonResponse
     {
         $affectedArea->delete();
+
         return response()->json(null, 204);
     }
 }

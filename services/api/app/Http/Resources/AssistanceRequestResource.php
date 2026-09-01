@@ -11,6 +11,7 @@ class AssistanceRequestResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'area_id' => $this->area_id,
             'type' => $this->type->value,
             'priority' => $this->priority->value,
             'description' => $this->description,

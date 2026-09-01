@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('team_management', function (Blueprint $table) {
             $table->id('assignment_id');
-            $table->foreignId('team_id');
-            $table->foreignId('request_id');
-            $table->string('status', 50)->default('assigned');
+            $table->foreignId('team_id')->constrained('rescue_teams', 'team_id')->restrictOnDelete();
+            $table->foreignId('request_id')->constrained('emergency_requests', 'request_id')->cascadeOnDelete();
+            $table->string('status', 50)->default('assigned')->index();
             $table->dateTime('assignment_at')->useCurrent();
             $table->timestamps();
         });
