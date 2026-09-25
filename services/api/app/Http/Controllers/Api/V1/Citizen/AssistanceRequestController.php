@@ -17,9 +17,20 @@ class AssistanceRequestController extends Controller
     public function index(ListAssistanceRequestsRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $userId = $request->user()->user_id ?? $request->user()->id;
+        $userId  = $request->user()->user_id ?? $request->user()->id;
+        $perPage = max(1, (int) ($validated['per_page'] ?? 10));
+        $page    = max(1, (int) ($validated['page'] ?? 1));
+        $offset  = ($page - 1) * $perPage;
 
-        $requests = DB::select(<<<'SQL'
+        // Total count for pagination meta
+        $countRow = DB::selectOne(
+            'SELECT COUNT(*) AS total FROM emergency_requests er WHERE er.user_id = ? AND er.deleted_at IS NULL',
+            [$userId]
+        );
+        $total    = (int) ($countRow->total ?? 0);
+        $lastPage = max(1, (int) ceil($total / $perPage));
+
+        $requests = DB::select(<<<SQL
             SELECT 
                 er.request_id AS id,
                 er.request_id,
@@ -39,16 +50,31 @@ class AssistanceRequestController extends Controller
                 er.created_at,
                 er.updated_at,
                 u.full_name AS citizen_name,
-                u.phone AS citizen_phone,
+                u.phone     AS citizen_phone,
                 aa.severity AS area_severity
             FROM emergency_requests er
             INNER JOIN users u ON er.user_id = u.user_id
             LEFT JOIN affected_areas aa ON er.area_id = aa.area_id
             WHERE er.user_id = ? AND er.deleted_at IS NULL
             ORDER BY er.created_at DESC
+            LIMIT {$perPage} OFFSET {$offset}
         SQL, [$userId]);
 
-        return response()->json(['data' => $requests]);
+        return response()->json([
+            'data'  => $requests,
+            'meta'  => [
+                'total'        => $total,
+                'per_page'     => $perPage,
+                'current_page' => $page,
+                'last_page'    => $lastPage,
+            ],
+            'links' => [
+                'first' => null,
+                'last'  => null,
+                'prev'  => $page > 1 ? $page - 1 : null,
+                'next'  => $page < $lastPage ? $page + 1 : null,
+            ],
+        ]);
     }
 
     /**

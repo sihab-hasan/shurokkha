@@ -20,9 +20,36 @@ class MissingPersonReportController extends Controller
     public function index(ListMissingPersonReportsRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $userId = $request->user()->user_id ?? $request->user()->id;
+        $userId    = $request->user()->user_id ?? $request->user()->id;
+        $perPage   = max(1, (int) ($validated['per_page'] ?? 10));
+        $page      = max(1, (int) ($validated['page'] ?? 1));
+        $offset    = ($page - 1) * $perPage;
 
-        $reports = DB::select(<<<'SQL'
+        // Build optional WHERE clauses for search / status filter
+        $whereClauses = ['mpr.user_id = ?', 'mpr.deleted_at IS NULL'];
+        $bindings     = [$userId];
+
+        if (! empty($validated['search'])) {
+            $whereClauses[] = '(mpr.full_name LIKE ? OR mpr.last_seen_location LIKE ?)';
+            $like = '%' . $validated['search'] . '%';
+            $bindings[]     = $like;
+            $bindings[]     = $like;
+        }
+
+        if (! empty($validated['status'])) {
+            $whereClauses[] = 'mpr.status = ?';
+            $bindings[]     = $validated['status'];
+        }
+
+        $where = implode(' AND ', $whereClauses);
+
+        // Total count for pagination meta
+        $countRow = DB::selectOne("SELECT COUNT(*) AS total FROM missing_person_reports mpr WHERE {$where}", $bindings);
+        $total    = (int) ($countRow->total ?? 0);
+        $lastPage = max(1, (int) ceil($total / $perPage));
+
+        // Paginated data
+        $reports = DB::select(<<<SQL
             SELECT 
                 mpr.id,
                 mpr.user_id,
@@ -43,14 +70,29 @@ class MissingPersonReportController extends Controller
                 mpr.created_at,
                 mpr.updated_at,
                 u.full_name AS reporter_name,
-                u.email AS reporter_email
+                u.email    AS reporter_email
             FROM missing_person_reports mpr
             INNER JOIN users u ON mpr.user_id = u.id
-            WHERE mpr.user_id = ? AND mpr.deleted_at IS NULL
+            WHERE {$where}
             ORDER BY mpr.created_at DESC
-        SQL, [$userId]);
+            LIMIT {$perPage} OFFSET {$offset}
+        SQL, $bindings);
 
-        return response()->json(['data' => $reports]);
+        return response()->json([
+            'data'  => $reports,
+            'meta'  => [
+                'total'        => $total,
+                'per_page'     => $perPage,
+                'current_page' => $page,
+                'last_page'    => $lastPage,
+            ],
+            'links' => [
+                'first' => null,
+                'last'  => null,
+                'prev'  => $page > 1 ? $page - 1 : null,
+                'next'  => $page < $lastPage ? $page + 1 : null,
+            ],
+        ]);
     }
 
     /**
