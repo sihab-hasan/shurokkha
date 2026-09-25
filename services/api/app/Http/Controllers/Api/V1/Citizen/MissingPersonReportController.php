@@ -2,154 +2,361 @@
 
 namespace App\Http\Controllers\Api\V1\Citizen;
 
-use App\Enums\MissingPersonStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Citizen\MissingPerson\ListMissingPersonReportsRequest;
 use App\Http\Requests\Citizen\MissingPerson\StoreMissingPersonReport;
 use App\Http\Requests\Citizen\MissingPerson\UpdateMissingPersonReport;
-use App\Http\Resources\MissingPersonReportResource;
-use App\Models\MissingPersonReport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MissingPersonReportController extends Controller
 {
-    public function index(ListMissingPersonReportsRequest $request): AnonymousResourceCollection
+    /**
+     * 1. Fetch missing person reports using 100% Raw SQL with user JOIN.
+     */
+    public function index(ListMissingPersonReportsRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $query = MissingPersonReport::query()
-            ->where('user_id', $request->user()->id)
-            ->latest('created_at');
+        $userId    = $request->user()->user_id ?? $request->user()->id;
+        $perPage   = max(1, (int) ($validated['per_page'] ?? 10));
+        $page      = max(1, (int) ($validated['page'] ?? 1));
+        $offset    = ($page - 1) * $perPage;
 
-        if (! empty($validated['status'])) {
-            $query->where('status', $validated['status']);
-        }
+        // Build optional WHERE clauses for search / status filter
+        $whereClauses = ['mpr.user_id = ?', 'mpr.deleted_at IS NULL'];
+        $bindings     = [$userId];
 
         if (! empty($validated['search'])) {
-            $search = $validated['search'];
-            $query->where(function ($query) use ($search): void {
-                $query->where('full_name', 'like', "%{$search}%")
-                    ->orWhere('last_seen_location', 'like', "%{$search}%");
-            });
+            $whereClauses[] = '(mpr.full_name LIKE ? OR mpr.last_seen_location LIKE ?)';
+            $like = '%' . $validated['search'] . '%';
+            $bindings[]     = $like;
+            $bindings[]     = $like;
         }
 
-        return MissingPersonReportResource::collection(
-            $query->paginate($validated['per_page'] ?? 10)->withQueryString(),
-        );
+        if (! empty($validated['status'])) {
+            $whereClauses[] = 'mpr.status = ?';
+            $bindings[]     = $validated['status'];
+        }
+
+        $where = implode(' AND ', $whereClauses);
+
+        // Total count for pagination meta
+        $countRow = DB::selectOne("SELECT COUNT(*) AS total FROM missing_person_reports mpr WHERE {$where}", $bindings);
+        $total    = (int) ($countRow->total ?? 0);
+        $lastPage = max(1, (int) ceil($total / $perPage));
+
+        // Paginated data
+        $reports = DB::select(<<<SQL
+            SELECT 
+                mpr.id,
+                mpr.user_id,
+                mpr.full_name,
+                mpr.age,
+                mpr.gender,
+                mpr.photo_path,
+                mpr.physical_description,
+                mpr.distinguishing_features,
+                mpr.last_seen_at,
+                mpr.last_seen_location,
+                mpr.latitude,
+                mpr.longitude,
+                mpr.contact_phone,
+                mpr.status,
+                mpr.found_at,
+                mpr.closed_at,
+                mpr.created_at,
+                mpr.updated_at,
+                u.full_name AS reporter_name,
+                u.email    AS reporter_email
+            FROM missing_person_reports mpr
+            INNER JOIN users u ON mpr.user_id = u.id
+            WHERE {$where}
+            ORDER BY mpr.created_at DESC
+            LIMIT {$perPage} OFFSET {$offset}
+        SQL, $bindings);
+
+        return response()->json([
+            'data'  => $reports,
+            'meta'  => [
+                'total'        => $total,
+                'per_page'     => $perPage,
+                'current_page' => $page,
+                'last_page'    => $lastPage,
+            ],
+            'links' => [
+                'first' => null,
+                'last'  => null,
+                'prev'  => $page > 1 ? $page - 1 : null,
+                'next'  => $page < $lastPage ? $page + 1 : null,
+            ],
+        ]);
     }
 
+    /**
+     * 2. Store missing person report using 100% Raw SQL INSERT.
+     */
     public function store(StoreMissingPersonReport $request): JsonResponse
     {
         $validated = $request->validated();
-        unset($validated['photo']);
+        $userId = $request->user()->user_id ?? $request->user()->id;
+        $id = (string) Str::ulid();
+        $photoPath = null;
 
         if ($request->hasFile('photo')) {
-            $validated['photo_path'] = $request->file('photo')->store('missing-persons', 'local');
+            $photoPath = $request->file('photo')->store('missing-persons', 'local');
         }
 
-        $report = MissingPersonReport::query()->create([
-            ...$validated,
-            'user_id' => $request->user()->id,
-            'status' => MissingPersonStatus::Reported,
+        $now = now();
+
+        DB::insert(<<<'SQL'
+            INSERT INTO missing_person_reports (
+                id,
+                user_id,
+                full_name,
+                age,
+                gender,
+                photo_path,
+                physical_description,
+                distinguishing_features,
+                last_seen_at,
+                last_seen_location,
+                latitude,
+                longitude,
+                contact_phone,
+                status,
+                created_at,
+                updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        SQL, [
+            $id,
+            $userId,
+            $validated['full_name'],
+            $validated['age'] ?? null,
+            $validated['gender'] ?? null,
+            $photoPath,
+            $validated['physical_description'] ?? null,
+            $validated['distinguishing_features'] ?? null,
+            $validated['last_seen_at'],
+            $validated['last_seen_location'],
+            $validated['latitude'] ?? null,
+            $validated['longitude'] ?? null,
+            $validated['contact_phone'],
+            'reported',
+            $now,
+            $now,
         ]);
 
-        return (new MissingPersonReportResource($report))
-            ->response()
-            ->setStatusCode(201);
+        $created = DB::selectOne(<<<'SQL'
+            SELECT * FROM missing_person_reports WHERE id = ?
+        SQL, [$id]);
+
+        return response()->json(['data' => $created], 201);
     }
 
-    public function show(MissingPersonReport $missingPersonReport): MissingPersonReportResource
+    /**
+     * 3. Show single report details using 100% Raw SQL with User JOIN.
+     */
+    public function show(string $missingPersonReport): JsonResponse
     {
-        Gate::authorize('view', $missingPersonReport);
+        $userId = auth()->id();
 
-        return new MissingPersonReportResource($missingPersonReport);
+        $record = DB::selectOne(<<<'SQL'
+            SELECT 
+                mpr.*,
+                u.full_name AS reporter_name,
+                u.email AS reporter_email
+            FROM missing_person_reports mpr
+            INNER JOIN users u ON mpr.user_id = u.id
+            WHERE mpr.id = ? AND mpr.deleted_at IS NULL
+        SQL, [$missingPersonReport]);
+
+        if (! $record) {
+            return response()->json(['message' => 'Report not found'], 404);
+        }
+
+        if ($record->user_id !== $userId && auth()->user()?->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        return response()->json(['data' => $record]);
     }
 
-
-    public function photo(MissingPersonReport $missingPersonReport)
+    /**
+     * 4. Retrieve photo.
+     */
+    public function photo(string $missingPersonReport)
     {
-        Gate::authorize('view', $missingPersonReport);
+        $userId = auth()->id();
+
+        $record = DB::selectOne(<<<'SQL'
+            SELECT photo_path, user_id FROM missing_person_reports WHERE id = ? AND deleted_at IS NULL
+        SQL, [$missingPersonReport]);
+
+        if (! $record) {
+            abort(404, 'Report not found.');
+        }
+
+        if ($record->user_id !== $userId && auth()->user()?->role !== 'admin') {
+            abort(403, 'Forbidden');
+        }
 
         abort_if(
-            $missingPersonReport->photo_path === null
-                || ! Storage::disk('local')->exists($missingPersonReport->photo_path),
+            $record->photo_path === null || ! Storage::disk('local')->exists($record->photo_path),
             404,
             'Photo not found.',
         );
 
         return Storage::disk('local')->response(
-            $missingPersonReport->photo_path,
+            $record->photo_path,
             null,
             ['Cache-Control' => 'private, max-age=3600'],
         );
     }
 
-    public function update(
-        UpdateMissingPersonReport $request,
-        MissingPersonReport $missingPersonReport,
-    ): MissingPersonReportResource {
-        Gate::authorize('update', $missingPersonReport);
-        $this->ensureMutable($missingPersonReport);
-
+    /**
+     * 5. Update missing person report via 100% Raw SQL UPDATE.
+     */
+    public function update(UpdateMissingPersonReport $request, string $missingPersonReport): JsonResponse
+    {
+        $userId = auth()->id();
         $validated = $request->validated();
-        $removePhoto = (bool) ($validated['remove_photo'] ?? false);
-        unset($validated['photo'], $validated['remove_photo']);
 
-        if ($request->hasFile('photo')) {
-            if ($missingPersonReport->photo_path) {
-                Storage::disk('local')->delete($missingPersonReport->photo_path);
-            }
-            $validated['photo_path'] = $request->file('photo')->store('missing-persons', 'local');
-        } elseif ($removePhoto && $missingPersonReport->photo_path) {
-            Storage::disk('local')->delete($missingPersonReport->photo_path);
-            $validated['photo_path'] = null;
+        $existing = DB::selectOne(<<<'SQL'
+            SELECT * FROM missing_person_reports WHERE id = ? AND deleted_at IS NULL
+        SQL, [$missingPersonReport]);
+
+        if (! $existing) {
+            return response()->json(['message' => 'Report not found'], 404);
         }
 
-        $missingPersonReport->update($validated);
+        if ($existing->user_id !== $userId && auth()->user()?->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
 
-        return new MissingPersonReportResource($missingPersonReport->refresh());
+        if (in_array($existing->status, ['located', 'closed', 'rejected'], true)) {
+            return response()->json(['message' => 'This missing-person report can no longer be changed.'], 409);
+        }
+
+        $photoPath = $existing->photo_path;
+        $removePhoto = (bool) ($validated['remove_photo'] ?? false);
+
+        if ($request->hasFile('photo')) {
+            if ($photoPath && Storage::disk('local')->exists($photoPath)) {
+                Storage::disk('local')->delete($photoPath);
+            }
+            $photoPath = $request->file('photo')->store('missing-persons', 'local');
+        } elseif ($removePhoto && $photoPath) {
+            if (Storage::disk('local')->exists($photoPath)) {
+                Storage::disk('local')->delete($photoPath);
+            }
+            $photoPath = null;
+        }
+
+        DB::update(<<<'SQL'
+            UPDATE missing_person_reports
+            SET 
+                full_name = COALESCE(?, full_name),
+                age = COALESCE(?, age),
+                gender = COALESCE(?, gender),
+                photo_path = ?,
+                physical_description = COALESCE(?, physical_description),
+                distinguishing_features = COALESCE(?, distinguishing_features),
+                last_seen_at = COALESCE(?, last_seen_at),
+                last_seen_location = COALESCE(?, last_seen_location),
+                latitude = COALESCE(?, latitude),
+                longitude = COALESCE(?, longitude),
+                contact_phone = COALESCE(?, contact_phone),
+                updated_at = ?
+            WHERE id = ?
+        SQL, [
+            $validated['full_name'] ?? null,
+            $validated['age'] ?? null,
+            $validated['gender'] ?? null,
+            $photoPath,
+            $validated['physical_description'] ?? null,
+            $validated['distinguishing_features'] ?? null,
+            $validated['last_seen_at'] ?? null,
+            $validated['last_seen_location'] ?? null,
+            $validated['latitude'] ?? null,
+            $validated['longitude'] ?? null,
+            $validated['contact_phone'] ?? null,
+            now(),
+            $missingPersonReport,
+        ]);
+
+        $updated = DB::selectOne(<<<'SQL'
+            SELECT * FROM missing_person_reports WHERE id = ?
+        SQL, [$missingPersonReport]);
+
+        return response()->json(['data' => $updated]);
     }
 
-    public function destroy(MissingPersonReport $missingPersonReport): JsonResponse
+    /**
+     * 6. Delete missing person report via 100% Raw SQL (Soft Delete).
+     */
+    public function destroy(string $missingPersonReport): JsonResponse
     {
-        Gate::authorize('delete', $missingPersonReport);
-        $missingPersonReport->delete();
+        $userId = auth()->id();
 
-        return response()->json(status: 204);
+        DB::update(<<<'SQL'
+            UPDATE missing_person_reports
+            SET deleted_at = ?, updated_at = ?
+            WHERE id = ? AND user_id = ?
+        SQL, [now(), now(), $missingPersonReport, $userId]);
+
+        return response()->json(null, 204);
     }
 
-    public function close(Request $request, MissingPersonReport $missingPersonReport): MissingPersonReportResource
+    /**
+     * 7. Close missing person report via 100% Raw SQL UPDATE.
+     */
+    public function close(Request $request, string $missingPersonReport): JsonResponse
     {
-        Gate::authorize('update', $missingPersonReport);
-        $this->ensureMutable($missingPersonReport);
+        $userId = auth()->id();
+
+        $existing = DB::selectOne(<<<'SQL'
+            SELECT * FROM missing_person_reports WHERE id = ? AND deleted_at IS NULL
+        SQL, [$missingPersonReport]);
+
+        if (! $existing) {
+            return response()->json(['message' => 'Report not found'], 404);
+        }
+
+        if ($existing->user_id !== $userId && auth()->user()?->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        if (in_array($existing->status, ['located', 'closed', 'rejected'], true)) {
+            return response()->json(['message' => 'This missing-person report can no longer be changed.'], 409);
+        }
 
         $validated = $request->validate([
             'located' => ['sometimes', 'boolean'],
         ]);
         $located = (bool) ($validated['located'] ?? false);
+        $status = $located ? 'located' : 'closed';
+        $now = now();
 
-        $missingPersonReport->update([
-            'status' => $located ? MissingPersonStatus::Located : MissingPersonStatus::Closed,
-            'found_at' => $located ? now() : null,
-            'closed_at' => now(),
+        DB::update(<<<'SQL'
+            UPDATE missing_person_reports
+            SET status = ?, found_at = ?, closed_at = ?, updated_at = ?
+            WHERE id = ?
+        SQL, [
+            $status,
+            $located ? $now : null,
+            $now,
+            $now,
+            $missingPersonReport,
         ]);
 
-        return new MissingPersonReportResource($missingPersonReport->refresh());
-    }
+        $updated = DB::selectOne(<<<'SQL'
+            SELECT * FROM missing_person_reports WHERE id = ?
+        SQL, [$missingPersonReport]);
 
-    private function ensureMutable(MissingPersonReport $report): void
-    {
-        abort_if(
-            in_array($report->status, [
-                MissingPersonStatus::Located,
-                MissingPersonStatus::Closed,
-                MissingPersonStatus::Rejected,
-            ], true),
-            409,
-            'This missing-person report can no longer be changed.',
-        );
+        return response()->json(['data' => $updated]);
     }
 }
