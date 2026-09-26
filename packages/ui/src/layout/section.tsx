@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react"
+import type { ComponentProps, ReactNode } from "react"
 
 import { cn } from "../lib/utils"
 
@@ -6,6 +6,8 @@ export type SectionSpacing = "sm" | "md" | "lg" | "none"
 
 export type SectionProps = ComponentProps<"section"> & {
   spacing?: SectionSpacing
+  title?: ReactNode
+  description?: ReactNode
 }
 
 const spacingClasses: Record<SectionSpacing, string> = {
@@ -19,10 +21,22 @@ export function Section({
   children,
   className,
   spacing = "md",
+  title,
+  description,
   ...props
 }: SectionProps) {
   return (
     <section className={cn(spacingClasses[spacing], className)} {...props}>
+      {(title || description) && (
+        <div className="mb-6 space-y-1">
+          {title && (
+            <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
+          )}
+          {description && (
+            <p className="text-sm text-muted-foreground">{description}</p>
+          )}
+        </div>
+      )}
       {children}
     </section>
   )

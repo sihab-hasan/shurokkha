@@ -1,19 +1,33 @@
 import * as React from "react"
 import { cn } from "../lib/utils"
 
+type MetricStripProps = React.HTMLAttributes<HTMLDivElement> & {
+  columns?: 2 | 3 | 4
+}
+
 export const MetricStrip = ({
   children,
-  columns = 4,
   className,
   ...props
-}: any) => (
-  <div
-    className={cn("grid gap-4 sm:grid-cols-2 lg:grid-cols-4", className)}
-    {...props}
-  >
+}: MetricStripProps) => (
+  <div className={cn("grid gap-4 sm:grid-cols-2 lg:grid-cols-4", className)} {...props}>
     {children}
   </div>
 )
+
+type MetricStripItemProps = React.HTMLAttributes<HTMLDivElement> & {
+  title?: React.ReactNode
+  label?: React.ReactNode
+  value?: React.ReactNode
+  detail?: React.ReactNode
+  icon?: React.ReactNode
+  trend?: {
+    value: number | string
+    direction?: "up" | "down" | "neutral"
+    label?: React.ReactNode
+    positive?: boolean
+  }
+}
 
 export const MetricStripItem = ({
   title,
@@ -24,7 +38,7 @@ export const MetricStripItem = ({
   trend,
   className,
   ...props
-}: any) => (
+}: MetricStripItemProps) => (
   <div
     className={cn(
       "rounded-xl border bg-card text-card-foreground shadow",
@@ -43,11 +57,14 @@ export const MetricStripItem = ({
         <p
           className={cn(
             "text-xs",
-            trend.positive ? "text-green-500" : "text-destructive"
+            trend.positive || trend.direction === "up"
+              ? "text-green-500"
+              : trend.direction === "neutral"
+                ? "text-muted-foreground"
+                : "text-destructive"
           )}
         >
-          {trend.value > 0 ? "+" : ""}
-          {trend.value}% {trend.label}
+          {trend.value} {trend.label}
         </p>
       )}
     </div>

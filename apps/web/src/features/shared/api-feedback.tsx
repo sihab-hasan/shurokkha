@@ -8,6 +8,11 @@ export function errorMessage(error: unknown, fallback = "Action failed.") {
   return fallback
 }
 
+type IssueInput =
+  | null
+  | string
+  | { id?: string; field?: string; message?: string }
+
 export function issuesFromError(error: unknown): ValidationIssue[] {
   if (!error || typeof error !== "object") return []
   const candidates =
@@ -15,24 +20,30 @@ export function issuesFromError(error: unknown): ValidationIssue[] {
     (error as { issues?: unknown; errors?: unknown }).errors
   if (!Array.isArray(candidates)) return []
   return candidates
-    .map((item, index) => {
+    .map((item, index): IssueInput => {
       if (!item) return null
-      if (typeof item === "string") return { id: `err-${index}`, message: item }
+      if (typeof item === "string") return item
       if (typeof item === "object" && "message" in item) {
+        const source = item as {
+          field?: string
+          id?: string
+          message?: string
+        }
         return {
           id: String(
-            (item as { field?: string; id?: string }).field ??
-              (item as { field?: string; id?: string }).id ??
-              `err-${index}`
+            source.field ?? source.id ?? `err-${index}`
           ),
-          message: String(
-            (item as { message?: string }).message ?? "Invalid value"
-          ),
+          message: String(source.message ?? "Invalid value"),
         }
       }
       return null
     })
-    .filter((v): v is ValidationIssue => v !== null)
+    .filter((v): v is string | { id: string; message: string } => v !== null)
+    .map((v): ValidationIssue =>
+      typeof v === "string"
+        ? { id: `err-${v.slice(0, 16)}`, message: v }
+        : v
+    )
 }
 
 export function ApiFailure({

@@ -5,37 +5,38 @@ import { cn } from "../lib/utils"
 // Shared types
 // ---------------------------------------------------------------------------
 
-export type ValidationIssue = { field?: string; message: string }
-export type AuthStateTone = "info" | "success" | "warning" | "error"
+export type ValidationIssue = { id?: string; field?: string; message: string }
+export type AuthStateTone =
+  | "neutral"
+  | "info"
+  | "success"
+  | "warning"
+  | "error"
+  | "danger"
+  | "critical"
+
+// ---------------------------------------------------------------------------
+// Permissive passthrough type — accepts arbitrary custom props (tone, icon,
+// title, actions, items, ...) while still extending HTMLAttributes. Used for
+// the wrapper components in this module that act as branded slots.
+// ---------------------------------------------------------------------------
+
+type PermissiveProps = React.HTMLAttributes<HTMLDivElement> & {
+  [key: string]: unknown
+}
 
 // ---------------------------------------------------------------------------
 // Simple passthrough wrappers — no custom props, safe to spread directly
 // ---------------------------------------------------------------------------
 
-export const ActivityFeed = (props: React.HTMLAttributes<HTMLDivElement>) => (
-  <div {...props} />
-)
-export const CollectionFooter = (
-  props: React.HTMLAttributes<HTMLDivElement>
-) => <div {...props} />
-export const CollectionList = (props: React.HTMLAttributes<HTMLDivElement>) => (
-  <div {...props} />
-)
-export const ConversationLayout = (
-  props: React.HTMLAttributes<HTMLDivElement>
-) => <div {...props} />
-export const ConversationList = (
-  props: React.HTMLAttributes<HTMLDivElement>
-) => <div {...props} />
-export const EntityStatus = (props: React.HTMLAttributes<HTMLDivElement>) => (
-  <div {...props} />
-)
-export const AuthState = (props: React.HTMLAttributes<HTMLDivElement>) => (
-  <div {...props} />
-)
-export const DataFreshness = (props: React.HTMLAttributes<HTMLDivElement>) => (
-  <div {...props} />
-)
+export const ActivityFeed = (props: PermissiveProps) => <div {...props} />
+export const CollectionFooter = (props: PermissiveProps) => <div {...props} />
+export const CollectionList = (props: PermissiveProps) => <div {...props} />
+export const ConversationLayout = (props: PermissiveProps) => <div {...props} />
+export const ConversationList = (props: PermissiveProps) => <div {...props} />
+export const EntityStatus = (props: PermissiveProps) => <div {...props} />
+export const AuthState = (props: PermissiveProps) => <div {...props} />
+export const DataFreshness = (props: PermissiveProps) => <div {...props} />
 export const AuthHeader = ({
   title,
   description,
@@ -53,24 +54,77 @@ export const AuthHeader = ({
     )}
   </div>
 )
-export const MessageThread = (props: React.HTMLAttributes<HTMLDivElement>) => (
+export const MessageThread = (props: PermissiveProps) => (
   <div className="space-y-4" {...props} />
 )
-export const NotificationItem = (
-  props: React.HTMLAttributes<HTMLDivElement>
-) => (
+export const NotificationItem = (props: PermissiveProps) => (
   <div
     className="flex items-start gap-4 border-b p-4 last:border-0"
     {...props}
   />
 )
-export const NotificationList = (
-  props: React.HTMLAttributes<HTMLDivElement>
-) => <div className="flex flex-col" {...props} />
-export const ProcessSteps = (props: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className="flex items-center gap-2" {...props} />
+export const NotificationList = (props: PermissiveProps) => (
+  <div className="flex flex-col" {...props} />
 )
-export const ReportViewer = (props: React.HTMLAttributes<HTMLDivElement>) => (
+interface ProcessStep {
+  id: string
+  title: React.ReactNode
+  description?: React.ReactNode
+  status?: "complete" | "current" | "upcoming" | "pending"
+}
+
+interface ProcessStepsProps extends React.HTMLAttributes<HTMLDivElement> {
+  steps?: ProcessStep[]
+  orientation?: "horizontal" | "vertical"
+  numbered?: boolean
+}
+
+export const ProcessSteps = ({
+  steps,
+  orientation = "vertical",
+  numbered = true,
+  className,
+  ...props
+}: ProcessStepsProps) => (
+  <div
+    className={cn(
+      orientation === "horizontal"
+        ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        : "flex flex-col gap-4",
+      className
+    )}
+    {...props}
+  >
+    {(steps ?? []).map((step, index) => (
+      <div key={step.id ?? index} className="flex items-start gap-3">
+        {numbered ? (
+          <span
+            className={cn(
+              "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+              step.status === "complete" &&
+                "bg-primary text-primary-foreground",
+              step.status === "current" &&
+                "bg-primary/20 text-primary ring-2 ring-primary",
+              (!step.status ||
+                step.status === "upcoming" ||
+                step.status === "pending") &&
+                "bg-muted text-muted-foreground"
+            )}
+          >
+            {index + 1}
+          </span>
+        ) : null}
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-medium">{step.title}</div>
+          {step.description && (
+            <p className="text-xs text-muted-foreground">{step.description}</p>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+)
+export const ReportViewer = (props: PermissiveProps) => (
   <div className="rounded-md border" {...props} />
 )
 interface CollectionGridProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -403,6 +457,7 @@ export const EntityHeader = ({
 interface EntitySummaryProps {
   title?: React.ReactNode
   description?: React.ReactNode
+  footer?: React.ReactNode
   children?: React.ReactNode
   className?: string
 }
@@ -410,6 +465,7 @@ interface EntitySummaryProps {
 export const EntitySummary = ({
   title,
   description,
+  footer,
   children,
   className,
 }: EntitySummaryProps) => (
@@ -433,6 +489,9 @@ export const EntitySummary = ({
       </div>
     )}
     {children}
+    {footer && (
+      <div className="border-t pt-4 text-sm text-muted-foreground">{footer}</div>
+    )}
   </div>
 )
 
@@ -482,10 +541,14 @@ interface WidgetFrameProps extends Omit<
   "title"
 > {
   title?: React.ReactNode
+  description?: React.ReactNode
+  actions?: React.ReactNode
 }
 
 export const WidgetFrame = ({
   title,
+  description,
+  actions,
   children,
   className,
   ...props
@@ -497,9 +560,15 @@ export const WidgetFrame = ({
     )}
     {...props}
   >
-    {title && (
-      <div className="border-b p-6 py-4">
-        <h3 className="font-semibold">{title}</h3>
+    {(title || description || actions) && (
+      <div className="flex items-start justify-between gap-3 border-b p-6 py-4">
+        <div className="min-w-0">
+          {title && <h3 className="font-semibold">{title}</h3>}
+          {description && (
+            <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+          )}
+        </div>
+        {actions && <div className="shrink-0">{actions}</div>}
       </div>
     )}
     <div className="p-6">{children}</div>
