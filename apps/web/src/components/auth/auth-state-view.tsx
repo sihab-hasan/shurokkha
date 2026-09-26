@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { AuthState, type AuthStateTone } from "@shurokkha/ui-patterns/auth"
+import { AuthState, type AuthStateTone } from "@shurokkha/ui/components/misc"
 import { buttonVariants } from "@shurokkha/ui/components/button"
 import { cn } from "@shurokkha/ui/lib/utils"
 

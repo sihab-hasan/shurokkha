@@ -22,7 +22,7 @@ const api = createShurokkhaApi({
 })
 
 await api.auth.login({
-  email: "citizen@example.com",
+  email: "user@example.com",
   password: "password123",
 })
 

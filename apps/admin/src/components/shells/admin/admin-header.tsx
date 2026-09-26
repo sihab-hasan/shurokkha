@@ -2,7 +2,7 @@
 
 import { Bell, Command, Search, ShieldCheck } from "lucide-react"
 
-import { WorkspaceShellHeader } from "@shurokkha/ui-patterns/layout"
+import { WorkspaceShellHeader } from "@shurokkha/ui/layout/workspace-shell-header"
 import { Badge } from "@shurokkha/ui/components/badge"
 import { Button } from "@shurokkha/ui/components/button"
 import {

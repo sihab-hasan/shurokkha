@@ -11,12 +11,12 @@ USE shurokkha_db;
 -- Purpose: Retrieve matching records that exist in both related tables.
 -- ============================================================================
 
--- 1.1 INNER JOIN: Get each Emergency Request with Citizen details
+-- 1.1 INNER JOIN: Get each Emergency Request with User details
 -- Shows which user submitted which emergency request.
-SELECT 
+SELECT
     er.request_id,
     u.user_id,
-    u.full_name AS citizen_name,
+    u.full_name AS requester_name,
     u.phone AS contact_number,
     u.email,
     er.priority,
@@ -63,7 +63,7 @@ ORDER BY er.request_at DESC;
 -- ============================================================================
 
 -- 2.1 LEFT JOIN: List ALL Users and their Emergency Requests (if any)
--- Shows citizens who requested help AND users/donors/admins who made 0 requests.
+-- Shows users who requested help AND users/admins who made 0 requests.
 SELECT 
     u.user_id,
     u.full_name,
@@ -125,7 +125,7 @@ ORDER BY u.user_id ASC;
 -- Purpose: Summarize data using COUNT, GROUP BY, HAVING, and ORDER BY.
 -- ============================================================================
 
--- 4.1 AGGREGATE: Count total Emergency Requests submitted by each Citizen
+-- 4.1 AGGREGATE: Count total Emergency Requests submitted by each User
 SELECT 
     u.user_id,
     u.full_name,

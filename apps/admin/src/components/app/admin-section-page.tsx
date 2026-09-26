@@ -24,14 +24,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@shurokkha/ui/components/card"
+import { CollectionGrid, CollectionView } from "@shurokkha/ui/components/misc"
 import {
-  CollectionGrid,
-  CollectionView,
-} from "@shurokkha/ui-patterns/collections"
-import { MetricStrip, MetricStripItem } from "@shurokkha/ui-patterns/dashboard"
-import { StatusBanner } from "@shurokkha/ui-patterns/feedback"
-import { ContentSection } from "@shurokkha/ui-patterns/layout"
-import { PageHeader } from "@shurokkha/ui-patterns/navigation"
+  MetricStrip,
+  MetricStripItem,
+} from "@shurokkha/ui/components/metric-strip"
+import { StatusBanner } from "@shurokkha/ui/components/status-banner"
+import { Section } from "@shurokkha/ui/layout/section"
+import { Container } from "@shurokkha/ui/layout/container"
+import { PageHeader } from "@shurokkha/ui/layout/page-header"
 import { OperationsWorkspace } from "@/components/app/operations-workspace"
 
 const sections = {
@@ -179,50 +180,52 @@ export function AdminSectionPage({ section }: AdminSectionPageProps) {
             />
           </MetricStrip>
 
-          <ContentSection
+          <Section
             title={`${config.title} overview`}
             description="This collection surface can switch to real cards, rows or a data table when the feature data contract is finalized."
           >
-            <CollectionView surface="card">
-              <CollectionGrid columns={3} className="p-4 sm:p-5">
-                {[
-                  "Priority queue",
-                  "Recent activity",
-                  "Operational health",
-                ].map((title, index) => (
-                  <Card key={title} className="shadow-none">
-                    <CardHeader>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                          <Icon />
-                        </span>
-                        <Badge
-                          variant={
-                            index === 0
-                              ? "destructive"
-                              : index === 1
-                                ? "secondary"
-                                : "outline"
-                          }
-                        >
-                          {index === 0 ? "Review" : "Ready"}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-base">{title}</CardTitle>
-                      <CardDescription>
-                        Reusable presentation shell with app-owned business
-                        content.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="text-sm text-muted-foreground">
-                      Connect this block to the relevant service when the module
-                      is implemented.
-                    </CardContent>
-                  </Card>
-                ))}
-              </CollectionGrid>
-            </CollectionView>
-          </ContentSection>
+            <Container>
+              <CollectionView surface="card">
+                <CollectionGrid columns={3} className="p-4 sm:p-5">
+                  {[
+                    "Priority queue",
+                    "Recent activity",
+                    "Operational health",
+                  ].map((title, index) => (
+                    <Card key={title} className="shadow-none">
+                      <CardHeader>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <Icon />
+                          </span>
+                          <Badge
+                            variant={
+                              index === 0
+                                ? "destructive"
+                                : index === 1
+                                  ? "secondary"
+                                  : "outline"
+                            }
+                          >
+                            {index === 0 ? "Review" : "Ready"}
+                          </Badge>
+                        </div>
+                        <CardTitle className="text-base">{title}</CardTitle>
+                        <CardDescription>
+                          Reusable presentation shell with app-owned business
+                          content.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="text-sm text-muted-foreground">
+                        Connect this block to the relevant service when the
+                        module is implemented.
+                      </CardContent>
+                    </Card>
+                  ))}
+                </CollectionGrid>
+              </CollectionView>
+            </Container>
+          </Section>
         </>
       )}
     </div>

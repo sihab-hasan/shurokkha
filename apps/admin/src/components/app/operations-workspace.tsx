@@ -33,7 +33,10 @@ import {
 } from "@shurokkha/ui/components/card"
 import { Input } from "@shurokkha/ui/components/input"
 import { Label } from "@shurokkha/ui/components/label"
-import { MetricStrip, MetricStripItem } from "@shurokkha/ui-patterns/dashboard"
+import {
+  MetricStrip,
+  MetricStripItem,
+} from "@shurokkha/ui/components/metric-strip"
 import { getShurokkhaApi } from "@/lib/api"
 
 // --- TYPE DEFINITIONS ---

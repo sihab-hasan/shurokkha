@@ -10,8 +10,8 @@ import {
   ShieldCheck,
 } from "lucide-react"
 
-import { ActivityFeed } from "@shurokkha/ui-patterns/activity"
-import { EntitySummary } from "@shurokkha/ui-patterns/entity"
+import { ActivityFeed } from "@shurokkha/ui/components/misc"
+import { EntitySummary } from "@shurokkha/ui/components/misc"
 import {
   Card,
   CardContent,

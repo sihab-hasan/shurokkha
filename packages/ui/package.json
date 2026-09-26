@@ -42,8 +42,11 @@
     "./postcss.config": "./postcss.config.mjs",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
+    "./layout": "./src/layout/index.ts",
+    "./layout/*": "./src/layout/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
-    "./providers/*": "./src/providers/*.tsx"
+    "./providers/*": "./src/providers/*.tsx",
+    "./icons/*": "./src/icons/*.tsx"
   },
   "license": "UNLICENSED",
   "sideEffects": [

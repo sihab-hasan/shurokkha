@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { ShieldCheck } from "lucide-react"
 
-import { WorkspaceShellSidebar } from "@shurokkha/ui-patterns/layout"
+import { WorkspaceShellSidebar } from "@shurokkha/ui/layout/workspace-shell-sidebar"
 
 import {
   adminPrimaryNavigation,

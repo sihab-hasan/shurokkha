@@ -1,7 +1,7 @@
-import { CommunityIcon } from "@shurokkha/icons/community-icon"
-import { MedicalIcon } from "@shurokkha/icons/medical-icon"
-import { SafetyIcon } from "@shurokkha/icons/safety-icon"
-import { ShelterIcon } from "@shurokkha/icons/shelter-icon"
+import { CommunityIcon } from "@shurokkha/ui/icons/community-icon"
+import { MedicalIcon } from "@shurokkha/ui/icons/medical-icon"
+import { SafetyIcon } from "@shurokkha/ui/icons/safety-icon"
+import { ShelterIcon } from "@shurokkha/ui/icons/shelter-icon"
 import { cn } from "@shurokkha/ui/lib/utils"
 
 import { BrandLogo } from "@/components/brand/brand-logo"

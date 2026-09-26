@@ -53,7 +53,18 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl bg-popover p-6 text-sm text-popover-foreground shadow-overlay ring-1 ring-foreground/5 duration-100 outline-none sm:max-w-md dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          // Three layers of overflow protection so the modal can never
+          // sprout a horizontal scrollbar:
+          // 1. `min-w-0` lets the grid item hosting our content shrink
+          //    below intrinsic width — without it, a single child with a
+          //    long unbroken string (URL, free-form description) would
+          //    force the popup wider than its `max-w-[calc(100%-2rem)]`.
+          // 2. `overflow-x-hidden` is the hard backstop: anything that
+          //    still tries to escape (raw <img>, <pre>, long inline code)
+          //    gets clipped instead of overflowing.
+          // 3. `max-w-[calc(100%-2rem)]` keeps the popup 1rem away from
+          //    each viewport edge on small screens.
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] min-w-0 -translate-x-1/2 -translate-y-1/2 gap-6 overflow-x-hidden rounded-xl bg-popover p-6 text-sm text-popover-foreground shadow-overlay ring-1 ring-foreground/5 duration-100 outline-none sm:max-w-md dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}

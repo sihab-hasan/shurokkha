@@ -1,10 +1,11 @@
-import { EmergencyHelpIcon } from "@shurokkha/icons/emergency-help-icon"
-import { NotificationIcon } from "@shurokkha/icons/notification-icon"
-import { ResourceIcon } from "@shurokkha/icons/resource-icon"
-import { VolunteerIcon } from "@shurokkha/icons/volunteer-icon"
-import { ContentContainer } from "@shurokkha/ui-patterns/layout"
-import { SectionHeader } from "@shurokkha/ui-patterns/navigation"
-import { ProcessSteps } from "@shurokkha/ui-patterns/progress"
+import { EmergencyHelpIcon } from "@shurokkha/ui/icons/emergency-help-icon"
+import { NotificationIcon } from "@shurokkha/ui/icons/notification-icon"
+import { ResourceIcon } from "@shurokkha/ui/icons/resource-icon"
+import { VolunteerIcon } from "@shurokkha/ui/icons/volunteer-icon"
+import { Section } from "@shurokkha/ui/layout/section"
+import { Container } from "@shurokkha/ui/layout/container"
+import { SectionHeader } from "@shurokkha/ui/layout/section-header"
+import { ProcessSteps } from "@shurokkha/ui/components/misc"
 import { Card, CardContent } from "@shurokkha/ui/components/card"
 
 const steps = [
@@ -45,22 +46,24 @@ const steps = [
 export function StepsSection() {
   return (
     <section className="bg-background py-12 sm:py-16 lg:py-20">
-      <ContentContainer className="py-0">
-        <SectionHeader
-          eyebrow="The core journey"
-          title="Four connected actions, supported by trusted context"
-          description="The experience guides people from understanding a situation to taking the next useful step without forcing them through disconnected systems."
-        />
-        <Card className="shadow-xs">
-          <CardContent className="py-5 sm:py-7">
-            <ProcessSteps
-              steps={steps}
-              orientation="horizontal"
-              numbered={false}
-            />
-          </CardContent>
-        </Card>
-      </ContentContainer>
+      <Section className="py-0">
+        <Container>
+          <SectionHeader
+            eyebrow="The core journey"
+            title="Four connected actions, supported by trusted context"
+            description="The experience guides people from understanding a situation to taking the next useful step without forcing them through disconnected systems."
+          />
+          <Card className="shadow-xs">
+            <CardContent className="py-5 sm:py-7">
+              <ProcessSteps
+                steps={steps}
+                orientation="horizontal"
+                numbered={false}
+              />
+            </CardContent>
+          </Card>
+        </Container>
+      </Section>
     </section>
   )
 }

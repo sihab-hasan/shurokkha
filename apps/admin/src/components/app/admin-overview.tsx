@@ -17,17 +17,17 @@ import {
 import { Button } from "@shurokkha/ui/components/button"
 import { Badge } from "@shurokkha/ui/components/badge"
 import { Separator } from "@shurokkha/ui/components/separator"
+import { DashboardGrid, WidgetFrame } from "@shurokkha/ui/components/misc"
 import {
-  DashboardGrid,
   KpiCard,
   MetricStrip,
   MetricStripItem,
-  WidgetFrame,
-} from "@shurokkha/ui-patterns/dashboard"
-import { StatusBanner } from "@shurokkha/ui-patterns/feedback"
-import { ContentSection } from "@shurokkha/ui-patterns/layout"
-import { PageHeader } from "@shurokkha/ui-patterns/navigation"
-import { ProcessSteps } from "@shurokkha/ui-patterns/progress"
+} from "@shurokkha/ui/components/metric-strip"
+import { StatusBanner } from "@shurokkha/ui/components/status-banner"
+import { Section } from "@shurokkha/ui/layout/section"
+import { Container } from "@shurokkha/ui/layout/container"
+import { PageHeader } from "@shurokkha/ui/layout/page-header"
+import { ProcessSteps } from "@shurokkha/ui/components/misc"
 
 const queues = [
   {
@@ -216,57 +216,59 @@ export function AdminOverview() {
         </WidgetFrame>
       </div>
 
-      <ContentSection
+      <Section
         title="Operational shortcuts"
         description="Shared entry points use the same patterns across the web and admin applications."
       >
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            {
-              title: "Operations map",
-              description: "Explore incidents, shelters and field coverage.",
-              icon: MapPinned,
-              href: "/operations",
-            },
-            {
-              title: "Shelter network",
-              description: "Capacity, readiness and verification status.",
-              icon: LifeBuoy,
-              href: "/shelters",
-            },
-            {
-              title: "People & access",
-              description: "Roles, identity and permissions review.",
-              icon: UsersRound,
-              href: "/people",
-            },
-            {
-              title: "Approvals",
-              description: "Review high-impact operational changes.",
-              icon: ClipboardCheck,
-              href: "/approvals",
-            },
-          ].map((item) => (
-            <Button
-              key={item.title}
-              variant="outline"
-              nativeButton={false}
-              render={<Link href={item.href} />}
-              className="h-auto justify-start gap-3 rounded-xl p-4 text-left"
-            >
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <item.icon />
-              </span>
-              <span className="min-w-0">
-                <span className="block font-semibold">{item.title}</span>
-                <span className="mt-1 block text-xs leading-relaxed font-normal whitespace-normal text-muted-foreground">
-                  {item.description}
+        <Container>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              {
+                title: "Operations map",
+                description: "Explore incidents, shelters and field coverage.",
+                icon: MapPinned,
+                href: "/operations",
+              },
+              {
+                title: "Shelter network",
+                description: "Capacity, readiness and verification status.",
+                icon: LifeBuoy,
+                href: "/shelters",
+              },
+              {
+                title: "People & access",
+                description: "Roles, identity and permissions review.",
+                icon: UsersRound,
+                href: "/people",
+              },
+              {
+                title: "Approvals",
+                description: "Review high-impact operational changes.",
+                icon: ClipboardCheck,
+                href: "/approvals",
+              },
+            ].map((item) => (
+              <Button
+                key={item.title}
+                variant="outline"
+                nativeButton={false}
+                render={<Link href={item.href} />}
+                className="h-auto justify-start gap-3 rounded-xl p-4 text-left"
+              >
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <item.icon />
                 </span>
-              </span>
-            </Button>
-          ))}
-        </div>
-      </ContentSection>
+                <span className="min-w-0">
+                  <span className="block font-semibold">{item.title}</span>
+                  <span className="mt-1 block text-xs leading-relaxed font-normal whitespace-normal text-muted-foreground">
+                    {item.description}
+                  </span>
+                </span>
+              </Button>
+            ))}
+          </div>
+        </Container>
+      </Section>
     </div>
   )
 }

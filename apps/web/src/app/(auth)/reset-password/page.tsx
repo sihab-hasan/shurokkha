@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { AuthHeader } from "@shurokkha/ui-patterns/auth"
+import { AuthHeader } from "@shurokkha/ui/components/misc"
 import { ResetPasswordForm } from "@/components/auth/forms/reset-password-form"
 
 const pageTitle = "Reset Password"

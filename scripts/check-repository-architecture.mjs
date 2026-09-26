@@ -128,7 +128,7 @@ for (const base of ["apps", "packages"]) {
 // PageContainer was removed: shells own semantic main elements.
 expectMissing(
   "packages/ui-patterns/src/layout/page-container.tsx",
-  "Removed PageContainer must not be reintroduced; use shell + ContentContainer."
+  "Removed PageContainer must not be reintroduced; use shell + Container."
 )
 
 // Dependency direction between shared visual layers.

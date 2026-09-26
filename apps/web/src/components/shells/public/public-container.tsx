@@ -1,4 +1,4 @@
-import { ContentContainer } from "@shurokkha/ui-patterns/layout"
+import { Container } from "@shurokkha/ui/layout/container"
 import { cn } from "@shurokkha/ui/lib/utils"
 
 export interface PublicContainerProps {
@@ -12,12 +12,14 @@ export interface PublicContainerProps {
  */
 export function PublicContainer({ children, className }: PublicContainerProps) {
   return (
-    <ContentContainer
-      size="default"
+    <Container
       padded={false}
-      className={cn("px-4 sm:px-6 lg:px-8", className)}
+      className={cn(
+        "mx-auto w-full max-w-[88rem] px-4 sm:px-6 lg:px-8",
+        className
+      )}
     >
       {children}
-    </ContentContainer>
+    </Container>
   )
 }

@@ -44,7 +44,7 @@ Imports use `@/* -> ./src/*`, so application code imports `@/components/...`, ne
 import { Button } from "@shurokkha/ui/components/button"
 import { cn } from "@shurokkha/ui/lib/utils"
 import { PageHeader } from "@shurokkha/ui-patterns/navigation"
-import { ContentContainer } from "@shurokkha/ui-patterns/layout"
+import { Container } from "@shurokkha/ui-patterns/layout"
 ```
 
 This keeps dependencies explicit and avoids mixing client-heavy modules through a root barrel.

@@ -1,6 +1,6 @@
 "use client"
 
-import { ErrorState } from "@shurokkha/ui-patterns/feedback"
+import { ErrorState } from "@shurokkha/ui/components/states"
 
 export default function WorkspaceError({
   error,

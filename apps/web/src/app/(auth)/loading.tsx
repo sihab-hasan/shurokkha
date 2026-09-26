@@ -1,4 +1,4 @@
-import { LoadingState } from "@shurokkha/ui-patterns/feedback"
+import { LoadingState } from "@shurokkha/ui/components/states"
 
 export default function AuthLoading() {
   return (

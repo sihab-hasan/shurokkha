@@ -9,13 +9,13 @@ PublicLayout
 └─ PublicShell
    └─ SiteShell                 # owns semantic <main>
       └─ page.tsx
-         └─ ContentContainer    # public page owns width/gutters
+         └─ Container    # public page owns width/gutters
 ```
 
 Canonical interior page composition:
 
 ```text
-ContentContainer
+Container
 ├─ PageHeader
 └─ <section>
    └─ SectionHeader
@@ -37,12 +37,12 @@ Public visual rule: do not use horizontal divider lines between sections or shel
 ```text
 CitizenLayout / DonorLayout / VolunteerLayout
 └─ AppShell(role)
-   └─ WorkspaceShell            # owns <main>, scroll region and ContentContainer
+   └─ WorkspaceShell            # owns <main>, scroll region and Container
       └─ page.tsx
          └─ page archetype
 ```
 
-Do **not** add another `ContentContainer` inside signed-in pages. Choose the closest pattern family:
+Do **not** add another `Container` inside signed-in pages. Choose the closest pattern family:
 
 - overview: `PageHeader` + dashboard patterns;
 - collection/list: collection/data-table patterns;
@@ -66,7 +66,7 @@ AuthLayout
          └─ or AuthState / AuthStateView
 ```
 
-Do not use `ContentContainer`, `PageHeader` or `SectionHeader` inside auth pages. Routing, links, forms and Shurokkha branding remain Web-owned; the shared pattern layer owns stable auth presentation primitives.
+Do not use `Container`, `PageHeader` or `SectionHeader` inside auth pages. Routing, links, forms and Shurokkha branding remain Web-owned; the shared pattern layer owns stable auth presentation primitives.
 
 ## Naming contract
 
@@ -75,6 +75,6 @@ Do not use `ContentContainer`, `PageHeader` or `SectionHeader` inside auth pages
 - `AuthShell`: Web authentication shell wrapper.
 - `AppShell`: Web signed-in role shell.
 - `WorkspaceShell`: generic reusable sidebar workspace primitive.
-- `ContentContainer`: non-semantic width/gutter wrapper.
+- `Container`: non-semantic width/gutter wrapper.
 
 `PageContainer` is intentionally absent because semantic `<main>` ownership belongs to shells.

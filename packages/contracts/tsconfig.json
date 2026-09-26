@@ -1,6 +1,8 @@
 {
   "extends": "@shurokkha/typescript-config/base.json",
   "compilerOptions": {
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
     "outDir": "dist"
   },
   "include": ["src"],

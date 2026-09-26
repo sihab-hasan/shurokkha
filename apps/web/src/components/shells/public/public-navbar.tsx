@@ -26,8 +26,8 @@ export default function PublicNavbar() {
   const pathname = usePathname()
   const { status, user } = useAuth()
   const getHelpHref =
-    status === "authenticated" && user?.role === "citizen"
-      ? routes.citizen.requestHelp
+    status === "authenticated"
+      ? routes.account.createAssistance
       : routes.public.getHelp
 
   return (

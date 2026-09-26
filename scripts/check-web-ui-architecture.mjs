@@ -112,10 +112,8 @@ for (const filePath of walkFiles("apps/web/src/app/(public)")) {
     failures.push(`${filePath} must not use removed PageContainer.`)
   if (fullPage) continue
 
-  if (!source.includes("ContentContainer"))
-    failures.push(
-      `${filePath} must use ContentContainer; SiteShell owns only <main>.`
-    )
+  if (!source.includes("Container"))
+    failures.push(`${filePath} must use Container; SiteShell owns only <main>.`)
   if (!source.includes("PageHeader"))
     failures.push(`${filePath} must use PageHeader.`)
   if (/<h[12]\b/.test(source))
@@ -125,7 +123,7 @@ for (const filePath of walkFiles("apps/web/src/app/(public)")) {
   const capitalizedTags = [...source.matchAll(/<([A-Z][A-Za-z0-9.]*)\b/g)].map(
     (match) => match[1]
   )
-  const allowed = new Set(["ContentContainer", "PageHeader", "SectionHeader"])
+  const allowed = new Set(["Container", "PageHeader", "SectionHeader"])
   for (const tag of capitalizedTags) {
     if (!allowed.has(tag))
       failures.push(
@@ -134,11 +132,11 @@ for (const filePath of walkFiles("apps/web/src/app/(public)")) {
   }
 }
 
-// WorkspaceShell already owns ContentContainer and the semantic main region.
+// WorkspaceShell already owns Container and the semantic main region.
 for (const filePath of walkFiles("apps/web/src/app/(app)")) {
   if (!filePath.endsWith("/page.tsx")) continue
   const source = read(filePath)
-  if (source.includes("ContentContainer"))
+  if (source.includes("Container"))
     failures.push(`${filePath} duplicates WorkspaceShell content gutters.`)
   if (source.includes("PageContainer"))
     failures.push(
@@ -155,7 +153,7 @@ for (const filePath of walkFiles("apps/web/src/app/(auth)")) {
   if (!filePath.endsWith("/page.tsx")) continue
   const source = read(filePath)
   for (const forbidden of [
-    "ContentContainer",
+    "Container",
     "PageContainer",
     "PageHeader",
     "SectionHeader",

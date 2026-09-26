@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { AuthHeader } from "@shurokkha/ui-patterns/auth"
+import { AuthHeader } from "@shurokkha/ui/components/misc"
 import { SignUpForm } from "@/components/auth/forms/sign-up-form"
 import { GuestGate } from "@/components/auth/guest-gate"
 

@@ -6,7 +6,7 @@ const root = process.cwd()
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8")
 
 const backendRoutes = read("services/api/routes/api.php")
-const apiClient = read("packages/api-client/src/index.ts")
+const apiClient = read("packages/api-client/src/client.ts")
 const apiLib = read("apps/web/src/lib/api.ts")
 
 const expected = [
@@ -17,66 +17,106 @@ const expected = [
   ["api.v1.auth.me", "get", "/v1/auth/me"],
   ["api.v1.auth.logout", "post", "/v1/auth/logout"],
   [
-    "api.v1.citizen.requests.index",
+    "api.v1.assistance-requests.index",
     "get",
-    "/v1/citizen/requests${queryString(params)}",
+    "/v1/assistance-requests${queryString(params)}",
   ],
-  ["api.v1.citizen.requests.store", "post", "/v1/citizen/requests"],
-  ["api.v1.citizen.requests.show", "get", "/v1/citizen/requests/${id}"],
-  ["api.v1.citizen.requests.update", "patch", "/v1/citizen/requests/${id}"],
-  ["api.v1.citizen.requests.destroy", "delete", "/v1/citizen/requests/${id}"],
+  ["api.v1.assistance-requests.store", "post", "/v1/assistance-requests"],
+  ["api.v1.assistance-requests.show", "get", "/v1/assistance-requests/${id}"],
   [
-    "api.v1.citizen.requests.cancel",
-    "post",
-    "/v1/citizen/requests/${id}/cancel",
+    "api.v1.assistance-requests.update",
+    "patch",
+    "/v1/assistance-requests/${id}",
   ],
   [
-    "api.v1.citizen.missing-persons.index",
-    "get",
-    "/v1/citizen/missing-persons${queryString(params)}",
-  ],
-  [
-    "api.v1.citizen.missing-persons.store",
-    "postForm",
-    "/v1/citizen/missing-persons",
-  ],
-  [
-    "api.v1.citizen.missing-persons.show",
-    "get",
-    "/v1/citizen/missing-persons/${id}",
-  ],
-  [
-    "api.v1.citizen.missing-persons.photo",
-    "getBlob",
-    "/v1/citizen/missing-persons/${id}/photo",
-  ],
-  [
-    "api.v1.citizen.missing-persons.update",
-    "patchForm",
-    "/v1/citizen/missing-persons/${id}",
-  ],
-  [
-    "api.v1.citizen.missing-persons.destroy",
+    "api.v1.assistance-requests.destroy",
     "delete",
-    "/v1/citizen/missing-persons/${id}",
+    "/v1/assistance-requests/${id}",
   ],
   [
-    "api.v1.citizen.missing-persons.close",
+    "api.v1.assistance-requests.cancel",
     "post",
-    "/v1/citizen/missing-persons/${id}/close",
+    "/v1/assistance-requests/${id}/cancel",
   ],
+  [
+    "api.v1.missing-persons.index",
+    "get",
+    "/v1/missing-persons${queryString(params)}",
+  ],
+  ["api.v1.missing-persons.store", "postForm", "/v1/missing-persons"],
+  ["api.v1.missing-persons.show", "get", "/v1/missing-persons/${id}"],
+  [
+    "api.v1.missing-persons.photo",
+    "getBlob",
+    "/v1/missing-persons/${id}/photo",
+  ],
+  ["api.v1.missing-persons.update", "patchForm", "/v1/missing-persons/${id}"],
+  ["api.v1.missing-persons.destroy", "delete", "/v1/missing-persons/${id}"],
+  ["api.v1.missing-persons.close", "post", "/v1/missing-persons/${id}/close"],
+  ["api.v1.auth.me.profile.show", "get", "/v1/auth/me/profile"],
+  ["api.v1.auth.me.profile.update", "patch", "/v1/auth/me/profile"],
+  [
+    "api.v1.auth.me.profile.avatar.upload",
+    "postForm",
+    "/v1/auth/me/profile/avatar",
+  ],
+  [
+    "api.v1.auth.me.profile.avatar.destroy",
+    "delete",
+    "/v1/auth/me/profile/avatar",
+  ],
+  [
+    "api.v1.auth.me.notification-preferences.show",
+    "get",
+    "/v1/auth/me/notification-preferences",
+  ],
+  [
+    "api.v1.auth.me.notification-preferences.update",
+    "put",
+    "/v1/auth/me/notification-preferences",
+  ],
+  [
+    "api.v1.auth.me.privacy-preferences.show",
+    "get",
+    "/v1/auth/me/privacy-preferences",
+  ],
+  [
+    "api.v1.auth.me.privacy-preferences.update",
+    "put",
+    "/v1/auth/me/privacy-preferences",
+  ],
+  ["api.v1.auth.me.session.show", "get", "/v1/auth/me/session"],
 ]
+
+// The settings routes are nested inside `Route::prefix('me')->name('me.')`
+// so the declared name in routes/api.php is e.g. `profile.show`, not
+// `me.profile.show`. After `api.v1.` and `auth.` are stripped from the
+// expected name, the remaining `me.profile.show` won't appear literally in
+// the source — Laravel composes the final route name at boot time.
+const declaredNameOverrides = {
+  "api.v1.auth.me.profile.show": "profile.show",
+  "api.v1.auth.me.profile.update": "profile.update",
+  "api.v1.auth.me.profile.avatar.upload": "profile.avatar.upload",
+  "api.v1.auth.me.profile.avatar.destroy": "profile.avatar.destroy",
+  "api.v1.auth.me.notification-preferences.show":
+    "notification-preferences.show",
+  "api.v1.auth.me.notification-preferences.update":
+    "notification-preferences.update",
+  "api.v1.auth.me.privacy-preferences.show": "privacy-preferences.show",
+  "api.v1.auth.me.privacy-preferences.update": "privacy-preferences.update",
+  "api.v1.auth.me.session.show": "session.show",
+}
 
 const failures = []
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 
 for (const [routeName, clientMethod, clientPath] of expected) {
   const shortName = routeName.replace(/^api\.v1\./, "")
-  const declaredName = shortName.startsWith("citizen.")
-    ? shortName.replace(/^citizen\./, "")
-    : shortName.startsWith("auth.")
+  const declaredName =
+    declaredNameOverrides[routeName] ??
+    (shortName.startsWith("auth.")
       ? shortName.replace(/^auth\./, "")
-      : shortName
+      : shortName)
 
   if (!backendRoutes.includes(`->name('${declaredName}')`)) {
     failures.push(`Backend route name not found: ${routeName}`)

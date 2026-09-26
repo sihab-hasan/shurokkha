@@ -1,4 +1,4 @@
-import type { WorkspaceShellProps } from "@shurokkha/ui-patterns/layout"
+import { WorkspaceShellProps } from "@shurokkha/ui/layout/workspace-shell"
 
 export const adminShellConfig = {
   headerHeight: "3.5rem",

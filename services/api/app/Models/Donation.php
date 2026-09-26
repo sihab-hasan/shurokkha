@@ -17,6 +17,10 @@ class Donation extends Model
         'user_id',
         'donation_kind',
         'amount',
+        'payment_method',
+        'campaign_title',
+        'receipt_number',
+        'currency',
         'status',
     ];
 

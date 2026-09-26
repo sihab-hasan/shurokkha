@@ -67,7 +67,7 @@ Web uses:
 
 Admin uses `(app) -> AdminShell`.
 
-Experience shells own semantic `<main>` regions. `ContentContainer` handles non-semantic width/gutters. The old `PageContainer` abstraction has been removed to avoid nested main elements.
+Experience shells own semantic `<main>` regions. `Container` handles non-semantic width/gutters. The old `PageContainer` abstraction has been removed to avoid nested main elements.
 
 See [Shell architecture](shell-architecture.md) for the detailed contract.
 

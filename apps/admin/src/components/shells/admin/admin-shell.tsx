@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 
-import { WorkspaceShell } from "@shurokkha/ui-patterns/layout"
+import { WorkspaceShell } from "@shurokkha/ui/layout/workspace-shell"
 
 import { adminShellConfig } from "@/config/shell-config"
 

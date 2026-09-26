@@ -82,21 +82,22 @@ expectNotContains(
 for (const file of [
   "apps/web/src/components/shells/public/public-shell.tsx",
   "apps/web/src/components/shells/auth/auth-shell.tsx",
-  "apps/web/src/components/shells/app/app-shell.tsx",
-  "apps/web/src/components/shells/app/app-header.tsx",
-  "apps/web/src/components/shells/app/app-sidebar.tsx",
+  "apps/web/src/components/shells/account/account-shell.tsx",
+  "apps/web/src/components/shells/account/account-header.tsx",
+  "apps/web/src/components/shells/account/account-sidebar.tsx",
 ])
   expectExists(file, `Missing web shell file: ${file}`)
 
-for (const role of ["citizen", "donor", "volunteer"]) {
-  const path = `apps/web/src/app/(app)/${role}/layout.tsx`
-  expectContains(path, "AppShell", `${role} layout must mount AppShell.`)
-  expectContains(
-    path,
-    `role="${role}"`,
-    `${role} layout must select its role explicitly.`
-  )
-}
+// Account is the signed-in route group for every authenticated role (user | admin).
+expectExists(
+  "apps/web/src/app/(account)/layout.tsx",
+  "Web signed-in routes must live under (account)."
+)
+expectContains(
+  "apps/web/src/app/(account)/layout.tsx",
+  "AccountShell",
+  "(account) layout must mount AccountShell."
+)
 
 // Admin is an application, so its signed-in route group is also named (app).
 expectExists(
@@ -122,7 +123,7 @@ expectExists(
   "AdminShell must live under components/shells/admin."
 )
 
-// Shared pattern naming: WorkspaceShell is neutral; app-specific AppShell stays inside apps/web.
+// Shared pattern naming: WorkspaceShell is neutral; app-specific shells stay inside apps/web.
 for (const file of [
   "workspace-shell.tsx",
   "workspace-shell-header.tsx",
@@ -131,16 +132,6 @@ for (const file of [
   expectExists(
     `packages/ui-patterns/src/layout/${file}`,
     `Missing shared workspace shell primitive: ${file}`
-  )
-}
-for (const file of [
-  "app-shell.tsx",
-  "app-shell-header.tsx",
-  "app-shell-sidebar.tsx",
-]) {
-  expectMissing(
-    `packages/ui-patterns/src/layout/${file}`,
-    `Shared layout package must use WorkspaceShell naming, not ${file}.`
   )
 }
 expectContains(
@@ -171,7 +162,7 @@ for (const legacy of [
 for (const directory of [
   "apps/web/src/app/(public)",
   "apps/web/src/app/(auth)",
-  "apps/web/src/app/(app)",
+  "apps/web/src/app/(account)",
 ]) {
   for (const filePath of walkFiles(directory)) {
     if (filePath.includes("/_sections/"))

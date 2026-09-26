@@ -10,7 +10,7 @@ import {
   Users,
 } from "lucide-react"
 
-import { SectionHeader } from "@shurokkha/ui-patterns/navigation"
+import { SectionHeader } from "@shurokkha/ui/layout/section-header"
 import { Card, CardContent } from "@shurokkha/ui/components/card"
 
 const shurokkhaOptions = [
