@@ -134,6 +134,20 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::get('/donations', [AdminDonationController::class, 'index'])->name('donations.index');
             Route::post('/donations', [AdminDonationController::class, 'store'])->name('donations.store');
             Route::delete('/donations/{donation}', [AdminDonationController::class, 'destroy'])->name('donations.destroy');
+
+            // Reports: Direct Joins and Aggregations matching ahp_joins_and_aggregations.sql
+            Route::prefix('reports')->name('reports.')->group(function (): void {
+                Route::get('/summary', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'summary'])->name('summary');
+                Route::get('/area-severity', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'areaSeverityBreakdown'])->name('area-severity');
+                Route::get('/active-teams', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'activeRescueTeamAssignments'])->name('active-teams');
+                Route::get('/citizen-stats', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'citizenRequestStats'])->name('citizen-stats');
+
+                Route::get('/inner-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'innerJoin'])->name('inner-join');
+                Route::get('/left-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'leftJoin'])->name('left-join');
+                Route::get('/right-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'rightJoin'])->name('right-join');
+                Route::get('/full-outer-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'fullOuterJoin'])->name('full-outer-join');
+            });
         });
     });
 });
+

@@ -25,15 +25,15 @@ class AuthController extends Controller
     {
         $user = User::query()->create($request->validated());
 
-        \Illuminate\Support\Facades\DB::table('users')
-            ->where('id', $user->id)
-            ->update([
-                'user_id' => $user->id,
-                'full_name' => $user->name,
-                'phone' => '01700000000',
-                'status' => 'active',
-                'role_id' => 2,
-            ]);
+        \Illuminate\Support\Facades\DB::update(<<<'SQL'
+            UPDATE users
+            SET user_id = id,
+                full_name = name,
+                phone = '01700000000',
+                status = 'active',
+                role_id = 2
+            WHERE id = ?
+        SQL, [$user->id]);
 
         $user->refresh();
 
