@@ -9,9 +9,7 @@ export function errorMessage(error: unknown, fallback = "Action failed.") {
 }
 
 type IssueInput =
-  | null
-  | string
-  | { id?: string; field?: string; message?: string }
+  null | string | { id?: string; field?: string; message?: string }
 
 export function issuesFromError(error: unknown): ValidationIssue[] {
   if (!error || typeof error !== "object") return []
@@ -30,9 +28,7 @@ export function issuesFromError(error: unknown): ValidationIssue[] {
           message?: string
         }
         return {
-          id: String(
-            source.field ?? source.id ?? `err-${index}`
-          ),
+          id: String(source.field ?? source.id ?? `err-${index}`),
           message: String(source.message ?? "Invalid value"),
         }
       }
@@ -40,9 +36,7 @@ export function issuesFromError(error: unknown): ValidationIssue[] {
     })
     .filter((v): v is string | { id: string; message: string } => v !== null)
     .map((v): ValidationIssue =>
-      typeof v === "string"
-        ? { id: `err-${v.slice(0, 16)}`, message: v }
-        : v
+      typeof v === "string" ? { id: `err-${v.slice(0, 16)}`, message: v } : v
     )
 }
 

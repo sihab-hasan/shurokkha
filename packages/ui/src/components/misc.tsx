@@ -7,13 +7,7 @@ import { cn } from "../lib/utils"
 
 export type ValidationIssue = { id?: string; field?: string; message: string }
 export type AuthStateTone =
-  | "neutral"
-  | "info"
-  | "success"
-  | "warning"
-  | "error"
-  | "danger"
-  | "critical"
+  "neutral" | "info" | "success" | "warning" | "error" | "danger" | "critical"
 
 // ---------------------------------------------------------------------------
 // Permissive passthrough type — accepts arbitrary custom props (tone, icon,
@@ -490,7 +484,9 @@ export const EntitySummary = ({
     )}
     {children}
     {footer && (
-      <div className="border-t pt-4 text-sm text-muted-foreground">{footer}</div>
+      <div className="border-t pt-4 text-sm text-muted-foreground">
+        {footer}
+      </div>
     )}
   </div>
 )
@@ -565,7 +561,9 @@ export const WidgetFrame = ({
         <div className="min-w-0">
           {title && <h3 className="font-semibold">{title}</h3>}
           {description && (
-            <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              {description}
+            </p>
           )}
         </div>
         {actions && <div className="shrink-0">{actions}</div>}
