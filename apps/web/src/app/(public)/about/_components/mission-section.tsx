@@ -1,7 +1,8 @@
 import { HeartHandshake, Target } from "lucide-react"
 
-import { ContentContainer } from "@shurokkha/ui-patterns/layout"
-import { SectionHeader } from "@shurokkha/ui-patterns/navigation"
+import { Section } from "@shurokkha/ui/layout/section"
+import { Container } from "@shurokkha/ui/layout/container"
+import { SectionHeader } from "@shurokkha/ui/layout/section-header"
 import {
   Card,
   CardContent,
@@ -32,35 +33,37 @@ const statements = [
 export function MissionSection() {
   return (
     <section className="bg-background py-12 sm:py-16 lg:py-20">
-      <ContentContainer className="py-0">
-        <SectionHeader
-          eyebrow="Why we exist"
-          title="Support should be easier to understand when the situation is hardest"
-          description="Disasters create information gaps, urgent needs, and fragmented support. Shurokkha is designed to reduce that friction by connecting trusted context with practical next steps."
-          align="left"
-        />
+      <Section className="py-0">
+        <Container>
+          <SectionHeader
+            eyebrow="Why we exist"
+            title="Support should be easier to understand when the situation is hardest"
+            description="Disasters create information gaps, urgent needs, and fragmented support. Shurokkha is designed to reduce that friction by connecting trusted context with practical next steps."
+            align="left"
+          />
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          {statements.map(({ title, description, content, icon: Icon }) => (
-            <Card key={title} className="h-full shadow-xs">
-              <CardHeader>
-                <span className="mb-3 flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Icon className="size-5" aria-hidden="true" />
-                </span>
-                <CardTitle className="text-xl">{title}</CardTitle>
-                <CardDescription className="max-w-xl leading-6">
-                  {description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="max-w-2xl leading-7 text-muted-foreground">
-                  {content}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </ContentContainer>
+          <div className="grid gap-5 lg:grid-cols-2">
+            {statements.map(({ title, description, content, icon: Icon }) => (
+              <Card key={title} className="h-full shadow-xs">
+                <CardHeader>
+                  <span className="mb-3 flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Icon className="size-5" aria-hidden="true" />
+                  </span>
+                  <CardTitle className="text-xl">{title}</CardTitle>
+                  <CardDescription className="max-w-xl leading-6">
+                    {description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="max-w-2xl leading-7 text-muted-foreground">
+                    {content}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </Section>
     </section>
   )
 }

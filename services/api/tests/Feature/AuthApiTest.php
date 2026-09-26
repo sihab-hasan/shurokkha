@@ -10,35 +10,35 @@ class AuthApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_a_citizen_can_register_and_receive_a_session(): void
+    public function test_a_user_can_register_and_receive_a_session(): void
     {
         $response = $this->postJson('/api/v1/auth/register', [
-            'name' => 'Citizen One',
-            'email' => 'citizen@example.com',
+            'name' => 'User One',
+            'email' => 'user@example.com',
             'password' => 'password123',
         ]);
 
         $response
             ->assertCreated()
-            ->assertJsonPath('user.email', 'citizen@example.com')
-            ->assertJsonPath('user.role', 'citizen')
+            ->assertJsonPath('user.email', 'user@example.com')
+            ->assertJsonPath('user.role', 'user')
             ->assertJsonMissingPath('token');
 
-        $user = User::query()->where('email', 'citizen@example.com')->firstOrFail();
+        $user = User::query()->where('email', 'user@example.com')->firstOrFail();
 
         $this->assertAuthenticatedAs($user);
-        $this->assertDatabaseHas('users', ['email' => 'citizen@example.com']);
+        $this->assertDatabaseHas('users', ['email' => 'user@example.com']);
     }
 
-    public function test_a_citizen_can_login_read_me_and_logout_with_session_cookie_auth(): void
+    public function test_a_user_can_login_read_me_and_logout_with_session_cookie_auth(): void
     {
         $user = User::factory()->create([
-            'email' => 'citizen@example.com',
+            'email' => 'user@example.com',
             'password' => 'password123',
         ]);
 
         $this->postJson('/api/v1/auth/login', [
-            'email' => 'citizen@example.com',
+            'email' => 'user@example.com',
             'password' => 'password123',
             'remember' => true,
         ])
@@ -50,7 +50,7 @@ class AuthApiTest extends TestCase
         $this->getJson('/api/v1/auth/me')
             ->assertOk()
             ->assertJsonPath('data.id', $user->id)
-            ->assertJsonPath('data.role', 'citizen');
+            ->assertJsonPath('data.role', 'user');
 
         $this->postJson('/api/v1/auth/logout')->assertNoContent();
         $this->assertGuest();

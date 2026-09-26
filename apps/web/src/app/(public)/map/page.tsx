@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
-import { ContentContainer } from "@shurokkha/ui-patterns/layout"
-import { PageHeader } from "@shurokkha/ui-patterns/navigation"
+import { Section } from "@shurokkha/ui/layout/section"
+import { Container } from "@shurokkha/ui/layout/container"
+import { PageHeader } from "@shurokkha/ui/layout/page-header"
 
 export const metadata: Metadata = {
   title: "Live Operations Map",
@@ -10,8 +11,10 @@ export const metadata: Metadata = {
 
 export default function LiveOperationsMapPage() {
   return (
-    <ContentContainer className="py-12 sm:py-16 lg:py-20">
-      <PageHeader title="Live Operations Map" />
-    </ContentContainer>
+    <Section className="py-12 sm:py-16 lg:py-20">
+      <Container>
+        <PageHeader title="Live Operations Map" />
+      </Container>
+    </Section>
   )
 }

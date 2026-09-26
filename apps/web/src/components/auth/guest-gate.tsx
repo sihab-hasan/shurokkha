@@ -3,7 +3,7 @@
 import { useEffect, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 
-import { LoadingState } from "@shurokkha/ui-patterns/feedback"
+import { LoadingState } from "@shurokkha/ui/components/states"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import { dashboardRouteForUser, safeReturnTo } from "@/lib/auth-navigation"

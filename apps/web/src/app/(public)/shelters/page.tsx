@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
-import { ContentContainer } from "@shurokkha/ui-patterns/layout"
-import { PageHeader, SectionHeader } from "@shurokkha/ui-patterns/navigation"
+import { Section } from "@shurokkha/ui/layout/section"
+import { Container } from "@shurokkha/ui/layout/container"
+import { PageHeader } from "@shurokkha/ui/layout/page-header"
+import { SectionHeader } from "@shurokkha/ui/layout/section-header"
 
 export const metadata: Metadata = {
   title: "Shelters",
@@ -10,11 +12,17 @@ export const metadata: Metadata = {
 
 export default function SheltersPage() {
   return (
-    <ContentContainer className="py-12 sm:py-16 lg:py-20">
-      <PageHeader title="Shelters" />
-      <section className="py-7 sm:py-9">
-        <SectionHeader title="Shelter Browser" align="left" className="mb-0" />
-      </section>
-    </ContentContainer>
+    <Section className="py-12 sm:py-16 lg:py-20">
+      <Container>
+        <PageHeader title="Shelters" />
+        <section className="py-7 sm:py-9">
+          <SectionHeader
+            title="Shelter Browser"
+            align="left"
+            className="mb-0"
+          />
+        </section>
+      </Container>
+    </Section>
   )
 }

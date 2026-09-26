@@ -24,7 +24,7 @@ Durable product and design-system documentation lives in the root `docs/` direct
 
 ## Web route model
 
-- `(public)` → `PublicShell`; public pages own `ContentContainer`.
+- `(public)` → `PublicShell`; public pages own `Container`.
 - `(auth)` → Web `AuthShell` → shared auth shell pattern.
 - `(app)` → role layout → Web `AppShell` → shared `WorkspaceShell`.
 

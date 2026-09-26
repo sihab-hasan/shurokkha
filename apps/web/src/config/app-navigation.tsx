@@ -1,217 +1,158 @@
 import {
-  CalendarDays,
-  ChartNoAxesCombined,
-  ClipboardCheck,
-  FileHeart,
-  Gift,
-  GraduationCap,
+  Bell,
+  FileText,
   HandHeart,
-  History,
+  HelpCircle,
+  Home,
+  House,
   LayoutDashboard,
-  PackageCheck,
-  PackageSearch,
-  ReceiptText,
-  Siren,
-  UserSearch,
+  MessageSquareWarning,
+  Search,
+  ShieldAlert,
+  Star,
+  Users,
+  Wallet,
 } from "lucide-react"
 
-import { AlertIcon } from "@shurokkha/icons/alert-icon"
-import { CommunityIcon } from "@shurokkha/icons/community-icon"
-import { DonationIcon } from "@shurokkha/icons/donation-icon"
-import { NotificationIcon } from "@shurokkha/icons/notification-icon"
-import { SafetyIcon } from "@shurokkha/icons/safety-icon"
-import { ShelterIcon } from "@shurokkha/icons/shelter-icon"
-
-import type { NavModule } from "@/components/shells/app/app-navigation.types"
+import type { AccountModule, UserRole } from "@/lib/rbac"
 import { routes } from "@/config/routes"
 
-export type AppRole = "citizen" | "donor" | "volunteer"
+// ---------------------------------------------------------------------------
+// Navigation item shape
+// ---------------------------------------------------------------------------
 
-const citizenNavigation: NavModule[] = [
+export interface NavModule {
+  id: string
+  label: string
+  href: string
+  icon: React.ElementType
+  /** Maps to an AccountModule for RBAC filtering */
+  module?: AccountModule
+  /** Optional explicit role whitelist — overrides module-based check */
+  roles?: UserRole[]
+  /** Sidebar category header label */
+  category?: string
+}
+
+// ---------------------------------------------------------------------------
+// All account navigation modules
+// Grouped by category; the sidebar renders one <SidebarGroup> per category.
+// ---------------------------------------------------------------------------
+
+export const accountNavigationModules: NavModule[] = [
+  // ── Overview ─────────────────────────────────────────────────────────────
   {
-    id: "overview",
-    label: "Overview",
-    href: routes.citizen.home,
+    id: "dashboard",
+    label: "Dashboard",
+    href: routes.account.dashboard,
     icon: LayoutDashboard,
-    sections: [],
+    module: "dashboard",
+    category: "Overview",
   },
+
+  // ── Relief & Assistance ───────────────────────────────────────────────────
   {
-    id: "request-help",
-    label: "Request help",
-    href: routes.citizen.requestHelp,
-    icon: Siren,
-    sections: [],
-  },
-  {
-    id: "requests",
-    label: "My requests",
-    href: routes.citizen.requests,
-    icon: FileHeart,
-    sections: [],
-  },
-  {
-    id: "shelters",
-    label: "Nearby shelters",
-    href: routes.citizen.shelters,
-    icon: ShelterIcon,
-    sections: [],
-  },
-  {
-    id: "alerts",
-    label: "Emergency alerts",
-    href: routes.citizen.alerts,
-    icon: NotificationIcon,
-    sections: [],
-  },
-  {
-    id: "disasters",
-    label: "Disaster information",
-    href: routes.citizen.disasters,
-    icon: AlertIcon,
-    sections: [],
+    id: "assistance",
+    label: "Assistance",
+    href: routes.account.assistance,
+    icon: HandHeart,
+    module: "assistance",
+    category: "Relief & Assistance",
   },
   {
     id: "missing-persons",
-    label: "Missing persons",
-    href: routes.citizen.missingPersons,
-    icon: UserSearch,
-    sections: [],
+    label: "Missing Persons",
+    href: routes.account.missingPersons,
+    icon: Search,
+    module: "missing-persons",
+    category: "Relief & Assistance",
   },
   {
-    id: "safety",
-    label: "Safety instructions",
-    href: routes.citizen.safety,
-    icon: SafetyIcon,
-    sections: [],
+    id: "shelter",
+    label: "Shelter",
+    href: routes.account.shelter,
+    icon: House,
+    module: "shelter",
+    category: "Relief & Assistance",
   },
-]
+  {
+    id: "help-requests",
+    label: "Help Requests",
+    href: routes.account.helpRequests,
+    icon: HelpCircle,
+    module: "help-requests",
+    category: "Relief & Assistance",
+  },
 
-const donorNavigation: NavModule[] = [
-  {
-    id: "overview",
-    label: "Overview",
-    href: routes.donor.home,
-    icon: LayoutDashboard,
-    sections: [],
-  },
-  {
-    id: "donate",
-    label: "Make a donation",
-    href: routes.donor.donate,
-    icon: Gift,
-    sections: [],
-  },
+  // ── Give & Participate ────────────────────────────────────────────────────
   {
     id: "donations",
-    label: "My donations",
-    href: routes.donor.donations,
-    icon: DonationIcon,
-    sections: [],
+    label: "Donations",
+    href: routes.account.donations,
+    icon: Wallet,
+    module: "donations",
+    category: "Give & Participate",
   },
   {
-    id: "contributions",
-    label: "Contributions",
-    href: routes.donor.contributions,
-    icon: History,
-    sections: [],
+    id: "volunteering",
+    label: "Volunteering",
+    href: routes.account.volunteering,
+    icon: Users,
+    module: "volunteering",
+    category: "Give & Participate",
+  },
+
+  // ── Household ─────────────────────────────────────────────────────────────
+  {
+    id: "household",
+    label: "Household",
+    href: routes.account.household,
+    icon: Home,
+    module: "household",
+    category: "Household",
+  },
+
+  // ── Feedback & Advocacy ───────────────────────────────────────────────────
+  {
+    id: "appeals",
+    label: "Appeals",
+    href: routes.account.appeals,
+    icon: ShieldAlert,
+    module: "appeals",
+    category: "Feedback & Advocacy",
   },
   {
-    id: "tracking",
-    label: "Donation tracking",
-    href: routes.donor.tracking,
-    icon: PackageSearch,
-    sections: [],
+    id: "complaints",
+    label: "Complaints",
+    href: routes.account.complaints,
+    icon: MessageSquareWarning,
+    module: "complaints",
+    category: "Feedback & Advocacy",
   },
   {
-    id: "campaigns",
-    label: "Relief campaigns",
-    href: routes.donor.campaigns,
-    icon: HandHeart,
-    sections: [],
+    id: "feedback",
+    label: "Feedback",
+    href: routes.account.feedback,
+    icon: Star,
+    module: "feedback",
+    category: "Feedback & Advocacy",
+  },
+
+  // ── Account ───────────────────────────────────────────────────────────────
+  {
+    id: "documents",
+    label: "Documents",
+    href: routes.account.documents,
+    icon: FileText,
+    module: "documents",
+    category: "Account",
   },
   {
-    id: "receipts",
-    label: "Receipts",
-    href: routes.donor.receipts,
-    icon: ReceiptText,
-    sections: [],
-  },
-  {
-    id: "impact",
-    label: "Impact report",
-    href: routes.donor.impact,
-    icon: ChartNoAxesCombined,
-    sections: [],
+    id: "notifications",
+    label: "Notifications",
+    href: routes.account.notifications,
+    icon: Bell,
+    module: "notifications",
+    category: "Account",
   },
 ]
-
-const volunteerNavigation: NavModule[] = [
-  {
-    id: "overview",
-    label: "Overview",
-    href: routes.volunteer.home,
-    icon: LayoutDashboard,
-    sections: [],
-  },
-  {
-    id: "assignments",
-    label: "My assignments",
-    href: routes.volunteer.assignments,
-    icon: ClipboardCheck,
-    sections: [],
-  },
-  {
-    id: "missions",
-    label: "Rescue missions",
-    href: routes.volunteer.missions,
-    icon: Siren,
-    sections: [],
-  },
-  {
-    id: "distributions",
-    label: "Distribution tasks",
-    href: routes.volunteer.distributions,
-    icon: PackageCheck,
-    sections: [],
-  },
-  {
-    id: "shelters",
-    label: "Assigned shelters",
-    href: routes.volunteer.shelters,
-    icon: ShelterIcon,
-    sections: [],
-  },
-  {
-    id: "schedule",
-    label: "Schedule",
-    href: routes.volunteer.schedule,
-    icon: CalendarDays,
-    sections: [],
-  },
-  {
-    id: "team",
-    label: "My team",
-    href: routes.volunteer.team,
-    icon: CommunityIcon,
-    sections: [],
-  },
-  {
-    id: "training",
-    label: "Training",
-    href: routes.volunteer.training,
-    icon: GraduationCap,
-    sections: [],
-  },
-]
-
-export const appNavigation: Record<AppRole, NavModule[]> = {
-  citizen: citizenNavigation,
-  donor: donorNavigation,
-  volunteer: volunteerNavigation,
-}
-
-export const appRoleMeta: Record<AppRole, { label: string }> = {
-  citizen: { label: "Citizen" },
-  donor: { label: "Donor" },
-  volunteer: { label: "Volunteer" },
-}

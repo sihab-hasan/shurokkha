@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { AuthHeader } from "@shurokkha/ui-patterns/auth"
+import { AuthHeader } from "@shurokkha/ui/components/misc"
 import { VerifyOtpForm } from "@/components/auth/forms/verify-otp-form"
 
 const pageTitle = "Verify OTP"

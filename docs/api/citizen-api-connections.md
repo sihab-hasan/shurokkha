@@ -1,4 +1,4 @@
-# Citizen API connection map
+# Account resource API connection map
 
 The Laravel router adds `/api` to `routes/api.php`, and the route file adds `/v1`.
 
@@ -24,27 +24,29 @@ Do not browse the frontend as `localhost` while configuring the API as `127.0.0.
 
 ## Registered and connected routes
 
-| Method | Laravel route                                | Frontend caller                     |
-| ------ | -------------------------------------------- | ----------------------------------- |
-| GET    | `/api/v1/health`                             | `getShurokkhaApi().system.health()` |
-| GET    | `/api/v1/auth/csrf`                          | API client CSRF bootstrap           |
-| POST   | `/api/v1/auth/register`                      | Sign-up form                        |
-| POST   | `/api/v1/auth/login`                         | Sign-in form                        |
-| GET    | `/api/v1/auth/me`                            | `AuthGate` session verification     |
-| POST   | `/api/v1/auth/logout`                        | Sign-out handler                    |
-| GET    | `/api/v1/citizen/requests`                   | Assistance request list             |
-| POST   | `/api/v1/citizen/requests`                   | Assistance request create form      |
-| GET    | `/api/v1/citizen/requests/{id}`              | Assistance request detail           |
-| PATCH  | `/api/v1/citizen/requests/{id}`              | Assistance request edit form        |
-| DELETE | `/api/v1/citizen/requests/{id}`              | Assistance request detail delete    |
-| POST   | `/api/v1/citizen/requests/{id}/cancel`       | Assistance request detail cancel    |
-| GET    | `/api/v1/citizen/missing-persons`            | Missing-person list                 |
-| POST   | `/api/v1/citizen/missing-persons`            | Missing-person create form          |
-| GET    | `/api/v1/citizen/missing-persons/{id}`       | Missing-person detail               |
-| GET    | `/api/v1/citizen/missing-persons/{id}/photo` | Protected missing-person photo      |
-| PATCH  | `/api/v1/citizen/missing-persons/{id}`       | Missing-person edit form            |
-| DELETE | `/api/v1/citizen/missing-persons/{id}`       | Missing-person detail delete        |
-| POST   | `/api/v1/citizen/missing-persons/{id}/close` | Missing-person located/close action |
+| Method | Laravel route                             | Frontend caller                     |
+| ------ | ----------------------------------------- | ----------------------------------- |
+| GET    | `/api/v1/health`                          | `getShurokkhaApi().system.health()` |
+| GET    | `/api/v1/auth/csrf`                       | API client CSRF bootstrap           |
+| POST   | `/api/v1/auth/register`                   | Sign-up form                        |
+| POST   | `/api/v1/auth/login`                      | Sign-in form                        |
+| GET    | `/api/v1/auth/me`                         | `AuthGate` session verification     |
+| POST   | `/api/v1/auth/logout`                     | Sign-out handler                    |
+| GET    | `/api/v1/assistance-requests`             | Assistance request list             |
+| POST   | `/api/v1/assistance-requests`             | Assistance request create form      |
+| GET    | `/api/v1/assistance-requests/{id}`        | Assistance request detail           |
+| PATCH  | `/api/v1/assistance-requests/{id}`        | Assistance request edit form        |
+| DELETE | `/api/v1/assistance-requests/{id}`        | Assistance request detail delete    |
+| POST   | `/api/v1/assistance-requests/{id}/cancel` | Assistance request detail cancel    |
+| GET    | `/api/v1/missing-persons`                 | Missing-person list                 |
+| POST   | `/api/v1/missing-persons`                 | Missing-person create form          |
+| GET    | `/api/v1/missing-persons/{id}`            | Missing-person detail               |
+| GET    | `/api/v1/missing-persons/{id}/photo`      | Protected missing-person photo      |
+| PATCH  | `/api/v1/missing-persons/{id}`            | Missing-person edit form            |
+| DELETE | `/api/v1/missing-persons/{id}`            | Missing-person detail delete        |
+| POST   | `/api/v1/missing-persons/{id}/close`      | Missing-person located/close action |
+
+All account resource routes require an authenticated session. Assistance and missing-person access is granted by backend permissions, and record policies restrict data to its owner.
 
 Total connected Laravel API routes: **19**.
 
@@ -75,13 +77,13 @@ No authentication credential is stored in `localStorage` or `sessionStorage`.
 - `/sign-up`
 - `/sign-in`
 - `/sign-out`
-- `/citizen`
-- `/citizen/request-help`
-- `/citizen/requests`
-- `/citizen/requests/[requestId]`
-- `/citizen/missing-persons`
-- `/citizen/missing-persons/create`
-- `/citizen/missing-persons/[personId]`
+- `/account`
+- `/account/assistance`
+- `/account/assistance/new`
+- `/account/assistance/[requestId]`
+- `/account/missing-persons`
+- `/account/missing-persons/new`
+- `/account/missing-persons/[reportId]`
 
 ## Automated audit
 

@@ -28,7 +28,7 @@ Shurokkha should feel calm, credible and operational. Emergency emphasis must co
 
 - Never calculate global sidebar/header offsets in pages.
 - Shells own `<main>` and top-level geometry.
-- Public pages use `ContentContainer`; signed-in pages inherit it from `WorkspaceShell`; auth pages inherit width/alignment from `AuthShell`.
+- Public pages use `Container`; signed-in pages inherit it from `WorkspaceShell`; auth pages inherit width/alignment from `AuthShell`.
 - Use `PageHeader` for page-level headings and `SectionHeader` for public section headings where appropriate.
 - Do not reintroduce `PageContainer` or a generic `SectionContainer` duplicate.
 - Public sections and public shell chrome must not use horizontal divider lines; separate areas with spacing and tonal surfaces instead.

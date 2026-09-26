@@ -2,7 +2,7 @@
 
 Laravel API service for the Shurokkha platform.
 
-## Implemented citizen features
+## Implemented account resources
 
 ### Health
 
@@ -19,24 +19,26 @@ Authenticated routes use the bearer token returned by register/login.
 
 ### Assistance requests
 
-- `GET /api/v1/citizen/requests`
-- `POST /api/v1/citizen/requests`
-- `GET /api/v1/citizen/requests/{id}`
-- `PATCH /api/v1/citizen/requests/{id}`
-- `DELETE /api/v1/citizen/requests/{id}`
-- `POST /api/v1/citizen/requests/{id}/cancel`
+- `GET /api/v1/assistance-requests`
+- `POST /api/v1/assistance-requests`
+- `GET /api/v1/assistance-requests/{id}`
+- `PATCH /api/v1/assistance-requests/{id}`
+- `DELETE /api/v1/assistance-requests/{id}`
+- `POST /api/v1/assistance-requests/{id}/cancel`
 
 Citizens can only read or mutate their own records. Deletes are soft deletes.
 
 ### Missing-person reports
 
-- `GET /api/v1/citizen/missing-persons`
-- `POST /api/v1/citizen/missing-persons`
-- `GET /api/v1/citizen/missing-persons/{id}`
-- `GET /api/v1/citizen/missing-persons/{id}/photo`
-- `PATCH /api/v1/citizen/missing-persons/{id}`
-- `DELETE /api/v1/citizen/missing-persons/{id}`
-- `POST /api/v1/citizen/missing-persons/{id}/close`
+- `GET /api/v1/missing-persons`
+- `POST /api/v1/missing-persons`
+- `GET /api/v1/missing-persons/{id}`
+- `GET /api/v1/missing-persons/{id}/photo`
+- `PATCH /api/v1/missing-persons/{id}`
+- `DELETE /api/v1/missing-persons/{id}`
+- `POST /api/v1/missing-persons/{id}/close`
+
+These routes require a signed-in session. Backend permissions grant module access and policies limit records to their owner; the URL does not encode a role.
 
 Uploaded photos are stored on the private local disk and are returned only through the authenticated, ownership-protected photo endpoint. Deletes are soft deletes.
 

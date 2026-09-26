@@ -1,8 +1,9 @@
 import Link from "next/link"
 import { ArrowRight, HandHeart, Network, ShieldCheck } from "lucide-react"
 
-import { ContentContainer } from "@shurokkha/ui-patterns/layout"
-import { SectionHeader } from "@shurokkha/ui-patterns/navigation"
+import { Section } from "@shurokkha/ui/layout/section"
+import { Container } from "@shurokkha/ui/layout/container"
+import { SectionHeader } from "@shurokkha/ui/layout/section-header"
 import { Button } from "@shurokkha/ui/components/button"
 import {
   Card,
@@ -35,40 +36,44 @@ const steps = [
 export function HowWeWorkSection() {
   return (
     <section className="bg-background py-12 sm:py-16 lg:py-20">
-      <ContentContainer className="py-0">
-        <SectionHeader
-          eyebrow="What the platform helps people do"
-          title="Understand the situation, reach support, and stay connected through recovery"
-          description="Shurokkha is organized around practical journeys rather than isolated features, so the next useful action is easier to find."
-          align="left"
-          actions={
-            <Button
-              nativeButton={false}
-              variant="outline"
-              render={<Link href="/about/how-it-works" />}
-            >
-              Explore how it works
-              <ArrowRight data-icon="inline-end" />
-            </Button>
-          }
-        />
+      <Section className="py-0">
+        <Container>
+          <SectionHeader
+            eyebrow="What the platform helps people do"
+            title="Understand the situation, reach support, and stay connected through recovery"
+            description="Shurokkha is organized around practical journeys rather than isolated features, so the next useful action is easier to find."
+            align="left"
+            actions={
+              <Button
+                nativeButton={false}
+                variant="outline"
+                render={<Link href="/about/how-it-works" />}
+              >
+                Explore how it works
+                <ArrowRight data-icon="inline-end" />
+              </Button>
+            }
+          />
 
-        <div className="grid gap-4 lg:grid-cols-3">
-          {steps.map(({ title, description, icon: Icon }) => (
-            <Card key={title} className="h-full shadow-xs">
-              <CardHeader>
-                <span className="mb-2 flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Icon className="size-5" aria-hidden="true" />
-                </span>
-                <CardTitle className="text-xl">{title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="leading-7 text-muted-foreground">{description}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </ContentContainer>
+          <div className="grid gap-4 lg:grid-cols-3">
+            {steps.map(({ title, description, icon: Icon }) => (
+              <Card key={title} className="h-full shadow-xs">
+                <CardHeader>
+                  <span className="mb-2 flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Icon className="size-5" aria-hidden="true" />
+                  </span>
+                  <CardTitle className="text-xl">{title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="leading-7 text-muted-foreground">
+                    {description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </Section>
     </section>
   )
 }

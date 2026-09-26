@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { CalendarDays, MapPin, UserCheck, UserPlus } from "lucide-react"
 
-import { VerifiedIcon } from "@shurokkha/icons/verified-icon"
+import { VerifiedIcon } from "@shurokkha/ui/icons/verified-icon"
 import { Avatar, AvatarFallback } from "@shurokkha/ui/components/avatar"
 import { Badge } from "@shurokkha/ui/components/badge"
 import { Button } from "@shurokkha/ui/components/button"

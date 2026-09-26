@@ -228,7 +228,7 @@ Use motion for state transitions, overlays, and feedback—not decoration.
 PublicShell
   header / utility navigation
   main
-    ContentContainer(default)
+    Container(default)
       hero or PageHeader
       semantic sections
   neutral footer
@@ -246,7 +246,7 @@ AppShell → WorkspaceShell
 ```
 
 `WorkspaceShell` already owns the content container. App pages must not add a
-second `ContentContainer`.
+second `Container`.
 
 ### Admin
 

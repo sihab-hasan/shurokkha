@@ -69,7 +69,7 @@ No raw hue utilities are allowed in `ui-patterns` for reusable state meaning.
 PageHeader
 DashboardGrid
   KpiCard / MetricCard / WidgetFrame
-secondary ContentSection(s)
+secondary Section(s)
 ```
 
 ### List/search
@@ -116,7 +116,7 @@ unrelated dashboard card.
 
 ## Public-page rule
 
-`ui-patterns` provides `ContentContainer`, `PageHeader`, and `SectionHeader`, but
+`ui-patterns` provides `Container`, `PageHeader`, and `SectionHeader`, but
 public domain sections remain in `apps/web`. Public sections use whitespace and
 surface shifts rather than full-width divider lines.
 

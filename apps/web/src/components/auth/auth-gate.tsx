@@ -4,7 +4,7 @@ import { useEffect, type ReactNode } from "react"
 import { usePathname, useRouter } from "next/navigation"
 
 import type { UserRole } from "@shurokkha/contracts"
-import { ErrorState, LoadingState } from "@shurokkha/ui-patterns/feedback"
+import { ErrorState, LoadingState } from "@shurokkha/ui/components/states"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import {

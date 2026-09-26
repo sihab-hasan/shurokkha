@@ -2,7 +2,7 @@
 
 import { TriangleAlert } from "lucide-react"
 
-import { AuthState } from "@shurokkha/ui-patterns/auth"
+import { AuthState } from "@shurokkha/ui/components/misc"
 import { Button } from "@shurokkha/ui/components/button"
 
 export default function AuthError({
@@ -18,7 +18,6 @@ export default function AuthError({
       tone="danger"
       icon={<TriangleAlert />}
       title="Unable to continue"
-      description="The secure access flow could not be loaded. Retry without leaving the authentication shell."
       actions={<Button onClick={reset}>Try again</Button>}
     >
       {error.digest ? (

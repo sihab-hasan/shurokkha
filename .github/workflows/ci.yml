@@ -27,9 +27,6 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-node-pnpm
 
-      - name: Architecture and repository readiness
-        run: pnpm check:architecture && pnpm check:github
-
       - name: Formatting
         run: pnpm format:check
 

@@ -2,16 +2,16 @@ import type { ApiUser, UserRole } from "@shurokkha/contracts"
 
 import { routes } from "@/config/routes"
 
-export function dashboardRouteForRole(role: UserRole) {
-  return routes[role].home
+export function dashboardRouteForRole(_role?: UserRole) {
+  return routes.account.dashboard
 }
 
-export function profileRouteForRole(role: UserRole) {
-  return routes[role].profile
+export function profileRouteForRole(_role?: UserRole) {
+  return routes.account.profile
 }
 
-export function settingsRouteForRole(role: UserRole) {
-  return routes[role].settings
+export function settingsRouteForRole(_role?: UserRole) {
+  return routes.account.settings
 }
 
 export function dashboardRouteForUser(user: Pick<ApiUser, "role">) {

@@ -35,6 +35,7 @@ import {
   profileRouteForRole,
   settingsRouteForRole,
 } from "@/lib/auth-navigation"
+import { hasModuleAccess } from "@/lib/rbac"
 
 function initials(name: string) {
   return (
@@ -168,19 +169,24 @@ export function AccountMenu({
             <Settings />
             Settings
           </DropdownMenuItem>
-          {user.role === "citizen" ? (
+          {hasModuleAccess(user.role, "assistance") ||
+          hasModuleAccess(user.role, "missing-persons") ? (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => router.push(routes.citizen.requests)}
-              >
-                My requests
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => router.push(routes.citizen.missingPersons)}
-              >
-                Missing persons
-              </DropdownMenuItem>
+              {hasModuleAccess(user.role, "assistance") ? (
+                <DropdownMenuItem
+                  onClick={() => router.push(routes.account.assistance)}
+                >
+                  My requests
+                </DropdownMenuItem>
+              ) : null}
+              {hasModuleAccess(user.role, "missing-persons") ? (
+                <DropdownMenuItem
+                  onClick={() => router.push(routes.account.missingPersons)}
+                >
+                  Missing persons
+                </DropdownMenuItem>
+              ) : null}
             </>
           ) : null}
           <DropdownMenuSeparator />

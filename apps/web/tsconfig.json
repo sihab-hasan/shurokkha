@@ -4,7 +4,10 @@
     "paths": {
       "@/*": ["./src/*"],
       "@shurokkha/ui/*": ["../../packages/ui/src/*"],
-      "@shurokkha/api-client": ["../../packages/api-client/src/index.ts"]
+      "@shurokkha/contracts": ["../../packages/contracts/src/index.ts"],
+      "@shurokkha/auth": ["../../packages/auth/src/index.ts"],
+      "@shurokkha/api-client": ["../../packages/api-client/src/index.ts"],
+      "@shurokkha/api-client/*": ["../../packages/api-client/src/*"]
     },
     "plugins": [
       {

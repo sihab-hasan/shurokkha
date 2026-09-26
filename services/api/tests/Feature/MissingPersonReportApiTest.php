@@ -18,7 +18,7 @@ class MissingPersonReportApiTest extends TestCase
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
 
-        $created = $this->actingAs($user)->post('/api/v1/citizen/missing-persons', [
+        $created = $this->actingAs($user)->post('/api/v1/missing-persons', [
             'full_name' => 'Missing Citizen',
             'age' => 27,
             'gender' => 'female',
@@ -37,30 +37,30 @@ class MissingPersonReportApiTest extends TestCase
 
         $id = $created->json('data.id');
 
-        $this->actingAs($user)->getJson('/api/v1/citizen/missing-persons?search=Missing')
+        $this->actingAs($user)->getJson('/api/v1/missing-persons?search=Missing')
             ->assertOk()
             ->assertJsonCount(1, 'data');
 
-        $this->actingAs($user)->getJson("/api/v1/citizen/missing-persons/{$id}")
+        $this->actingAs($user)->getJson("/api/v1/missing-persons/{$id}")
             ->assertOk()
             ->assertJsonPath('data.full_name', 'Missing Citizen');
 
-        $this->actingAs($user)->get("/api/v1/citizen/missing-persons/{$id}/photo")
+        $this->actingAs($user)->get("/api/v1/missing-persons/{$id}/photo")
             ->assertOk();
 
-        $this->actingAs($otherUser)->get("/api/v1/citizen/missing-persons/{$id}/photo")
+        $this->actingAs($otherUser)->get("/api/v1/missing-persons/{$id}/photo")
             ->assertForbidden();
 
-        $this->actingAs($user)->patchJson("/api/v1/citizen/missing-persons/{$id}", [
+        $this->actingAs($user)->patchJson("/api/v1/missing-persons/{$id}", [
             'last_seen_location' => 'Updated Test Location',
         ])
             ->assertOk()
             ->assertJsonPath('data.last_seen_location', 'Updated Test Location');
 
-        $this->actingAs($otherUser)->getJson("/api/v1/citizen/missing-persons/{$id}")
+        $this->actingAs($otherUser)->getJson("/api/v1/missing-persons/{$id}")
             ->assertForbidden();
 
-        $this->actingAs($user)->post("/api/v1/citizen/missing-persons/{$id}", [
+        $this->actingAs($user)->post("/api/v1/missing-persons/{$id}", [
             '_method' => 'PATCH',
             'full_name' => 'Missing Citizen',
             'age' => '',
@@ -78,14 +78,14 @@ class MissingPersonReportApiTest extends TestCase
             ->assertJsonPath('data.has_photo', false)
             ->assertJsonPath('data.age', null);
 
-        $this->actingAs($user)->get("/api/v1/citizen/missing-persons/{$id}/photo")
+        $this->actingAs($user)->get("/api/v1/missing-persons/{$id}/photo")
             ->assertNotFound();
 
-        $this->actingAs($user)->postJson("/api/v1/citizen/missing-persons/{$id}/close", ['located' => true])
+        $this->actingAs($user)->postJson("/api/v1/missing-persons/{$id}/close", ['located' => true])
             ->assertOk()
             ->assertJsonPath('data.status', 'located');
 
-        $this->actingAs($user)->deleteJson("/api/v1/citizen/missing-persons/{$id}")->assertNoContent();
+        $this->actingAs($user)->deleteJson("/api/v1/missing-persons/{$id}")->assertNoContent();
         $this->assertSoftDeleted('missing_person_reports', ['id' => $id]);
     }
 }

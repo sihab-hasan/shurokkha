@@ -12,9 +12,15 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'full_name' => $this->full_name,
             'email' => $this->email,
-            'role' => $this->role->value,
-            'avatar_url' => null,
+            'email_verified_at' => $this->email_verified_at?->toIso8601String(),
+            'phone' => $this->phone,
+            'phone_verified_at' => $this->phone_verified_at?->toIso8601String(),
+            'avatar_url' => $this->avatar_url,
+            'timezone' => $this->timezone,
+            'two_factor_confirmed_at' => $this->two_factor_confirmed_at?->toIso8601String(),
+            'role' => $this->role?->value,
         ];
     }
 }

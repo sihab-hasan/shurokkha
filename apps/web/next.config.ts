@@ -3,9 +3,10 @@ import type { NextConfig } from "next"
 const nextConfig: NextConfig = {
   transpilePackages: [
     "@shurokkha/api-client",
+    "@shurokkha/auth",
+    "@shurokkha/contracts",
     "@shurokkha/icons",
     "@shurokkha/ui",
-    "@shurokkha/ui-patterns",
   ],
 
   async redirects() {

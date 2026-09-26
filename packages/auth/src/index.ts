@@ -1,3 +1,2 @@
-export function hasRole(userRoles: string[], requiredRole: string) {
-  return userRoles.includes(requiredRole)
-}
+export * from "./permissions.js"
+export * from "./roles.js"

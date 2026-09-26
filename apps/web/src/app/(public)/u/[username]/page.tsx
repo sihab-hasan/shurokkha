@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { ContentContainer } from "@shurokkha/ui-patterns/layout"
+import { Section } from "@shurokkha/ui/layout/section"
+import { Container } from "@shurokkha/ui/layout/container"
 
 import { isAllowedUsername, normalizeUsername } from "@/config/username"
 
@@ -57,24 +58,26 @@ export default async function PublicProfilePage({
 
   return (
     <section className="bg-gradient-to-b from-muted/45 to-background py-10 sm:py-14 lg:py-16">
-      <ContentContainer size="narrow" className="py-0">
-        <div className="flex flex-col gap-6">
-          <ProfileHeader
-            name={profile.name}
-            username={profile.username}
-            role={profile.role}
-            joined={profile.joined}
-            location={profile.location}
-          />
-          <ProfileOverview
-            bio={profile.bio}
-            location={profile.location}
-            hours={profile.hours}
-            missions={profile.missions}
-            peopleHelped={profile.peopleHelped}
-          />
-        </div>
-      </ContentContainer>
+      <Section className="py-0">
+        <Container>
+          <div className="flex flex-col gap-6">
+            <ProfileHeader
+              name={profile.name}
+              username={profile.username}
+              role={profile.role}
+              joined={profile.joined}
+              location={profile.location}
+            />
+            <ProfileOverview
+              bio={profile.bio}
+              location={profile.location}
+              hours={profile.hours}
+              missions={profile.missions}
+              peopleHelped={profile.peopleHelped}
+            />
+          </div>
+        </Container>
+      </Section>
     </section>
   )
 }

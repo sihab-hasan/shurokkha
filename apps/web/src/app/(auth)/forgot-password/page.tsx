@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
-import { AuthHeader } from "@shurokkha/ui-patterns/auth"
+import { AuthHeader } from "@shurokkha/ui/components/misc"
 import { ForgotPasswordForm } from "@/components/auth/forms/forgot-password-form"
 
 import { routes } from "@/config/routes"

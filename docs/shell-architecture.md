@@ -15,13 +15,11 @@ apps/web/src/app/
 │   └── layout.tsx             # PublicLayout -> PublicShell
 ├── (auth)/
 │   └── layout.tsx             # AuthLayout -> AuthShell
-└── (app)/
-    ├── citizen/layout.tsx     # CitizenLayout -> AppShell(role="citizen")
-    ├── donor/layout.tsx       # DonorLayout -> AppShell(role="donor")
-    └── volunteer/layout.tsx   # VolunteerLayout -> AppShell(role="volunteer")
+└── (account)/
+    └── layout.tsx             # AccountLayout -> AccountShell (any authenticated role)
 ```
 
-`(app)` is preferred over `(dashboard)` because the signed-in product contains messages, forms, settings, detail pages and workflows in addition to overview dashboards.
+The signed-in product is reached at `/account/*` for every authenticated role (`user` or `admin`); the route group is intentionally role-agnostic and the RBAC engine in `apps/web/src/lib/rbac.ts` decides which navigation items each role sees.
 
 ## Shell component ownership
 
@@ -53,7 +51,7 @@ The app-specific names intentionally match their route-group experience: `Public
 ├── WorkspaceShellHeader
 ├── WorkspaceShellSidebar
 ├── SiteShell
-├── ContentContainer
+├── Container
 ├── SidebarLayout
 └── ExplorerLayout
 ```
@@ -105,11 +103,11 @@ Shell ownership determines what `page.tsx` should render.
 ```text
 (public)
 PublicLayout -> PublicShell -> SiteShell (<main>)
-page.tsx -> ContentContainer -> PageHeader -> <section> -> SectionHeader
+page.tsx -> Container -> PageHeader -> <section> -> SectionHeader
 
-(app)
-Citizen/Donor/Volunteer Layout -> AppShell -> WorkspaceShell
-WorkspaceShell owns <main>, scrolling, gutters and ContentContainer
+(account)
+AccountLayout -> AccountShell -> WorkspaceShell
+WorkspaceShell owns <main>, scrolling, gutters and Container
 page.tsx starts directly with PageHeader / Entity / Report / Messaging / other page pattern
 
 (auth)
@@ -118,4 +116,4 @@ AuthShell owns <main>, auth width and alignment
 page.tsx starts with AuthHeader or AuthState and auth-domain content
 ```
 
-Never add `ContentContainer` to `(app)` pages because `WorkspaceShell` already owns it. Never add `ContentContainer` or `PageHeader` to `(auth)` pages. `PageContainer` has been removed because semantic `<main>` ownership belongs to the experience shell.
+Never add `Container` to `(account)` pages because `WorkspaceShell` already owns it. Never add `Container` or `PageHeader` to `(auth)` pages. `PageContainer` has been removed because semantic `<main>` ownership belongs to the experience shell.

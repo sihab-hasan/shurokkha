@@ -1,7 +1,8 @@
 "use client"
 
-import { ErrorState } from "@shurokkha/ui-patterns/feedback"
-import { ContentContainer } from "@shurokkha/ui-patterns/layout"
+import { ErrorState } from "@shurokkha/ui/components/states"
+import { Section } from "@shurokkha/ui/layout/section"
+import { Container } from "@shurokkha/ui/layout/container"
 
 export default function PublicError({
   error,
@@ -11,13 +12,15 @@ export default function PublicError({
   reset: () => void
 }) {
   return (
-    <ContentContainer className="py-12">
-      <ErrorState
-        title="Page unavailable"
-        description="This public page could not be loaded. Retry without leaving the Shurokkha site shell."
-        errorCode={error.digest}
-        onRetry={reset}
-      />
-    </ContentContainer>
+    <Section className="py-12">
+      <Container>
+        <ErrorState
+          title="Page unavailable"
+          description="This public page could not be loaded. Retry without leaving the Shurokkha site shell."
+          errorCode={error.digest}
+          onRetry={reset}
+        />
+      </Container>
+    </Section>
   )
 }

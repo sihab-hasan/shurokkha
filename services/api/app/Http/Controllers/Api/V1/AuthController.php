@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Models\LoginAudit;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -39,6 +40,8 @@ class AuthController extends Controller
         Auth::guard('web')->login($user);
         $request->session()->regenerate();
 
+        $this->recordLoginAudit($request, $user);
+
         return response()->json([
             'status' => 'success',
             'message' => 'Account created successfully.',
@@ -52,6 +55,15 @@ class AuthController extends Controller
         $remember = (bool) $request->validated('remember', false);
 
         if (! Auth::guard('web')->attempt($credentials, $remember)) {
+            LoginAudit::query()->create([
+                'user_id' => null,
+                'ip_address' => $request->ip(),
+                'user_agent' => substr((string) $request->userAgent(), 0, 512),
+                'successful' => false,
+                'failure_reason' => 'invalid_credentials',
+                'signed_in_at' => now(),
+            ]);
+
             return response()->json([
                 'message' => 'The provided credentials are incorrect.',
             ], 422);
@@ -61,6 +73,8 @@ class AuthController extends Controller
 
         /** @var User $user */
         $user = $request->user();
+
+        $this->recordLoginAudit($request, $user);
 
         return response()->json([
             'status' => 'success',
@@ -76,11 +90,45 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
+        $this->recordLogout($request);
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return response()->json(status: 204);
+    }
+
+    private function recordLoginAudit(Request $request, User $user): void
+    {
+        LoginAudit::query()->create([
+            'user_id' => $user->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => substr((string) $request->userAgent(), 0, 512),
+            'session_token_hash' => $request->session()->getId()
+                ? hash('sha256', $request->session()->getId())
+                : null,
+            'successful' => true,
+            'signed_in_at' => now(),
+        ]);
+    }
+
+    private function recordLogout(Request $request): void
+    {
+        if (! $request->user()) {
+            return;
+        }
+
+        $sessionId = $request->session()->getId();
+        if (! $sessionId) {
+            return;
+        }
+
+        LoginAudit::query()
+            ->where('user_id', $request->user()->id)
+            ->where('session_token_hash', hash('sha256', $sessionId))
+            ->whereNull('signed_out_at')
+            ->update(['signed_out_at' => now()]);
     }
 }

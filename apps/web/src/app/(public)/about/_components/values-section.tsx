@@ -1,7 +1,8 @@
 import { BadgeCheck, HandHeart, Network, ShieldCheck } from "lucide-react"
 
-import { ContentContainer } from "@shurokkha/ui-patterns/layout"
-import { SectionHeader } from "@shurokkha/ui-patterns/navigation"
+import { Section } from "@shurokkha/ui/layout/section"
+import { Container } from "@shurokkha/ui/layout/container"
+import { SectionHeader } from "@shurokkha/ui/layout/section-header"
 import {
   Card,
   CardContent,
@@ -39,34 +40,36 @@ const values = [
 export function ValuesSection() {
   return (
     <section className="bg-muted/35 py-12 sm:py-16 lg:py-20">
-      <ContentContainer className="py-0">
-        <SectionHeader
-          eyebrow="Our principles"
-          title="What guides the way Shurokkha is designed"
-          description="The platform should make useful action easier without sacrificing clarity, dignity, safety, or accountability."
-        />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {values.map(({ title, description, icon: Icon }) => (
-            <Card
-              key={title}
-              size="sm"
-              className="h-full bg-background/85 shadow-xs"
-            >
-              <CardHeader>
-                <span className="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Icon className="size-5" aria-hidden="true" />
-                </span>
-                <CardTitle>{title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-6 text-muted-foreground">
-                  {description}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </ContentContainer>
+      <Section className="py-0">
+        <Container>
+          <SectionHeader
+            eyebrow="Our principles"
+            title="What guides the way Shurokkha is designed"
+            description="The platform should make useful action easier without sacrificing clarity, dignity, safety, or accountability."
+          />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {values.map(({ title, description, icon: Icon }) => (
+              <Card
+                key={title}
+                size="sm"
+                className="h-full bg-background/85 shadow-xs"
+              >
+                <CardHeader>
+                  <span className="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Icon className="size-5" aria-hidden="true" />
+                  </span>
+                  <CardTitle>{title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm leading-6 text-muted-foreground">
+                    {description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </Section>
     </section>
   )
 }

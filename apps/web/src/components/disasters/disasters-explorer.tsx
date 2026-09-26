@@ -24,7 +24,7 @@ import {
   CardTitle,
 } from "@shurokkha/ui/components/card"
 import { Input } from "@shurokkha/ui/components/input"
-import { WidgetFrame } from "@shurokkha/ui-patterns/dashboard"
+import { WidgetFrame } from "@shurokkha/ui/components/misc"
 
 export interface DisasterRecord {
   disaster_id: number
