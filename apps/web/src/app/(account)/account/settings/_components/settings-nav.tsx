@@ -2,13 +2,21 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Bell, Key, LayoutGrid, Lock, Shield } from "lucide-react"
+import { Bell, Key, LayoutGrid, Lock, Shield, User } from "lucide-react"
 
 import { routes } from "@/config/routes"
 import { cn } from "@shurokkha/ui/lib/utils"
 
 const tabs = [
   { label: "Overview", href: routes.account.settings, icon: LayoutGrid },
+  {
+    label: "Profile",
+    href: routes.account.profile,
+    icon: User,
+    // Match the Settings sub-route so the tab stays highlighted when
+    // a user lands on the alternate `/account/settings/profile` entry.
+    match: [routes.account.profile, "/account/settings/profile"],
+  },
   {
     label: "Notifications",
     href: routes.account.settingsNotifications,
@@ -28,7 +36,12 @@ export function SettingsNav() {
       aria-label="Settings Navigation Tabs"
     >
       {tabs.map((tab) => {
-        const isActive = pathname === tab.href
+        // `match` lets a single tab claim multiple paths (e.g. Profile
+        // highlights for both `/account/profile` and the legacy
+        // `/account/settings/profile` entry).
+        const isActive = tab.match
+          ? tab.match.includes(pathname)
+          : pathname === tab.href
         const Icon = tab.icon
 
         return (

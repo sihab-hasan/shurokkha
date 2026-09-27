@@ -100,4 +100,41 @@ class SessionController extends Controller
             'revoked_count' => $deleted,
         ]);
     }
+
+    /**
+     * Revoke a single session owned by the caller. The current session
+     * cannot revoke itself — users sign out of the current device from
+     * the account menu, not from the sessions list.
+     */
+    public function destroyOne(Request $request, string $sessionId): JsonResponse
+    {
+        $user = $request->user();
+
+        Gate::authorize('view-session', $user);
+
+        $currentSessionId = $request->session()->getId();
+
+        abort_if(
+            $sessionId === $currentSessionId,
+            422,
+            'Use the account menu to sign out of this device.'
+        );
+
+        $deleted = DB::table('sessions')
+            ->where('user_id', $user->id)
+            ->where('id', $sessionId)
+            ->delete();
+
+        if ($deleted === 0) {
+            return response()->json(
+                ['message' => 'Session not found or already revoked.'],
+                404
+            );
+        }
+
+        return response()->json([
+            'message' => 'Session revoked.',
+            'revoked_count' => $deleted,
+        ]);
+    }
 }

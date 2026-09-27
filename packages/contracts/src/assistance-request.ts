@@ -16,6 +16,9 @@ export type AssistanceRequestStatus =
 
 export interface AssistanceRequestRecord {
   id: EntityId
+  /** Affected-area FK (optional). The frontend doesn't currently pick an
+   *  area; this is reserved for admins/responders. */
+  area_id: number | null
   type: AssistanceRequestType
   priority: AssistanceRequestPriority
   description: string

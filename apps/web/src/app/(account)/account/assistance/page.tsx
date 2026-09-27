@@ -9,7 +9,7 @@ import { Section } from "@shurokkha/ui/layout/section"
 
 import { routes } from "@/config/routes"
 
-import { AssistanceSections } from "@/features/assistance/components/assistance-sections"
+import { AssistanceSection } from "@/features/assistance/components/assistance-section"
 import { AssistanceSkeleton } from "@/features/assistance/components/assistance-skeleton"
 
 /**
@@ -38,7 +38,7 @@ export default function AssistancePage() {
         />
 
         <Suspense fallback={<AssistanceSkeleton />}>
-          <AssistanceSections />
+          <AssistanceSection />
         </Suspense>
       </Container>
     </Section>

@@ -38,7 +38,7 @@ export function TwoFactorCard() {
     enable.mutate(undefined, {
       onSuccess: () =>
         toast.success(
-          "Two-factor authentication enabled. Save your recovery codes."
+          "Two-factor authentication enabled. Recovery codes aren't issued yet — full TOTP enrollment is coming soon."
         ),
       onError: (error) =>
         toast.error(
@@ -86,9 +86,10 @@ export function TwoFactorCard() {
             fallback="Could not update two-factor authentication."
           />
           <p className="text-sm text-muted-foreground">
-            When enabled, you&apos;ll enter a one-time code from your
-            authenticator app at every sign-in. Recovery codes are shown once
-            when you enable it.
+            When enabled, you&apos;ll be asked for a one-time code at every
+            sign-in. The full authenticator-app + recovery-codes flow is still
+            being rolled out — for now this toggle only marks the preference
+            on your profile.
           </p>
         </div>
         <div className="flex items-center justify-end gap-2 border-t border-border/60 px-6 py-3">

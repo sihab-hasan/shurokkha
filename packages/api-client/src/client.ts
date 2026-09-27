@@ -36,8 +36,18 @@ import type {
   PrivacyPreferencesInput,
   Profile,
   ProfileInput,
+  PublicAffectedAreaRecord,
+  PublicDisasterListMeta,
+  PublicDisasterRecord,
+  PublicDisasterSeverity,
+  PublicDisasterStatus,
+  PublicProfileRecord,
+  PublicShelterListMeta,
+  PublicShelterRecord,
+  PublicShelterStatus,
   RequestAccountDeletionInput,
   RevokeAllSessionsResponse,
+  RevokeOneSessionResponse,
   TwoFactorDisableResponse,
   TwoFactorEnableResponse,
   UpdatePasswordInput,
@@ -393,6 +403,50 @@ export function createShurokkhaApi(options: ApiClientOptions) {
           "/v1/health"
         ),
     },
+    public: {
+      disasters: {
+        list: (params: {
+          status?: PublicDisasterStatus
+          severity?: PublicDisasterSeverity
+        } = {}) =>
+          client.get<
+            ApiResource<PublicDisasterRecord[]> & {
+              meta?: PublicDisasterListMeta
+            }
+          >(`/v1/public/disasters${queryString(params)}`),
+        get: (id: number) =>
+          client.get<ApiResource<PublicDisasterRecord>>(
+            `/v1/public/disasters/${id}`
+          ),
+      },
+      shelters: {
+        list: (params: {
+          status?: PublicShelterStatus
+          only_available?: boolean
+        } = {}) =>
+          client.get<
+            ApiResource<PublicShelterRecord[]> & {
+              meta?: PublicShelterListMeta
+            }
+          >(`/v1/public/shelters${queryString(params)}`),
+        get: (id: number) =>
+          client.get<ApiResource<PublicShelterRecord>>(
+            `/v1/public/shelters/${id}`
+          ),
+      },
+      affectedAreas: {
+        list: () =>
+          client.get<ApiResource<PublicAffectedAreaRecord[]>>(
+            "/v1/public/affected-areas"
+          ),
+      },
+      profiles: {
+        get: (username: string) =>
+          client.get<ApiResource<PublicProfileRecord>>(
+            `/v1/public/profiles/${encodeURIComponent(username)}`
+          ),
+      },
+    },
     auth: {
       csrf: () => client.get<{ csrf: string }>("/v1/auth/csrf"),
       register: async (input: {
@@ -500,6 +554,15 @@ export function createShurokkhaApi(options: ApiClientOptions) {
           client.get<ApiResource<DonationStats>>("/v1/donations/stats"),
         get: (id: number) =>
           client.get<ApiResource<DonationRecord>>(`/v1/donations/${id}`),
+        /**
+         * Resolve a donation by its user-visible receipt number
+         * (e.g. "DON-000481"). 404 when the receipt doesn't exist or
+         * belongs to a different user.
+         */
+        getByReceipt: (receiptNumber: string) =>
+          client.get<ApiResource<DonationRecord>>(
+            `/v1/donations/by-receipt/${encodeURIComponent(receiptNumber)}`
+          ),
         create: (input: DonationInput) =>
           client.post<ApiResource<DonationRecord>>("/v1/donations", input),
         cancel: (id: number) =>
@@ -656,6 +719,10 @@ export function createShurokkhaApi(options: ApiClientOptions) {
           client.get<ApiResource<UserSession>>("/v1/auth/me/session"),
         list: () =>
           client.get<ApiResource<UserSession[]>>("/v1/auth/me/sessions"),
+        revokeOne: (sessionId: string) =>
+          client.delete<ApiResource<RevokeOneSessionResponse>>(
+            `/v1/auth/me/sessions/${encodeURIComponent(sessionId)}`
+          ),
         revokeAll: () =>
           client.post<ApiResource<RevokeAllSessionsResponse>>(
             "/v1/auth/me/sessions/revoke-all"

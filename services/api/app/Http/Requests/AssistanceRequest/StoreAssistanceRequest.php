@@ -22,8 +22,8 @@ class StoreAssistanceRequest extends FormRequest
             'priority' => ['required', Rule::enum(AssistanceRequestPriority::class)],
             'description' => ['required', 'string', 'min:10', 'max:3000'],
             'affected_people_count' => ['required', 'integer', 'min:1', 'max:10000'],
-            'contact_phone' => ['required', 'string', 'max:32'],
-            'address' => ['required', 'string', 'max:500'],
+            'contact_phone' => ['required', 'string', 'min:5', 'max:32'],
+            'address' => ['required', 'string', 'min:5', 'max:500'],
         ];
     }
 }

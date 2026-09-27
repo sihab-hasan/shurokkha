@@ -28,6 +28,7 @@ class IndexDonationsRequest extends FormRequest
         'completed',
         'failed',
         'refunded',
+        'cancelled',
     ];
 
     public const TYPES = [

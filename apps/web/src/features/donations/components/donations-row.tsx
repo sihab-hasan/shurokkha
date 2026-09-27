@@ -15,6 +15,7 @@ const STATUS_TONE: Record<
   completed: "success",
   failed: "destructive",
   refunded: "secondary",
+  cancelled: "outline",
 }
 
 /**

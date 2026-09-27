@@ -1,32 +1,34 @@
 import type { Metadata } from "next"
-import { Section } from "@shurokkha/ui/layout/section"
+
 import { Container } from "@shurokkha/ui/layout/container"
 import { PageHeader } from "@shurokkha/ui/layout/page-header"
-import { SectionHeader } from "@shurokkha/ui/layout/section-header"
+import { Section } from "@shurokkha/ui/layout/section"
+
+import { GuidePhasesGrid } from "@/features/resources/components/guide-phases-grid"
+import { GuidesSupportCallout } from "@/features/resources/components/guides-support-callout"
 
 export const metadata: Metadata = {
-  title: "Emergency Guides",
+  title: "Emergency guides",
   description:
-    "Practical guidance for preparing for and responding to disasters.",
+    "Practical guidance across the disaster cycle — prepare, respond, evacuate, recover — verified against official Bangladesh sources.",
 }
 
+/**
+ * `/resources/guides` shell. Page-level composition: header →
+ * four-phase checklist grid → support callout.
+ */
 export default function EmergencyGuidesPage() {
   return (
     <Section className="py-12 sm:py-16 lg:py-20">
-      <Container>
-        <PageHeader title="Emergency Guides" />
-        <section className="py-7 sm:py-9">
-          <SectionHeader title="Prepare" align="left" className="mb-0" />
-        </section>
-        <section className="py-7 sm:py-9">
-          <SectionHeader title="Respond" align="left" className="mb-0" />
-        </section>
-        <section className="py-7 sm:py-9">
-          <SectionHeader title="Evacuate" align="left" className="mb-0" />
-        </section>
-        <section className="py-7 sm:py-9">
-          <SectionHeader title="Recover" align="left" className="mb-0" />
-        </section>
+      <Container className="space-y-10">
+        <PageHeader
+          eyebrow="Emergency guides"
+          title="Practical guidance across the disaster cycle"
+          description="Four connected guides — prepare, respond, evacuate, recover — drawn from official Bangladesh sources and the coordination team’s field experience."
+        />
+
+        <GuidePhasesGrid />
+        <GuidesSupportCallout />
       </Container>
     </Section>
   )

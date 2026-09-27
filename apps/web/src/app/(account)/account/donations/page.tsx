@@ -9,7 +9,7 @@ import { Section } from "@shurokkha/ui/layout/section"
 
 import { routes } from "@/config/routes"
 
-import { DonationsSections } from "@/features/donations/components/donations-sections"
+import { DonationsSection } from "@/features/donations/components/donations-section"
 import { DonationsSkeleton } from "@/features/donations/components/donations-skeleton"
 
 /**
@@ -39,7 +39,7 @@ export default function DonationsPage() {
         />
 
         <Suspense fallback={<DonationsSkeleton />}>
-          <DonationsSections />
+          <DonationsSection />
         </Suspense>
       </Container>
     </Section>

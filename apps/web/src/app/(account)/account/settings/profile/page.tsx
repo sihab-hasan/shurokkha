@@ -4,7 +4,7 @@ import { Container } from "@shurokkha/ui/layout/container"
 import { PageHeader } from "@shurokkha/ui/layout/page-header"
 import { Section } from "@shurokkha/ui/layout/section"
 
-import { ProfileSections } from "@/features/settings/components/profile-sections"
+import { ProfileSection } from "@/features/settings/components/profile-section"
 import { ProfileSkeleton } from "@/features/settings/components/profile-skeleton"
 
 /**
@@ -21,7 +21,7 @@ export default function ProfileSettingsPage() {
           description="Update how you appear to other helpers on Shurokkha."
         />
         <Suspense fallback={<ProfileSkeleton />}>
-          <ProfileSections />
+          <ProfileSection />
         </Suspense>
       </Container>
     </Section>

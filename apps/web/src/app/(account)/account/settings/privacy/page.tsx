@@ -4,7 +4,7 @@ import { Container } from "@shurokkha/ui/layout/container"
 import { PageHeader } from "@shurokkha/ui/layout/page-header"
 import { Section } from "@shurokkha/ui/layout/section"
 
-import { PrivacySections } from "@/features/settings/components/privacy-sections"
+import { PrivacySection } from "@/features/settings/components/privacy-section"
 import { PrivacySkeleton } from "@/features/settings/components/privacy-skeleton"
 
 /**
@@ -22,7 +22,7 @@ export default function PrivacySettingsPage() {
           description="Control what is shared, with whom, and how you appear."
         />
         <Suspense fallback={<PrivacySkeleton />}>
-          <PrivacySections />
+          <PrivacySection />
         </Suspense>
       </Container>
     </Section>

@@ -4,7 +4,7 @@ import { Container } from "@shurokkha/ui/layout/container"
 import { PageHeader } from "@shurokkha/ui/layout/page-header"
 import { Section } from "@shurokkha/ui/layout/section"
 
-import { SessionsSections } from "@/features/settings/components/sessions-sections"
+import { SessionsSection } from "@/features/settings/components/sessions-section"
 import { SessionsSkeleton } from "@/features/settings/components/sessions-skeleton"
 
 /**
@@ -22,7 +22,7 @@ export default function SessionsSettingsPage() {
           description="The devices and browsers currently signed in to your account."
         />
         <Suspense fallback={<SessionsSkeleton />}>
-          <SessionsSections />
+          <SessionsSection />
         </Suspense>
       </Container>
     </Section>

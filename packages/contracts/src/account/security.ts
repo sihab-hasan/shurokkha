@@ -39,6 +39,11 @@ export interface RevokeAllSessionsResponse {
   revoked_count: number
 }
 
+export interface RevokeOneSessionResponse {
+  message: string
+  revoked_count: number
+}
+
 export const updatePasswordInputSchema = z
   .object({
     current_password: z.string().min(1, "Enter your current password"),

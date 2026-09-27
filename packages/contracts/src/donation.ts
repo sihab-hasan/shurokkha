@@ -39,6 +39,7 @@ export const DONATION_STATUSES = [
   "completed",
   "failed",
   "refunded",
+  "cancelled",
 ] as const
 
 export type DonationStatus = (typeof DONATION_STATUSES)[number]

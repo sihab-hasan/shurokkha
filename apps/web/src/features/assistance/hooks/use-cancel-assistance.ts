@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import type {
   AssistanceRequestRecord,
-  AssistanceRequestStatus,
   PaginatedResource,
 } from "@shurokkha/contracts"
 
@@ -38,9 +37,9 @@ export function useCancelAssistance() {
         return response.data
       },
       onSuccess: (updated) => {
-        const updatedStatus: AssistanceRequestStatus = updated.status
-
-        // Patch the record into every cached list page.
+        // Patch the full updated record into every cached list page so
+        // the cache stays in lockstep with the server payload (status,
+        // cancelled_at, updated_at, etc).
         queryClient.setQueriesData<AssistanceListPage | undefined>(
           { queryKey: ["assistance", "list"] },
           (current) => {
@@ -49,10 +48,7 @@ export function useCancelAssistance() {
               ...current,
               data: current.data.map((row) =>
                 row.id === updated.id
-                  ? ({
-                      ...row,
-                      status: updatedStatus,
-                    } as AssistanceRequestRecord)
+                  ? ({ ...row, ...updated } as AssistanceRequestRecord)
                   : row
               ),
             }

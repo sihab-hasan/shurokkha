@@ -4,7 +4,7 @@ import { Container } from "@shurokkha/ui/layout/container"
 import { PageHeader } from "@shurokkha/ui/layout/page-header"
 import { Section } from "@shurokkha/ui/layout/section"
 
-import { SecuritySections } from "@/features/settings/components/security-sections"
+import { SecuritySection } from "@/features/settings/components/security-section"
 import { SecuritySkeleton } from "@/features/settings/components/security-skeleton"
 
 /**
@@ -22,7 +22,7 @@ export default function SecuritySettingsPage() {
           description="Manage how you sign in and prove it is you."
         />
         <Suspense fallback={<SecuritySkeleton />}>
-          <SecuritySections />
+          <SecuritySection />
         </Suspense>
       </Container>
     </Section>

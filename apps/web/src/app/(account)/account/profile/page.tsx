@@ -4,7 +4,7 @@ import { Container } from "@shurokkha/ui/layout/container"
 import { PageHeader } from "@shurokkha/ui/layout/page-header"
 import { Section } from "@shurokkha/ui/layout/section"
 
-import { ProfileSections } from "@/features/settings/components/profile-sections"
+import { ProfileSection } from "@/features/settings/components/profile-section"
 import { ProfileSkeleton } from "@/features/settings/components/profile-skeleton"
 
 /**
@@ -16,7 +16,7 @@ import { ProfileSkeleton } from "@/features/settings/components/profile-skeleton
  *  - `<Container padded={false}>` controls the horizontal alignment + rhythm
  *  - `<PageHeader>` ships in the initial HTML so the title is indexable
  *  - the data-driven UI lives in a `<Suspense>` boundary around the
- *    `<ProfileSections />` client island, with a pure markup `<ProfileSkeleton />`
+ *    `<ProfileSection />` client island, with a pure markup `<ProfileSkeleton />`
  *    fallback so the page is fully renderable on the server
  */
 export default function ProfilePage() {
@@ -28,7 +28,7 @@ export default function ProfilePage() {
           description="Update how you appear to other helpers on Shurokkha."
         />
         <Suspense fallback={<ProfileSkeleton />}>
-          <ProfileSections />
+          <ProfileSection />
         </Suspense>
       </Container>
     </Section>

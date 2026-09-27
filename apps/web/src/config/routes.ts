@@ -46,8 +46,6 @@ export const routes = {
     createAssistance: "/account/assistance/new",
     assistanceRequest: (requestId: string) =>
       `/account/assistance/${encodeSegment(requestId)}`,
-    assistanceAppeal: (requestId: string) =>
-      `/account/assistance/${encodeSegment(requestId)}/appeal`,
     complaints: "/account/complaints",
     documents: "/account/documents",
     donations: "/account/donations",

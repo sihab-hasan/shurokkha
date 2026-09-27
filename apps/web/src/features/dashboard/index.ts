@@ -1,3 +1,4 @@
+export * from "./components/dashboard-activity-section"
+export * from "./components/dashboard-stats-section"
+export * from "./components/recent-donation-activity-item"
 export * from "./components/stat-card"
-export * from "./sections/dashboard-stats-section"
-export * from "./sections/dashboard-activity-section"

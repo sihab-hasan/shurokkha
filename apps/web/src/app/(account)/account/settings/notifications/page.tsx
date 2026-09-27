@@ -4,7 +4,7 @@ import { Container } from "@shurokkha/ui/layout/container"
 import { PageHeader } from "@shurokkha/ui/layout/page-header"
 import { Section } from "@shurokkha/ui/layout/section"
 
-import { NotificationsSections } from "@/features/settings/components/notifications-sections"
+import { NotificationsSection } from "@/features/settings/components/notifications-section"
 import { NotificationsSkeleton } from "@/features/settings/components/notifications-skeleton"
 
 /**
@@ -22,7 +22,7 @@ export default function NotificationsSettingsPage() {
           description="Choose how and when Shurokkha reaches you."
         />
         <Suspense fallback={<NotificationsSkeleton />}>
-          <NotificationsSections />
+          <NotificationsSection />
         </Suspense>
       </Container>
     </Section>

@@ -22,8 +22,8 @@ class UpdateAssistanceRequest extends FormRequest
             'priority' => ['sometimes', Rule::enum(AssistanceRequestPriority::class)],
             'description' => ['sometimes', 'string', 'min:10', 'max:3000'],
             'affected_people_count' => ['sometimes', 'integer', 'min:1', 'max:10000'],
-            'contact_phone' => ['sometimes', 'string', 'max:32'],
-            'address' => ['sometimes', 'string', 'max:500'],
+            'contact_phone' => ['sometimes', 'string', 'min:5', 'max:32'],
+            'address' => ['sometimes', 'string', 'min:5', 'max:500'],
         ];
     }
 }

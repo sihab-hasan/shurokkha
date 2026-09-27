@@ -1,48 +1,32 @@
 import type { Metadata } from "next"
-import { Section } from "@shurokkha/ui/layout/section"
+
 import { Container } from "@shurokkha/ui/layout/container"
 import { PageHeader } from "@shurokkha/ui/layout/page-header"
-import { SectionHeader } from "@shurokkha/ui/layout/section-header"
+import { Section } from "@shurokkha/ui/layout/section"
+
+import { ResourceServicesGrid } from "@/features/resources/components/resource-services-grid"
 
 export const metadata: Metadata = {
-  title: "Support Services",
+  title: "Support services",
   description:
-    "Find coordinated disaster support services and recovery assistance.",
+    "Coordinated disaster support pathways — emergency assistance, food and supplies, medical support, and recovery pathways.",
 }
 
+/**
+ * `/resources/support-services` shell. Page-level composition:
+ * header → four-lane service grid.
+ */
 export default function SupportServicesPage() {
   return (
     <Section className="py-12 sm:py-16 lg:py-20">
-      <Container>
-        <PageHeader title="Support Services" />
-        <section className="py-7 sm:py-9">
-          <SectionHeader
-            title="Emergency Assistance"
-            align="left"
-            className="mb-0"
-          />
-        </section>
-        <section className="py-7 sm:py-9">
-          <SectionHeader
-            title="Food and Supplies"
-            align="left"
-            className="mb-0"
-          />
-        </section>
-        <section className="py-7 sm:py-9">
-          <SectionHeader
-            title="Medical Support"
-            align="left"
-            className="mb-0"
-          />
-        </section>
-        <section className="py-7 sm:py-9">
-          <SectionHeader
-            title="Recovery Support"
-            align="left"
-            className="mb-0"
-          />
-        </section>
+      <Container className="space-y-10">
+        <PageHeader
+          eyebrow="Support services"
+          title="Coordinated disaster support pathways"
+          description="Four service lanes Shurokkha helps coordinate end-to-end: emergency assistance, food and supplies, medical support, and recovery pathways."
+        />
+
+        <ResourceServicesGrid />
       </Container>
     </Section>
   )

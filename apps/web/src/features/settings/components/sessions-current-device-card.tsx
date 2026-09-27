@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Laptop, MapPin, ShieldAlert } from "lucide-react"
+import { Laptop, LogOut, MapPin, ShieldAlert } from "lucide-react"
 
 import {
   AlertDialog,
@@ -21,6 +21,7 @@ import { SettingsSection } from "@shurokkha/ui/components/settings-section"
 import { Skeleton } from "@shurokkha/ui/components/skeleton"
 
 import { useCurrentSession } from "../hooks/use-current-session"
+import { useRevokeOneSession } from "../hooks/use-revoke-one-session"
 import { useRevokeAllSessions, useSessionsList } from "../hooks/use-sessions"
 import { ApiFailure, errorMessage } from "@/features/shared/api-feedback"
 import { timeAgo } from "@/features/shared/time-ago"
@@ -105,6 +106,26 @@ function browserLabel(userAgent: string) {
 
 export function ActiveSessionsCard() {
   const { data, isPending, isError, error } = useSessionsList()
+  const revokeOne = useRevokeOneSession()
+  const [confirmingId, setConfirmingId] = React.useState<string | null>(null)
+
+  function confirmRevoke(sessionId: string) {
+    revokeOne.mutate(
+      { sessionId },
+      {
+        onSuccess: (response) => {
+          toast.success(
+            response?.data?.message ?? "Session signed out."
+          )
+          setConfirmingId(null)
+        },
+        onError: (caught) =>
+          toast.error(
+            errorMessage(caught, "Could not sign out that device.")
+          ),
+      }
+    )
+  }
 
   return (
     <section className="space-y-4">
@@ -169,18 +190,63 @@ export function ActiveSessionsCard() {
                 }
                 meta={session.last_active_at ?? undefined}
                 control={
-                  <span
-                    aria-hidden
-                    className="flex size-8 items-center justify-center rounded-md border border-border/60 bg-muted text-muted-foreground"
-                  >
-                    <Laptop className="size-4" />
-                  </span>
+                  isCurrent ? (
+                    <span
+                      aria-hidden
+                      className="flex size-8 items-center justify-center rounded-md border border-border/60 bg-muted text-muted-foreground"
+                    >
+                      <Laptop className="size-4" />
+                    </span>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setConfirmingId(session.id)}
+                      disabled={revokeOne.isPending}
+                      aria-label={`Sign out ${browserLabel(session.user_agent)}`}
+                    >
+                      <LogOut className="mr-1.5 size-3.5" />
+                      Sign out
+                    </Button>
+                  )
                 }
               />
             )
           })}
         </SettingsCard>
       )}
+
+      <AlertDialog
+        open={confirmingId !== null}
+        onOpenChange={(open) => {
+          if (!open) setConfirmingId(null)
+        }}
+      >
+        <AlertDialogContent size="default">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sign out this device?</AlertDialogTitle>
+            <AlertDialogDescription>
+              We&apos;ll end the session on that device immediately. They&apos;ll
+              need to sign in again to use Shurokkha.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={revokeOne.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={revokeOne.isPending}
+              onClick={(event) => {
+                event.preventDefault()
+                if (confirmingId) confirmRevoke(confirmingId)
+              }}
+            >
+              {revokeOne.isPending ? "Signing out…" : "Sign out"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   )
 }

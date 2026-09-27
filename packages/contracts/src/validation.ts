@@ -1,5 +1,10 @@
 import { z } from "zod"
 
+import {
+  DONATION_KINDS,
+  DONATION_PAYMENT_METHODS,
+} from "./donation"
+
 export const idSchema = z.string().min(1)
 
 export const assistanceRequestTypeSchema = z.enum([
@@ -54,3 +59,38 @@ export const missingPersonInputSchema = z
       })
     }
   })
+
+/**
+ * Validation for `POST /v1/donations`.
+ *
+ * Mirrors `StoreDonationRequest`:
+ *  - `donation_kind` ∈ {@link DONATION_KINDS}, required
+ *  - `amount` ≥ 1, ≤ 99_999_999.99
+ *  - `payment_method` optional, must be in {@link DONATION_PAYMENT_METHODS}
+ *  - `campaign_title` optional, ≤ 255 chars
+ *  - `currency` optional, ISO-4217 3-letter code (default "BDT"
+ *    enforced server-side; we default here too so the form is honest)
+ */
+export const donationInputSchema = z.object({
+  donation_kind: z.enum(DONATION_KINDS),
+  amount: z.coerce.number().min(1).max(99_999_999.99),
+  payment_method: z
+    .enum(DONATION_PAYMENT_METHODS)
+    .nullable()
+    .optional()
+    .or(z.literal("").transform(() => null)),
+  campaign_title: z
+    .string()
+    .trim()
+    .max(255)
+    .nullable()
+    .optional()
+    .or(z.literal("").transform(() => null)),
+  currency: z
+    .string()
+    .trim()
+    .length(3)
+    .default("BDT"),
+})
+
+export type DonationInputValues = z.infer<typeof donationInputSchema>

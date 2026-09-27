@@ -112,6 +112,23 @@ class DonationController extends Controller
         return new DonationResource($donation);
     }
 
+    /**
+     * Resolve a donation by its user-visible receipt number (e.g.
+     * "DON-000481"). Scoped to the caller so a wrong receipt id leaks
+     * no information: missing-and-not-yours both surface as 404.
+     */
+    public function showByReceipt(Request $request, string $receiptNumber): DonationResource
+    {
+        Gate::authorize('viewAny', Donation::class);
+
+        $donation = Donation::query()
+            ->where('user_id', $request->user()->id)
+            ->where('receipt_number', $receiptNumber)
+            ->firstOrFail();
+
+        return new DonationResource($donation);
+    }
+
     public function cancel(Donation $donation): DonationResource
     {
         Gate::authorize('cancel', $donation);

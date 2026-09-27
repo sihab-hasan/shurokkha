@@ -1,83 +1,58 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
 
-import { Section } from "@shurokkha/ui/layout/section"
 import { Container } from "@shurokkha/ui/layout/container"
+import { Section } from "@shurokkha/ui/layout/section"
 
-import { isAllowedUsername, normalizeUsername } from "@/config/username"
-
-import { ProfileHeader } from "./_components/profile-header"
-import { ProfileOverview } from "./_components/profile-overview"
-
-const publicProfiles = {
-  "sihab.xd": {
-    name: "Sihab Hasan",
-    username: "sihab.xd",
-    role: "Citizen",
-    bio: "Supporting safer, better-connected communities through Shurokkha.",
-    joined: "Joined May 2023",
-    location: "Riverview",
-    hours: 48,
-    missions: 12,
-    peopleHelped: 86,
-  },
-} as const
-
-type PublicUsername = keyof typeof publicProfiles
+import { ProfileBodySection, ProfileSkeleton } from "@/features/profiles"
+import { normalizeUsername, isAllowedUsername } from "@/config/username"
 
 interface PublicProfilePageProps {
   params: Promise<{ username: string }>
 }
 
-function getPublicProfile(username: string) {
-  const normalizedUsername = normalizeUsername(username)
-  if (!isAllowedUsername(normalizedUsername)) return null
-  return publicProfiles[normalizedUsername as PublicUsername] ?? null
+/**
+ * Public profile page shell. Validates the username shape early so
+ * disallowed segments return a 404 without ever hitting the network,
+ * then defers to {@link ProfileBodySection} for the data-driven view.
+ */
+export default async function PublicProfilePage({
+  params,
+}: PublicProfilePageProps) {
+  const { username: rawUsername } = await params
+  const username = normalizeUsername(rawUsername)
+
+  if (!isAllowedUsername(username)) {
+    return (
+      <Section className="py-16">
+        <Container>
+          <p className="text-sm text-muted-foreground">
+            Invalid username format.
+          </p>
+        </Container>
+      </Section>
+    )
+  }
+
+  return (
+    <section className="bg-gradient-to-b from-muted/45 to-background py-10 sm:py-14 lg:py-16">
+      <Section className="py-0">
+        <Container>
+          <Suspense fallback={<ProfileSkeleton username={username} />}>
+            <ProfileBodySection username={username} />
+          </Suspense>
+        </Container>
+      </Section>
+    </section>
+  )
 }
 
 export async function generateMetadata({
   params,
 }: PublicProfilePageProps): Promise<Metadata> {
   const { username } = await params
-  const profile = getPublicProfile(username)
-  if (!profile) return { title: "Profile not found" }
-
   return {
-    title: `${profile.name} (@${profile.username})`,
-    description: profile.bio,
-    alternates: { canonical: `/u/${profile.username}` },
+    title: `@${normalizeUsername(username)}`,
+    description: `View ${normalizeUsername(username)}'s public profile on Shurokkha.`,
   }
-}
-
-export default async function PublicProfilePage({
-  params,
-}: PublicProfilePageProps) {
-  const { username } = await params
-  const profile = getPublicProfile(username)
-  if (!profile) notFound()
-
-  return (
-    <section className="bg-gradient-to-b from-muted/45 to-background py-10 sm:py-14 lg:py-16">
-      <Section className="py-0">
-        <Container>
-          <div className="flex flex-col gap-6">
-            <ProfileHeader
-              name={profile.name}
-              username={profile.username}
-              role={profile.role}
-              joined={profile.joined}
-              location={profile.location}
-            />
-            <ProfileOverview
-              bio={profile.bio}
-              location={profile.location}
-              hours={profile.hours}
-              missions={profile.missions}
-              peopleHelped={profile.peopleHelped}
-            />
-          </div>
-        </Container>
-      </Section>
-    </section>
-  )
 }

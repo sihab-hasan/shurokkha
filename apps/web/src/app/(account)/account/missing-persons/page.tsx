@@ -9,7 +9,7 @@ import { Section } from "@shurokkha/ui/layout/section"
 
 import { routes } from "@/config/routes"
 
-import { MissingPersonSections } from "@/features/missing-persons/components/missing-person-sections"
+import { MissingPersonSection } from "@/features/missing-persons/components/missing-person-section"
 import { MissingPersonSkeleton } from "@/features/missing-persons/components/missing-person-skeleton"
 
 /**
@@ -36,7 +36,7 @@ export default function MissingPersonsPage() {
         />
 
         <Suspense fallback={<MissingPersonSkeleton />}>
-          <MissingPersonSections />
+          <MissingPersonSection />
         </Suspense>
       </Container>
     </Section>

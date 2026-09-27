@@ -15,6 +15,10 @@ use App\Http\Controllers\Api\V1\Disaster\AdminDisasterController;
 use App\Http\Controllers\Api\V1\Donation\AdminDonationController;
 use App\Http\Controllers\Api\V1\Donation\DonationController;
 use App\Http\Controllers\Api\V1\MissingPerson\MissingPersonReportController;
+use App\Http\Controllers\Api\V1\Public\PublicAffectedAreaController;
+use App\Http\Controllers\Api\V1\Public\PublicDisasterController;
+use App\Http\Controllers\Api\V1\Public\PublicProfileController;
+use App\Http\Controllers\Api\V1\Public\PublicShelterController;
 use App\Http\Controllers\Api\V1\RescueTeam\AdminRescueTeamController;
 use App\Http\Controllers\Api\V1\Shelter\AdminShelterController;
 use App\Http\Controllers\Api\V1\TeamManagement\AdminTeamManagementController;
@@ -32,6 +36,25 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     // middleware gives these API endpoints encrypted cookies, sessions, and
     // CSRF protection while the outer API group still provides /api routing.
     Route::middleware('web')->group(function (): void {
+        // Public, guest-accessible reads. Live inside the `web` group so
+        // they share the same session + CSRF cookie behavior as the auth
+        // endpoints, but do NOT require authentication.
+        Route::prefix('public')->name('public.')->group(function (): void {
+            Route::get('/disasters', [PublicDisasterController::class, 'index'])->name('disasters.index');
+            Route::get('/disasters/{disaster}', [PublicDisasterController::class, 'show'])
+                ->whereNumber('disaster')->name('disasters.show');
+
+            Route::get('/shelters', [PublicShelterController::class, 'index'])->name('shelters.index');
+            Route::get('/shelters/{shelter}', [PublicShelterController::class, 'show'])
+                ->whereNumber('shelter')->name('shelters.show');
+
+            Route::get('/affected-areas', [PublicAffectedAreaController::class, 'index'])->name('affected-areas.index');
+
+            Route::get('/profiles/{username}', [PublicProfileController::class, 'show'])
+                ->where('username', '[A-Za-z0-9._-]+')
+                ->name('profiles.show');
+        });
+
         Route::prefix('auth')->name('auth.')->group(function (): void {
             Route::get('/csrf', [AuthController::class, 'csrf'])->name('csrf');
             Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -67,9 +90,12 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
                 Route::post('/account-deletion', [AccountDeletionController::class, 'store'])->name('account-deletion.store');
                 Route::delete('/account-deletion', [AccountDeletionController::class, 'destroy'])->name('account-deletion.destroy');
 
-                // Sessions — current session, list, sign-out-everywhere
+                // Sessions — current session, list, sign-out-everywhere, sign-out-one
                 Route::get('/session', [SessionController::class, 'show'])->name('session.show');
                 Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index');
+                Route::delete('/sessions/{sessionId}', [SessionController::class, 'destroyOne'])
+                    ->where('sessionId', '[A-Za-z0-9]+')
+                    ->name('sessions.destroy');
                 Route::post('/sessions/revoke-all', [SessionController::class, 'destroyAll'])->name('sessions.revoke-all');
 
                 // Two-factor — stub enable/disable until TOTP ships
@@ -102,6 +128,9 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
 
             Route::get('/donations/stats', [DonationController::class, 'stats'])->name('donations.stats');
             Route::get('/donations', [DonationController::class, 'index'])->name('donations.index');
+            Route::get('/donations/by-receipt/{receiptNumber}', [DonationController::class, 'showByReceipt'])
+                ->where('receiptNumber', 'DON-[A-Za-z0-9\-]+')
+                ->name('donations.showByReceipt');
             Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
             Route::get('/donations/{donation}', [DonationController::class, 'show'])->name('donations.show');
             Route::post('/donations/{donation}/cancel', [DonationController::class, 'cancel'])->name('donations.cancel');

@@ -16,10 +16,10 @@ class UpdateProfileRequest extends FormRequest
         $userId = $this->user()?->id ?? 0;
 
         return [
-            'full_name' => ['required', 'string', 'max:120'],
+            'full_name' => ['required', 'string', 'min:2', 'max:120'],
             'email' => ['required', 'email', 'max:255', "unique:users,email,{$userId}"],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'timezone' => ['nullable', 'string', 'max:64'],
+            'phone' => ['nullable', 'string', 'min:5', 'max:20'],
+            'timezone' => ['nullable', 'string', 'min:1', 'max:64'],
         ];
     }
 }

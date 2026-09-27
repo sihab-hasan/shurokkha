@@ -55,13 +55,20 @@ export function DonationDetail({ id }: DonationDetailProps) {
         }
       }
 
-      // Otherwise look up by receipt_number via the list endpoint.
-      const list = await api.resources.donations.list({
-        page: 1,
-        per_page: 1,
-      })
-      const match = list.data.find((row) => row.receipt_number === id)
-      return match ?? null
+      // Otherwise look up by receipt_number via the dedicated endpoint.
+      // Falls back to null when the receipt doesn't exist or belongs
+      // to a different user (both surface as 404, identical from the
+      // caller's perspective).
+      if (/^DON-/.test(id)) {
+        try {
+          const response = await api.resources.donations.getByReceipt(id)
+          return response.data
+        } catch {
+          return null
+        }
+      }
+
+      return null
     }
 
     tryLoad()
