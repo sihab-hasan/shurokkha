@@ -21,9 +21,9 @@ import type { PublicShelterStatus } from "@shurokkha/contracts"
  * fallback={<SheltersSkeleton />}>`
  */
 export function ShelterGrid() {
-  const [statusFilter, setStatusFilter] = useState<
-    PublicShelterStatus | "all"
-  >("all")
+  const [statusFilter, setStatusFilter] = useState<PublicShelterStatus | "all">(
+    "all"
+  )
 
   const { data, isPending, isError, error } = usePublicShelters({
     status: statusFilter === "all" ? undefined : statusFilter,

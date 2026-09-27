@@ -51,7 +51,9 @@ export function ShelterCard({ shelter }: ShelterCardProps) {
     <Card className="h-full">
       <CardHeader className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={statusVariant}>{titleCase(shelter.status ?? "")}</Badge>
+          <Badge variant={statusVariant}>
+            {titleCase(shelter.status ?? "")}
+          </Badge>
           {shelter.area_severity ? (
             <Badge variant="outline">Area: {shelter.area_severity}</Badge>
           ) : null}

@@ -16,8 +16,8 @@ export function DisastersEmptyState() {
           <p className="text-sm font-medium">No active disasters</p>
         </div>
         <p className="text-sm text-muted-foreground">
-          Nothing is currently flagged active. Resolved and monitoring
-          entries will appear here as they are reported.
+          Nothing is currently flagged active. Resolved and monitoring entries
+          will appear here as they are reported.
         </p>
       </CardContent>
     </Card>

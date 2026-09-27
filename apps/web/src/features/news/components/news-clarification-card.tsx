@@ -19,11 +19,7 @@ export function NewsClarificationCard() {
           news pages reference, refreshed as conditions change.
         </p>
         <div className="flex flex-wrap gap-2">
-          <Button
-            nativeButton={false}
-            size="sm"
-            render={<Link href="/map" />}
-          >
+          <Button nativeButton={false} size="sm" render={<Link href="/map" />}>
             Live response map
           </Button>
           <Button

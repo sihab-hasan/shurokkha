@@ -405,10 +405,12 @@ export function createShurokkhaApi(options: ApiClientOptions) {
     },
     public: {
       disasters: {
-        list: (params: {
-          status?: PublicDisasterStatus
-          severity?: PublicDisasterSeverity
-        } = {}) =>
+        list: (
+          params: {
+            status?: PublicDisasterStatus
+            severity?: PublicDisasterSeverity
+          } = {}
+        ) =>
           client.get<
             ApiResource<PublicDisasterRecord[]> & {
               meta?: PublicDisasterListMeta
@@ -420,10 +422,12 @@ export function createShurokkhaApi(options: ApiClientOptions) {
           ),
       },
       shelters: {
-        list: (params: {
-          status?: PublicShelterStatus
-          only_available?: boolean
-        } = {}) =>
+        list: (
+          params: {
+            status?: PublicShelterStatus
+            only_available?: boolean
+          } = {}
+        ) =>
           client.get<
             ApiResource<PublicShelterRecord[]> & {
               meta?: PublicShelterListMeta

@@ -15,10 +15,9 @@ export function GetHelpWarningBanner() {
         <div className="space-y-1">
           <p className="text-sm font-semibold text-danger">Emergency warning</p>
           <p className="max-w-2xl text-sm leading-6 text-foreground">
-            If someone is in immediate danger, contact emergency services
-            first. Shurokkha can help with coordination, but it is not a
-            replacement for the official 999 response or local disaster
-            response teams.
+            If someone is in immediate danger, contact emergency services first.
+            Shurokkha can help with coordination, but it is not a replacement
+            for the official 999 response or local disaster response teams.
           </p>
         </div>
         <Button

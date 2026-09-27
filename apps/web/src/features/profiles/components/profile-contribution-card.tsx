@@ -1,6 +1,11 @@
 import { HandHeart, PackageCheck } from "lucide-react"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@shurokkha/ui/components/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@shurokkha/ui/components/card"
 
 import { ProfileContributionRow } from "./profile-contribution-row"
 
@@ -22,8 +27,8 @@ export function ProfileContributionCard({
       <CardHeader>
         <CardTitle>Public contribution</CardTitle>
         <p className="text-sm leading-6 text-muted-foreground">
-          A snapshot of approved contributions visible on the public
-          profile. Private activity never appears here.
+          A snapshot of approved contributions visible on the public profile.
+          Private activity never appears here.
         </p>
       </CardHeader>
       <CardContent className="grid gap-3">

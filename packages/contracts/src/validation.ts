@@ -1,9 +1,6 @@
 import { z } from "zod"
 
-import {
-  DONATION_KINDS,
-  DONATION_PAYMENT_METHODS,
-} from "./donation"
+import { DONATION_KINDS, DONATION_PAYMENT_METHODS } from "./donation"
 
 export const idSchema = z.string().min(1)
 
@@ -86,11 +83,7 @@ export const donationInputSchema = z.object({
     .nullable()
     .optional()
     .or(z.literal("").transform(() => null)),
-  currency: z
-    .string()
-    .trim()
-    .length(3)
-    .default("BDT"),
+  currency: z.string().trim().length(3).default("BDT"),
 })
 
 export type DonationInputValues = z.infer<typeof donationInputSchema>

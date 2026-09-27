@@ -21,8 +21,8 @@ export function ProfileNotFound({ username, message }: ProfileNotFoundProps) {
           <CardContent className="space-y-2 p-6">
             <p className="text-sm font-medium">Profile not available</p>
             <p className="text-sm text-muted-foreground">
-              We couldn&apos;t load <span className="font-mono">@{username}</span>
-              . {message}
+              We couldn&apos;t load{" "}
+              <span className="font-mono">@{username}</span>. {message}
             </p>
           </CardContent>
         </Card>

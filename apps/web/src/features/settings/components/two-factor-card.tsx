@@ -88,8 +88,8 @@ export function TwoFactorCard() {
           <p className="text-sm text-muted-foreground">
             When enabled, you&apos;ll be asked for a one-time code at every
             sign-in. The full authenticator-app + recovery-codes flow is still
-            being rolled out — for now this toggle only marks the preference
-            on your profile.
+            being rolled out — for now this toggle only marks the preference on
+            your profile.
           </p>
         </div>
         <div className="flex items-center justify-end gap-2 border-t border-border/60 px-6 py-3">

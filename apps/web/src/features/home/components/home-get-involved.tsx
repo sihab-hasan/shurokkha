@@ -26,8 +26,8 @@ export function HomeGetInvolved() {
             <div className="space-y-1">
               <p className="text-sm font-medium">Volunteer with Shurokkha</p>
               <p className="text-sm leading-6 text-muted-foreground">
-                Apply to be matched against verified assignments in your area
-                or remotely.
+                Apply to be matched against verified assignments in your area or
+                remotely.
               </p>
             </div>
             <Button nativeButton={false} render={<Link href="/volunteers" />}>

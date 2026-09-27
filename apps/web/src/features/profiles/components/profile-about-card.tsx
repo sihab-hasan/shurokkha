@@ -1,11 +1,11 @@
-import {
-  Clock3,
-  HandHeart,
-  LifeBuoy,
-  MapPin,
-} from "lucide-react"
+import { Clock3, HandHeart, LifeBuoy, MapPin } from "lucide-react"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@shurokkha/ui/components/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@shurokkha/ui/components/card"
 
 import { ProfileStatTile } from "./profile-stat-tile"
 

@@ -2,7 +2,10 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import type { ApiResource, RevokeOneSessionResponse } from "@shurokkha/contracts"
+import type {
+  ApiResource,
+  RevokeOneSessionResponse,
+} from "@shurokkha/contracts"
 
 import { getShurokkhaApi } from "@/lib/api"
 
@@ -28,9 +31,8 @@ export function useRevokeOneSession() {
     RevokeOneSessionVariables
   >({
     mutationFn: async ({ sessionId }) => {
-      const response = await getShurokkhaApi().settings.sessions.revokeOne(
-        sessionId
-      )
+      const response =
+        await getShurokkhaApi().settings.sessions.revokeOne(sessionId)
       return response
     },
     onSuccess: () => {

@@ -3,7 +3,12 @@
 import { Building2 } from "lucide-react"
 
 import { Badge } from "@shurokkha/ui/components/badge"
-import { Card, CardHeader, CardTitle, CardDescription } from "@shurokkha/ui/components/card"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@shurokkha/ui/components/card"
 
 import { usePublicShelters } from "@/features/shelters/hooks/use-shelters"
 import { titleCase } from "@/features/shared/formatters"
@@ -28,8 +33,7 @@ export function SheltersRegionColumn() {
       isError={isError}
       emptyMessage="No shelters listed."
       errorMessage={
-        (error as Error | undefined)?.message ??
-        "Could not load shelters."
+        (error as Error | undefined)?.message ?? "Could not load shelters."
       }
     >
       {shelters.slice(0, 8).map((shelter) => (
@@ -48,9 +52,7 @@ export function SheltersRegionColumn() {
                 {titleCase(shelter.status ?? "")}
               </Badge>
             </div>
-            <CardTitle className="text-sm">
-              {shelter.shelter_name}
-            </CardTitle>
+            <CardTitle className="text-sm">{shelter.shelter_name}</CardTitle>
             <CardDescription className="text-xs">
               {shelter.occupancy} / {shelter.capacity} ·{" "}
               {shelter.available_seats} available

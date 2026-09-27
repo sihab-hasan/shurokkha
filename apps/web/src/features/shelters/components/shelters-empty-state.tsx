@@ -10,8 +10,8 @@ export function SheltersEmptyState() {
       <CardContent className="space-y-2 p-6">
         <p className="text-sm font-medium">No shelters to show</p>
         <p className="text-sm text-muted-foreground">
-          No shelters match the current filter. Try widening the selection
-          or check back later.
+          No shelters match the current filter. Try widening the selection or
+          check back later.
         </p>
       </CardContent>
     </Card>

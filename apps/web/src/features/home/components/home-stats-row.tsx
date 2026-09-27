@@ -1,11 +1,6 @@
 "use client"
 
-import {
-  AlertOctagon,
-  Building2,
-  HeartHandshake,
-  Users,
-} from "lucide-react"
+import { AlertOctagon, Building2, HeartHandshake, Users } from "lucide-react"
 
 import { SectionHeader } from "@shurokkha/ui/layout/section-header"
 
@@ -39,8 +34,7 @@ export function HomeStatsRow() {
     0
   )
 
-  const isPending =
-    disasters.isPending || shelters.isPending || areas.isPending
+  const isPending = disasters.isPending || shelters.isPending || areas.isPending
 
   return (
     <section className="space-y-4">

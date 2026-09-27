@@ -76,8 +76,8 @@ export function ProfileHeaderCard({ profile }: ProfileHeaderCardProps) {
       </CardHeader>
       <CardContent className="px-5 pb-5 sm:px-8 sm:pb-7">
         <div className="rounded-xl bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
-          Verified community member · Only approved public profile
-          information is shown.
+          Verified community member · Only approved public profile information
+          is shown.
         </div>
       </CardContent>
     </Card>

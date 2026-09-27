@@ -19,8 +19,8 @@ export function AlertClarificationCallout() {
         <p className="text-sm leading-6 text-muted-foreground">
           When conditions change quickly, prefer information published by
           official Bangladesh agencies. Shurokkha&apos;s role is to coordinate
-          support pathways and surface verified context — not to replace
-          police, fire, ambulance, or civil defence response.
+          support pathways and surface verified context — not to replace police,
+          fire, ambulance, or civil defence response.
         </p>
         <div className="flex flex-wrap gap-2">
           <Button

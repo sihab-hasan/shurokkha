@@ -16,8 +16,8 @@ export function FundraiseCtaCard() {
           <p className="text-sm font-medium">Ready to give?</p>
           <p className="text-sm leading-6 text-muted-foreground">
             Pick an active campaign or give to the general relief pool. A
-            receipt is generated immediately and your account keeps a record
-            you can revisit.
+            receipt is generated immediately and your account keeps a record you
+            can revisit.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

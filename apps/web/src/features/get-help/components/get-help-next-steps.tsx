@@ -1,8 +1,4 @@
-import {
-  ArrowRight,
-  CheckCircle2,
-  ClipboardList,
-} from "lucide-react"
+import { ArrowRight, CheckCircle2, ClipboardList } from "lucide-react"
 
 import {
   Card,

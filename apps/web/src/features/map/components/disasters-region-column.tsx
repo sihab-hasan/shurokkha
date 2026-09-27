@@ -3,7 +3,12 @@
 import { AlertOctagon } from "lucide-react"
 
 import { Badge } from "@shurokkha/ui/components/badge"
-import { Card, CardHeader, CardTitle, CardDescription } from "@shurokkha/ui/components/card"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@shurokkha/ui/components/card"
 
 import { usePublicDisasters } from "@/features/disasters/hooks/use-disasters"
 import { titleCase } from "@/features/shared/formatters"
@@ -40,8 +45,7 @@ export function DisastersRegionColumn() {
       isError={isError}
       emptyMessage="No active disasters."
       errorMessage={
-        (error as Error | undefined)?.message ??
-        "Could not load disasters."
+        (error as Error | undefined)?.message ?? "Could not load disasters."
       }
     >
       {disasters.map((disaster) => (
@@ -57,9 +61,7 @@ export function DisastersRegionColumn() {
                 {titleCase(disaster.status ?? "")}
               </Badge>
             </div>
-            <CardTitle className="text-sm">
-              {disaster.disaster_name}
-            </CardTitle>
+            <CardTitle className="text-sm">{disaster.disaster_name}</CardTitle>
             <CardDescription className="text-xs">
               {disaster.affected_areas_count ?? 0} affected areas ·{" "}
               {(disaster.total_affected_population ?? 0).toLocaleString()}{" "}

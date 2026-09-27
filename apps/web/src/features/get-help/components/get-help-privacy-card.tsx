@@ -24,10 +24,7 @@ export function GetHelpPrivacyCard() {
           We collect only what coordination needs
         </CardTitle>
         <CardDescription className="flex items-start gap-2">
-          <Lock
-            className="mt-0.5 size-4 shrink-0 text-primary"
-            aria-hidden
-          />
+          <Lock className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
           <span>
             Request details are visible to the coordination team and to you.
             Other citizens never see your private request unless you choose to

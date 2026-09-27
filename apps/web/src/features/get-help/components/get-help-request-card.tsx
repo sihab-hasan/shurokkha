@@ -21,16 +21,14 @@ export function GetHelpRequestCard() {
       <CardHeader className="space-y-2">
         <CardTitle className="text-xl">Request help form</CardTitle>
         <CardDescription>
-          You&apos;ll need to be signed in so the request can be tracked
-          against your account. We&apos;ll bring you back here when
-          you&apos;re done.
+          You&apos;ll need to be signed in so the request can be tracked against
+          your account. We&apos;ll bring you back here when you&apos;re done.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm leading-6 text-muted-foreground">
-          The request captures the area, type of help, urgency, contact
-          phone, and any details the coordination team needs to assess the
-          situation.
+          The request captures the area, type of help, urgency, contact phone,
+          and any details the coordination team needs to assess the situation.
         </p>
         <div className="flex flex-wrap gap-2">
           <Button

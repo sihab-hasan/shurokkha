@@ -114,15 +114,11 @@ export function ActiveSessionsCard() {
       { sessionId },
       {
         onSuccess: (response) => {
-          toast.success(
-            response?.data?.message ?? "Session signed out."
-          )
+          toast.success(response?.data?.message ?? "Session signed out.")
           setConfirmingId(null)
         },
         onError: (caught) =>
-          toast.error(
-            errorMessage(caught, "Could not sign out that device.")
-          ),
+          toast.error(errorMessage(caught, "Could not sign out that device.")),
       }
     )
   }
@@ -227,8 +223,8 @@ export function ActiveSessionsCard() {
           <AlertDialogHeader>
             <AlertDialogTitle>Sign out this device?</AlertDialogTitle>
             <AlertDialogDescription>
-              We&apos;ll end the session on that device immediately. They&apos;ll
-              need to sign in again to use Shurokkha.
+              We&apos;ll end the session on that device immediately.
+              They&apos;ll need to sign in again to use Shurokkha.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
