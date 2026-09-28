@@ -6,14 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Http\Requests\Auth\UpdateProfileRequest;
 use App\Http\Requests\Auth\UploadAvatarRequest;
-use App\Http\Resources\ProfileResource;
-use App\Models\NotificationPreference;
-use App\Models\PrivacyPreference;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
@@ -23,86 +19,154 @@ class ProfileController extends Controller
      * yet (legacy user pre-migration), lazy-create them so subsequent
      * sub-resource calls don't 404.
      */
-    public function show(Request $request): ProfileResource
+    public function show(Request $request): JsonResponse
     {
         $user = $request->user();
 
-        Gate::authorize('view', $user);
+        // Ensure preference rows exist
+        $this->ensureNotificationPreference($user->id);
+        $this->ensurePrivacyPreference($user->id);
 
-        NotificationPreference::firstOrCreate(['user_id' => $user->id]);
-        PrivacyPreference::firstOrCreate(['user_id' => $user->id]);
+        $profile = DB::selectOne(<<<'SQL'
+            SELECT
+                u.id,
+                u.user_id,
+                u.name,
+                u.full_name,
+                u.email,
+                u.email_verified_at,
+                u.phone,
+                u.phone_verified_at,
+                u.bio,
+                u.avatar_path,
+                u.status,
+                u.timezone,
+                u.two_factor_confirmed_at,
+                u.created_at,
+                u.updated_at
+            FROM users u
+            WHERE u.id = ?
+        SQL, [$user->id]);
 
-        return new ProfileResource($user);
+        return response()->json(['data' => $profile]);
     }
 
-    public function update(UpdateProfileRequest $request): ProfileResource
+    public function update(UpdateProfileRequest $request): JsonResponse
     {
         $user = $request->user();
-
-        Gate::authorize('update', $user);
 
         // Belt-and-braces: strip fields that are not user-editable even if a
         // client tries to send them.
         $data = $request->validated();
         unset($data['role'], $data['password'], $data['avatar_path']);
 
-        $originalEmail = $user->email;
+        if (empty($data)) {
+            return $this->show($request);
+        }
 
-        DB::transaction(function () use ($user, $data, $originalEmail): void {
-            $user->fill($data);
+        // Re-verify the email address whenever the user changes it.
+        $emailChanged = array_key_exists('email', $data) && $data['email'] !== $user->email;
 
-            // Re-verify the email address whenever the user changes it.
-            if (array_key_exists('email', $data) && $data['email'] !== $originalEmail) {
-                $user->email_verified_at = null;
-            }
+        $sets = [];
+        $params = [];
+        foreach ($data as $key => $value) {
+            $sets[] = "{$key} = ?";
+            $params[] = $value;
+        }
 
-            $user->save();
-        });
+        if ($emailChanged) {
+            $sets[] = 'email_verified_at = NULL';
+        }
 
-        return new ProfileResource($user->refresh());
+        $sets[] = 'updated_at = ?';
+        $params[] = now();
+        $params[] = $user->id;
+
+        $setClause = implode(', ', $sets);
+
+        DB::update("UPDATE users SET {$setClause} WHERE id = ?", $params);
+
+        $updated = DB::selectOne(<<<'SQL'
+            SELECT
+                id, user_id, name, full_name, email, email_verified_at,
+                phone, phone_verified_at, bio, avatar_path, status,
+                timezone, two_factor_confirmed_at, created_at, updated_at
+            FROM users WHERE id = ?
+        SQL, [$user->id]);
+
+        return response()->json(['data' => $updated]);
     }
 
-    public function uploadAvatar(UploadAvatarRequest $request): ProfileResource
+    public function uploadAvatar(UploadAvatarRequest $request): JsonResponse
     {
         $user = $request->user();
 
-        Gate::authorize('update', $user);
+        // Delete old avatar if present
+        $existing = DB::selectOne(<<<'SQL'
+            SELECT avatar_path FROM users WHERE id = ?
+        SQL, [$user->id]);
 
-        if ($user->avatar_path) {
-            Storage::disk('local')->delete($user->avatar_path);
+        if ($existing && $existing->avatar_path) {
+            Storage::disk('local')->delete($existing->avatar_path);
         }
 
         $path = $request->file('avatar')->store('avatars', 'local');
+        $now = now();
 
-        $user->update(['avatar_path' => $path]);
+        DB::update(<<<'SQL'
+            UPDATE users SET avatar_path = ?, updated_at = ? WHERE id = ?
+        SQL, [$path, $now, $user->id]);
 
-        return new ProfileResource($user->refresh());
+        $updated = DB::selectOne(<<<'SQL'
+            SELECT
+                id, user_id, name, full_name, email, email_verified_at,
+                phone, phone_verified_at, bio, avatar_path, status,
+                timezone, two_factor_confirmed_at, created_at, updated_at
+            FROM users WHERE id = ?
+        SQL, [$user->id]);
+
+        return response()->json(['data' => $updated]);
     }
 
-    public function destroyAvatar(Request $request): ProfileResource
+    public function destroyAvatar(Request $request): JsonResponse
     {
         $user = $request->user();
 
-        Gate::authorize('update', $user);
+        $existing = DB::selectOne(<<<'SQL'
+            SELECT avatar_path FROM users WHERE id = ?
+        SQL, [$user->id]);
 
-        if ($user->avatar_path) {
-            Storage::disk('local')->delete($user->avatar_path);
-            $user->update(['avatar_path' => null]);
+        if ($existing && $existing->avatar_path) {
+            Storage::disk('local')->delete($existing->avatar_path);
+            $now = now();
+
+            DB::update(<<<'SQL'
+                UPDATE users SET avatar_path = NULL, updated_at = ? WHERE id = ?
+            SQL, [$now, $user->id]);
         }
 
-        return new ProfileResource($user->refresh());
+        $updated = DB::selectOne(<<<'SQL'
+            SELECT
+                id, user_id, name, full_name, email, email_verified_at,
+                phone, phone_verified_at, bio, avatar_path, status,
+                timezone, two_factor_confirmed_at, created_at, updated_at
+            FROM users WHERE id = ?
+        SQL, [$user->id]);
+
+        return response()->json(['data' => $updated]);
     }
 
     public function updatePassword(UpdatePasswordRequest $request): JsonResponse
     {
         $user = $request->user();
+        $now = now();
 
-        Gate::authorize('update', $user);
+        // Hash the password manually since we are bypassing Eloquent's `hashed` cast.
+        $hashed = Hash::make($request->validated('password'));
 
-        // Update the password via the model so the `hashed` cast hashes it.
-        $user->update([
-            'password' => $request->validated('password'),
-        ]);
+        DB::update(<<<'SQL'
+            UPDATE users SET password = ?, updated_at = ? WHERE id = ?
+        SQL, [$hashed, $now, $user->id]);
 
         // Best-effort: invalidate other sessions of this user. The current
         // session is left intact so the user is not kicked out of their
@@ -111,15 +175,49 @@ class ProfileController extends Controller
             ? hash('sha256', $request->session()->getId())
             : null;
 
-        DB::table('sessions')
-            ->where('user_id', $user->id)
-            ->when($currentSessionHash, function ($query, string $hash): void {
-                $query->where('id', '!=', $hash);
-            })
-            ->delete();
+        if ($currentSessionHash) {
+            DB::delete(<<<'SQL'
+                DELETE FROM sessions
+                WHERE user_id = ? AND id != ?
+            SQL, [$user->id, $currentSessionHash]);
+        } else {
+            DB::delete(<<<'SQL'
+                DELETE FROM sessions WHERE user_id = ?
+            SQL, [$user->id]);
+        }
 
         return response()->json([
             'message' => 'Password updated. Other sessions have been signed out.',
         ]);
+    }
+
+    private function ensureNotificationPreference(int $userId): void
+    {
+        $exists = DB::selectOne(<<<'SQL'
+            SELECT id FROM notification_preferences WHERE user_id = ?
+        SQL, [$userId]);
+
+        if ($exists === null) {
+            $now = now();
+            DB::insert(<<<'SQL'
+                INSERT INTO notification_preferences (user_id, created_at, updated_at)
+                VALUES (?, ?, ?)
+            SQL, [$userId, $now, $now]);
+        }
+    }
+
+    private function ensurePrivacyPreference(int $userId): void
+    {
+        $exists = DB::selectOne(<<<'SQL'
+            SELECT id FROM privacy_preferences WHERE user_id = ?
+        SQL, [$userId]);
+
+        if ($exists === null) {
+            $now = now();
+            DB::insert(<<<'SQL'
+                INSERT INTO privacy_preferences (user_id, created_at, updated_at)
+                VALUES (?, ?, ?)
+            SQL, [$userId, $now, $now]);
+        }
     }
 }

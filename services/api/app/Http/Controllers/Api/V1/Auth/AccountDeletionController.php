@@ -4,64 +4,94 @@ namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RequestAccountDeletionRequest;
-use App\Http\Resources\AccountDeletionRequestResource;
-use App\Models\AccountDeletionRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 
 class AccountDeletionController extends Controller
 {
+    /** Default grace period before permanent deletion. */
+    private const GRACE_DAYS = 30;
+
     /**
      * Return the current pending/most-recent deletion request for the
      * authenticated user, or a placeholder when none exists. The
      * frontend uses this to drive the danger-zone UI.
      */
-    public function show(Request $request): JsonResource
+    public function show(Request $request): JsonResponse
     {
         $user = $request->user();
 
-        $deletion = AccountDeletionRequest::query()
-            ->where('user_id', $user->id)
-            ->orderByDesc('id')
-            ->first();
+        $deletion = DB::selectOne(<<<'SQL'
+            SELECT
+                id,
+                user_id,
+                status,
+                reason,
+                scheduled_for,
+                cancelled_at,
+                completed_at,
+                created_at,
+                updated_at
+            FROM account_deletion_requests
+            WHERE user_id = ?
+            ORDER BY id DESC
+            LIMIT 1
+        SQL, [$user->id]);
 
-        if ($deletion) {
-            return new AccountDeletionRequestResource($deletion);
+        if ($deletion === null) {
+            $deletion = (object) [
+                'id' => null,
+                'user_id' => $user->id,
+                'status' => 'none',
+                'reason' => null,
+                'scheduled_for' => null,
+                'cancelled_at' => null,
+                'completed_at' => null,
+                'created_at' => null,
+                'updated_at' => null,
+            ];
         }
 
-        return new AccountDeletionRequestResource(new AccountDeletionRequest([
-            'user_id' => $user->id,
-            'status' => 'none',
-            'scheduled_for' => null,
-        ]));
+        return response()->json(['data' => $deletion]);
     }
 
     /**
      * Schedule a deletion request. Cancels any previous pending request
      * so we never have two overlapping deletion windows.
      */
-    public function store(RequestAccountDeletionRequest $request): JsonResource
+    public function store(RequestAccountDeletionRequest $request): JsonResponse
     {
         $user = $request->user();
+        $now = now();
 
-        AccountDeletionRequest::query()
-            ->where('user_id', $user->id)
-            ->where('status', AccountDeletionRequest::STATUS_PENDING)
-            ->update([
-                'status' => AccountDeletionRequest::STATUS_CANCELLED,
-                'cancelled_at' => now(),
-            ]);
+        DB::update(<<<'SQL'
+            UPDATE account_deletion_requests
+            SET status = 'cancelled', cancelled_at = ?, updated_at = ?
+            WHERE user_id = ? AND status = 'pending'
+        SQL, [$now, $now, $user->id]);
 
-        $deletion = AccountDeletionRequest::query()->create([
-            'user_id' => $user->id,
-            'status' => AccountDeletionRequest::STATUS_PENDING,
-            'scheduled_for' => AccountDeletionRequest::defaultSchedule(),
-            'reason' => $request->validated('reason'),
+        $scheduledFor = $now->copy()->addDays(self::GRACE_DAYS);
+
+        DB::insert(<<<'SQL'
+            INSERT INTO account_deletion_requests
+                (user_id, status, scheduled_for, reason, created_at, updated_at)
+            VALUES (?, 'pending', ?, ?, ?, ?)
+        SQL, [
+            $user->id,
+            $scheduledFor,
+            $request->validated('reason'),
+            $now,
+            $now,
         ]);
 
-        return new AccountDeletionRequestResource($deletion);
+        $insertedId = DB::getPdo()->lastInsertId();
+
+        $deletion = DB::selectOne(<<<'SQL'
+            SELECT * FROM account_deletion_requests WHERE id = ?
+        SQL, [$insertedId]);
+
+        return response()->json(['data' => $deletion]);
     }
 
     /**
@@ -70,14 +100,13 @@ class AccountDeletionController extends Controller
     public function destroy(Request $request): JsonResponse
     {
         $user = $request->user();
+        $now = now();
 
-        $deleted = AccountDeletionRequest::query()
-            ->where('user_id', $user->id)
-            ->where('status', AccountDeletionRequest::STATUS_PENDING)
-            ->update([
-                'status' => AccountDeletionRequest::STATUS_CANCELLED,
-                'cancelled_at' => now(),
-            ]);
+        $deleted = DB::update(<<<'SQL'
+            UPDATE account_deletion_requests
+            SET status = 'cancelled', cancelled_at = ?, updated_at = ?
+            WHERE user_id = ? AND status = 'pending'
+        SQL, [$now, $now, $user->id]);
 
         if ($deleted === 0) {
             return response()->json([

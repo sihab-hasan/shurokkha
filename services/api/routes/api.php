@@ -136,51 +136,60 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('/donations/{donation}/cancel', [DonationController::class, 'cancel'])->name('donations.cancel');
         });
 
-        Route::prefix('admin')->name('admin.')->group(function (): void {
-            Route::get('/disasters', [AdminDisasterController::class, 'index'])->name('disasters.index');
+            // Admin routes
+            Route::prefix('admin')->name('admin.')->group(function (): void {
+                Route::get('/disasters', [AdminDisasterController::class, 'index'])->name('disasters.index');
 
-            Route::get('/affected-areas', [AdminAffectedAreaController::class, 'index'])->name('affected-areas.index');
-            Route::post('/affected-areas', [AdminAffectedAreaController::class, 'store'])->name('affected-areas.store');
-            Route::delete('/affected-areas/{affectedArea}', [AdminAffectedAreaController::class, 'destroy'])->name('affected-areas.destroy');
+                Route::get('/affected-areas', [AdminAffectedAreaController::class, 'index'])->name('affected-areas.index');
+                Route::post('/affected-areas', [AdminAffectedAreaController::class, 'store'])->name('affected-areas.store');
+                Route::delete('/affected-areas/{affectedArea}', [AdminAffectedAreaController::class, 'destroy'])->name('affected-areas.destroy');
 
-            Route::get('/rescue-teams', [AdminRescueTeamController::class, 'index'])->name('rescue-teams.index');
-            Route::post('/rescue-teams', [AdminRescueTeamController::class, 'store'])->name('rescue-teams.store');
-            Route::delete('/rescue-teams/{rescueTeam}', [AdminRescueTeamController::class, 'destroy'])->name('rescue-teams.destroy');
+                Route::get('/rescue-teams', [AdminRescueTeamController::class, 'index'])->name('rescue-teams.index');
+                Route::post('/rescue-teams', [AdminRescueTeamController::class, 'store'])->name('rescue-teams.store');
+                Route::delete('/rescue-teams/{rescueTeam}', [AdminRescueTeamController::class, 'destroy'])->name('rescue-teams.destroy');
 
-            Route::get('/assignments', [AdminTeamManagementController::class, 'index'])->name('assignments.index');
-            Route::post('/assignments', [AdminTeamManagementController::class, 'store'])->name('assignments.store');
-            Route::patch('/assignments/{assignment}/status', [AdminTeamManagementController::class, 'updateStatus'])->name('assignments.updateStatus');
-            Route::delete('/assignments/{assignment}', [AdminTeamManagementController::class, 'destroy'])->name('assignments.destroy');
+                Route::get('/assignments', [AdminTeamManagementController::class, 'index'])->name('assignments.index');
+                Route::post('/assignments', [AdminTeamManagementController::class, 'store'])->name('assignments.store');
+                Route::patch('/assignments/{assignment}/status', [AdminTeamManagementController::class, 'updateStatus'])->name('assignments.updateStatus');
+                Route::delete('/assignments/{assignment}', [AdminTeamManagementController::class, 'destroy'])->name('assignments.destroy');
 
-            Route::get('/shelters', [AdminShelterController::class, 'index'])->name('shelters.index');
-            Route::post('/shelters', [AdminShelterController::class, 'store'])->name('shelters.store');
-            Route::patch('/shelters/{shelter}/occupancy', [AdminShelterController::class, 'updateOccupancy'])->name('shelters.occupancy');
-            Route::delete('/shelters/{shelter}', [AdminShelterController::class, 'destroy'])->name('shelters.destroy');
+                Route::get('/shelters', [AdminShelterController::class, 'index'])->name('shelters.index');
+                Route::post('/shelters', [AdminShelterController::class, 'store'])->name('shelters.store');
+                Route::patch('/shelters/{shelter}/occupancy', [AdminShelterController::class, 'updateOccupancy'])->name('shelters.occupancy');
+                Route::delete('/shelters/{shelter}', [AdminShelterController::class, 'destroy'])->name('shelters.destroy');
 
-            Route::get('/warehouses', [AdminWarehouseController::class, 'index'])->name('warehouses.index');
-            Route::post('/warehouses', [AdminWarehouseController::class, 'store'])->name('warehouses.store');
-            Route::post('/warehouses/{warehouse}/distribute', [AdminWarehouseController::class, 'distributeRelief'])->name('warehouses.distribute');
-            Route::delete('/warehouses/{warehouse}', [AdminWarehouseController::class, 'destroy'])->name('warehouses.destroy');
+                Route::get('/warehouses', [AdminWarehouseController::class, 'index'])->name('warehouses.index');
+                Route::post('/warehouses', [AdminWarehouseController::class, 'store'])->name('warehouses.store');
+                Route::post('/warehouses/{warehouse}/distribute', [AdminWarehouseController::class, 'distributeRelief'])->name('warehouses.distribute');
+                Route::delete('/warehouses/{warehouse}', [AdminWarehouseController::class, 'destroy'])->name('warehouses.destroy');
 
-            Route::get('/donations', [AdminDonationController::class, 'index'])->name('donations.index');
-            Route::post('/donations', [AdminDonationController::class, 'store'])->name('donations.store');
-            Route::delete('/donations/{donation}', [AdminDonationController::class, 'destroy'])->name('donations.destroy');
+                Route::get('/donations', [AdminDonationController::class, 'index'])->name('donations.index');
+                Route::post('/donations', [AdminDonationController::class, 'store'])->name('donations.store');
+                Route::delete('/donations/{donation}', [AdminDonationController::class, 'destroy'])->name('donations.destroy');
 
-            // Reports: Direct Joins and Aggregations matching ahp_joins_and_aggregations.sql
-            Route::prefix('reports')->name('reports.')->group(function (): void {
-                Route::get('/summary', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'summary'])->name('summary');
-                Route::get('/area-severity', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'areaSeverityBreakdown'])->name('area-severity');
-                Route::get('/active-teams', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'activeRescueTeamAssignments'])->name('active-teams');
-                Route::get('/citizen-stats', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'citizenRequestStats'])->name('citizen-stats');
-                Route::get('/shelter-summary-view', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'shelterPublicSummary'])->name('shelter-summary-view');
+                // Reports: Direct Joins and Aggregations matching ahp_joins_and_aggregations.sql
+                Route::prefix('reports')->name('reports.')->group(function (): void {
+                    Route::get('/summary', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'summary'])->name('summary');
+                    Route::get('/area-severity', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'areaSeverityBreakdown'])->name('area-severity');
+                    Route::get('/active-teams', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'activeRescueTeamAssignments'])->name('active-teams');
+                    Route::get('/citizen-stats', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'citizenRequestStats'])->name('citizen-stats');
+                    Route::get('/shelter-summary-view', [\App\Http\Controllers\Api\V1\Admin\AggregateReportController::class, 'shelterPublicSummary'])->name('shelter-summary-view');
 
-                Route::get('/inner-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'innerJoin'])->name('inner-join');
-                Route::get('/left-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'leftJoin'])->name('left-join');
-                Route::get('/right-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'rightJoin'])->name('right-join');
-                Route::get('/full-outer-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'fullOuterJoin'])->name('full-outer-join');
-                Route::get('/facility-locations', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'facilityLocations'])->name('facility-locations');
+                    Route::get('/inner-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'innerJoin'])->name('inner-join');
+                    Route::get('/left-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'leftJoin'])->name('left-join');
+                    Route::get('/right-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'rightJoin'])->name('right-join');
+                    Route::get('/full-outer-join', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'fullOuterJoin'])->name('full-outer-join');
+                    Route::get('/facility-locations', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'facilityLocations'])->name('facility-locations');
+                });
             });
         });
+
+        // TVUP Core Operations (Moved outside auth for easy frontend demo)
+        Route::prefix('core')->name('core.')->group(function (): void {
+            Route::get('/view', [\App\Http\Controllers\Api\V1\Admin\TVUPDisasterEmergencyController::class, 'getUserEmergencyHistory']);
+            Route::get('/union', [\App\Http\Controllers\Api\V1\Admin\TVUPDisasterEmergencyController::class, 'getCriticalAlerts']);
+            Route::post('/procedure', [\App\Http\Controllers\Api\V1\Admin\TVUPDisasterEmergencyController::class, 'escalateDisaster']);
+            Route::post('/transaction', [\App\Http\Controllers\Api\V1\Admin\TVUPDisasterEmergencyController::class, 'reportDisasterAndEmergency']);
+        });
     });
-});
 

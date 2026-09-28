@@ -15,6 +15,7 @@ import { StatCard } from "./stat-card"
 export function DashboardStatsSection() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+
       <StatCard
         title="Assistance Requests"
         icon={HeartHandshake}

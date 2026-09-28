@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\LoginAuditResource;
-use App\Models\LoginAudit;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LoginAuditController extends Controller
 {
@@ -20,22 +19,33 @@ class LoginAuditController extends Controller
         $user = $request->user();
         $limit = (int) min(50, max(1, $request->query('limit', 20)));
 
-        $records = LoginAudit::query()
-            ->where('user_id', $user->id)
-            ->orderByDesc('signed_in_at')
-            ->limit($limit)
-            ->get();
-
         $currentSessionHash = $request->session()->getId()
             ? hash('sha256', $request->session()->getId())
             : null;
 
-        $data = $records->map(function (LoginAudit $audit) use ($currentSessionHash): array {
-            $item = (new LoginAuditResource($audit))->toArray($request);
-            $item['is_current_session'] = $currentSessionHash !== null
+        $records = DB::select(<<<'SQL'
+            SELECT
+                id,
+                user_id,
+                ip_address,
+                user_agent,
+                session_token_hash,
+                successful,
+                failure_reason,
+                signed_in_at,
+                signed_out_at,
+                created_at
+            FROM login_audits
+            WHERE user_id = ?
+            ORDER BY signed_in_at DESC
+            LIMIT ?
+        SQL, [$user->id, $limit]);
+
+        $data = array_map(function (object $audit) use ($currentSessionHash): object {
+            $audit->is_current_session = $currentSessionHash !== null
                 && $audit->session_token_hash === $currentSessionHash;
-            return $item;
-        })->values();
+            return $audit;
+        }, $records);
 
         return response()->json(['data' => $data]);
     }

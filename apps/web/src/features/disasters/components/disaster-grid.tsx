@@ -4,6 +4,7 @@ import { DisasterCard } from "./disaster-card"
 import { DisastersEmptyState } from "./disasters-empty-state"
 import { DisastersErrorState } from "./disasters-error-state"
 import { DisastersSkeleton } from "./disasters-skeleton"
+import { EscalateDisasterAction } from "./escalate-disaster-action"
 
 import { usePublicDisasters } from "../hooks/use-disasters"
 
@@ -15,7 +16,7 @@ import { usePublicDisasters } from "../hooks/use-disasters"
  * boundary.
  */
 export function DisasterGrid() {
-  const { data, isPending, isError, error } = usePublicDisasters()
+  const { data, isPending, isError, error, refetch } = usePublicDisasters()
 
   if (isPending) {
     return <DisastersSkeleton />
@@ -27,15 +28,26 @@ export function DisasterGrid() {
 
   const disasters = data?.data ?? []
 
-  if (disasters.length === 0) {
-    return <DisastersEmptyState />
-  }
-
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {disasters.map((disaster) => (
-        <DisasterCard key={disaster.disaster_id} disaster={disaster} />
-      ))}
+    <div className="space-y-6">
+      <EscalateDisasterAction
+        disasters={disasters.map((d) => ({
+          disaster_id: d.disaster_id,
+          disaster_name: d.disaster_name,
+          severity: d.severity,
+        }))}
+        onEscalated={() => refetch()}
+      />
+
+      {disasters.length === 0 ? (
+        <DisastersEmptyState />
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {disasters.map((disaster) => (
+            <DisasterCard key={disaster.disaster_id} disaster={disaster} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

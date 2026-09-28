@@ -1,8 +1,11 @@
 import {
   Bell,
+  Database,
   FileText,
+  Flame,
   HandHeart,
   HelpCircle,
+  History,
   Home,
   House,
   LayoutDashboard,
@@ -12,6 +15,7 @@ import {
   Star,
   Users,
   Wallet,
+  Zap,
 } from "lucide-react"
 
 import type { AccountModule, UserRole } from "@/lib/rbac"
@@ -47,6 +51,27 @@ export const accountNavigationModules: NavModule[] = [
     href: routes.account.dashboard,
     icon: LayoutDashboard,
     module: "dashboard",
+    category: "Overview",
+  },
+  {
+    id: "get-help",
+    label: "Get Help & History",
+    href: "/get-help",
+    icon: History,
+    category: "Overview",
+  },
+  {
+    id: "disasters",
+    label: "Disasters & Severity",
+    href: "/disasters",
+    icon: Zap,
+    category: "Overview",
+  },
+  {
+    id: "emergency-alerts",
+    label: "Emergency Alerts",
+    href: "/emergency-alerts",
+    icon: Flame,
     category: "Overview",
   },
 

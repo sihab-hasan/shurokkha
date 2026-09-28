@@ -5,111 +5,175 @@ namespace App\Http\Controllers\Api\V1\Donation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Donation\IndexDonationsRequest;
 use App\Http\Requests\Donation\StoreDonationRequest;
-use App\Http\Resources\DonationResource;
-use App\Http\Resources\DonationStatsResource;
-use App\Models\Donation;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Citizen-facing donation endpoints.
  *
- * Mirrors the structure of {@see AssistanceRequestController}:
- *  - `index()`          list with filters, sort, paginate
- *  - `stats()`          per-user aggregate counts
- *  - `store()`          create a donation (auto-stamps `user_id`,
- *                       `status=pending`, `receipt_number`)
- *  - `show()`           detail (Policy-gated to owner)
- *  - `cancel()`         transition `pending` → `cancelled`
+ * All database operations use raw SQL to maintain the project's query
+ * structure convention. Manual pagination replicates Laravel's
+ * LengthAwarePaginator response shape so the frontend is unaffected.
  */
 class DonationController extends Controller
 {
-    public function index(IndexDonationsRequest $request): AnonymousResourceCollection
+    public function index(IndexDonationsRequest $request): JsonResponse
     {
-        Gate::authorize('viewAny', Donation::class);
-
+        $userId = $request->user()->id;
         $filters = $request->validatedFilters();
         $sort = $this->resolveSort($filters['sort']);
-        $dir = $filters['dir'] ?? 'desc';
+        $dir = strtolower($filters['dir'] ?? 'desc') === 'asc' ? 'ASC' : 'DESC';
+        $perPage = (int) ($filters['per_page'] ?? 10);
+        $page = (int) ($request->query('page', 1));
+        $offset = ($page - 1) * $perPage;
 
-        $base = fn (): Builder => Donation::query()
-            ->where('user_id', $request->user()->id);
+        // Build dynamic WHERE clause
+        $where = ['d.user_id = ?'];
+        $params = [$userId];
 
-        $query = $base()
-            ->when($filters['status'] !== [], fn (Builder $q) => $q->whereIn('status', $filters['status']))
-            ->when($filters['type'] !== [], fn (Builder $q) => $q->whereIn('donation_kind', $filters['type']))
-            ->when($filters['payment_method'] !== [], fn (Builder $q) => $q->whereIn('payment_method', $filters['payment_method']))
-            ->when($filters['search'] !== null, function (Builder $q) use ($filters): void {
-                $needle = $filters['search'];
-                $q->where(function (Builder $inner) use ($needle): void {
-                    $inner->where('campaign_title', 'like', "%{$needle}%")
-                        ->orWhere('receipt_number', 'like', "%{$needle}%")
-                        ->orWhere('donation_kind', 'like', "%{$needle}%");
-                });
-            })
-            ->orderBy($sort, $dir);
+        if ($filters['status'] !== []) {
+            $placeholders = implode(',', array_fill(0, count($filters['status']), '?'));
+            $where[] = "d.status IN ({$placeholders})";
+            $params = array_merge($params, $filters['status']);
+        }
 
-        return DonationResource::collection(
-            $query->paginate($filters['per_page'] ?? 10)->withQueryString(),
+        if ($filters['type'] !== []) {
+            $placeholders = implode(',', array_fill(0, count($filters['type']), '?'));
+            $where[] = "d.donation_kind IN ({$placeholders})";
+            $params = array_merge($params, $filters['type']);
+        }
+
+        if ($filters['payment_method'] !== []) {
+            $placeholders = implode(',', array_fill(0, count($filters['payment_method']), '?'));
+            $where[] = "d.payment_method IN ({$placeholders})";
+            $params = array_merge($params, $filters['payment_method']);
+        }
+
+        if ($filters['search'] !== null) {
+            $needle = '%' . $filters['search'] . '%';
+            $where[] = '(d.campaign_title LIKE ? OR d.receipt_number LIKE ? OR d.donation_kind LIKE ?)';
+            $params = array_merge($params, [$needle, $needle, $needle]);
+        }
+
+        $whereClause = implode(' AND ', $where);
+
+        // Count total
+        $countRow = DB::selectOne(
+            "SELECT COUNT(*) AS total FROM donations d WHERE {$whereClause}",
+            $params
         );
+        $total = (int) $countRow->total;
+
+        // Fetch page
+        $dataParams = array_merge($params, [$perPage, $offset]);
+        $rows = DB::select(
+            "SELECT
+                d.donation_id,
+                d.user_id,
+                d.donation_kind,
+                d.amount,
+                d.payment_method,
+                d.campaign_title,
+                d.receipt_number,
+                d.currency,
+                d.status,
+                d.created_at,
+                d.updated_at
+            FROM donations d
+            WHERE {$whereClause}
+            ORDER BY d.{$sort} {$dir}
+            LIMIT ? OFFSET ?",
+            $dataParams
+        );
+
+        $lastPage = max(1, (int) ceil($total / $perPage));
+
+        return response()->json([
+            'data' => $rows,
+            'meta' => [
+                'current_page' => $page,
+                'per_page' => $perPage,
+                'total' => $total,
+                'last_page' => $lastPage,
+            ],
+        ]);
     }
 
-    public function stats(Request $request): DonationStatsResource
+    public function stats(Request $request): JsonResponse
     {
-        Gate::authorize('viewAny', Donation::class);
+        $userId = $request->user()->id;
 
-        $base = fn (): Builder => Donation::query()
-            ->where('user_id', $request->user()->id);
+        $stats = DB::selectOne(<<<'SQL'
+            SELECT
+                COUNT(*) AS total,
+                COALESCE(SUM(amount), 0) AS lifetime_sum,
+                SUM(CASE WHEN donation_kind = 'recurring' THEN 1 ELSE 0 END) AS recurring,
+                SUM(CASE WHEN donation_kind = 'one_time' THEN 1 ELSE 0 END) AS one_time,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending,
+                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed
+            FROM donations
+            WHERE user_id = ?
+        SQL, [$userId]);
 
-        $payload = [
-            'total' => (clone $base())->count(),
-            'lifetime_sum' => (clone $base())->sum('amount'),
-            'recurring' => (clone $base())->where('donation_kind', 'recurring')->count(),
-            'one_time' => (clone $base())->where('donation_kind', 'one_time')->count(),
-            'pending' => (clone $base())->where('status', 'pending')->count(),
-            'completed' => (clone $base())->where('status', 'completed')->count(),
-        ];
-
-        return new DonationStatsResource($payload);
+        return response()->json(['data' => $stats]);
     }
 
     public function store(StoreDonationRequest $request): JsonResponse
     {
-        Gate::authorize('create', Donation::class);
+        $userId = $request->user()->id;
+        $validated = $request->validated();
+        $now = now();
 
-        $donation = DB::transaction(function () use ($request): Donation {
-            // Auto-stamp receipt number if the client didn't supply one.
-            $receipt = $request->input('receipt_number');
-            if (! is_string($receipt) || $receipt === '') {
-                // Compute next id inside the transaction so the receipt
-                // matches the row that ends up holding it.
-                $nextId = (int) (DB::table('donations')->max('donation_id') ?? 0) + 1;
-                $receipt = 'DON-' . str_pad((string) $nextId, 6, '0', STR_PAD_LEFT);
-            }
+        // Auto-stamp receipt number
+        $receipt = $validated['receipt_number'] ?? null;
+        if (! is_string($receipt) || $receipt === '') {
+            $maxId = DB::selectOne(<<<'SQL'
+                SELECT COALESCE(MAX(donation_id), 0) AS max_id FROM donations
+            SQL);
+            $nextId = (int) $maxId->max_id + 1;
+            $receipt = 'DON-' . str_pad((string) $nextId, 6, '0', STR_PAD_LEFT);
+        }
 
-            return Donation::query()->create([
-                ...$request->validated(),
-                'user_id' => $request->user()->id,
-                'status' => 'pending',
-                'currency' => $request->input('currency', 'BDT'),
-                'receipt_number' => $receipt,
-            ]);
-        });
+        DB::insert(<<<'SQL'
+            INSERT INTO donations
+                (donation_kind, amount, currency, campaign_title, payment_method,
+                 receipt_number, user_id, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
+        SQL, [
+            $validated['donation_kind'],
+            $validated['amount'],
+            $validated['currency'] ?? 'BDT',
+            $validated['campaign_title'] ?? null,
+            $validated['payment_method'] ?? null,
+            $receipt,
+            $userId,
+            $now,
+            $now,
+        ]);
 
-        return (new DonationResource($donation))
-            ->response()
-            ->setStatusCode(201);
+        $insertedId = DB::getPdo()->lastInsertId();
+
+        $donation = DB::selectOne(<<<'SQL'
+            SELECT * FROM donations WHERE donation_id = ?
+        SQL, [$insertedId]);
+
+        return response()->json(['data' => $donation], 201);
     }
 
-    public function show(Donation $donation): DonationResource
+    public function show(int|string $donation): JsonResponse
     {
-        Gate::authorize('view', $donation);
+        $donationId = is_numeric($donation) ? (int) $donation : 0;
 
-        return new DonationResource($donation);
+        $row = DB::selectOne(<<<'SQL'
+            SELECT * FROM donations WHERE donation_id = ?
+        SQL, [$donationId]);
+
+        if ($row === null) {
+            return response()->json(['message' => 'Donation not found.'], 404);
+        }
+
+        return response()->json(['data' => $row]);
     }
 
     /**
@@ -117,31 +181,44 @@ class DonationController extends Controller
      * "DON-000481"). Scoped to the caller so a wrong receipt id leaks
      * no information: missing-and-not-yours both surface as 404.
      */
-    public function showByReceipt(Request $request, string $receiptNumber): DonationResource
+    public function showByReceipt(Request $request, string $receiptNumber): JsonResponse
     {
-        Gate::authorize('viewAny', Donation::class);
+        $userId = $request->user()->id;
 
-        $donation = Donation::query()
-            ->where('user_id', $request->user()->id)
-            ->where('receipt_number', $receiptNumber)
-            ->firstOrFail();
+        $donation = DB::selectOne(<<<'SQL'
+            SELECT * FROM donations
+            WHERE user_id = ? AND receipt_number = ?
+        SQL, [$userId, $receiptNumber]);
 
-        return new DonationResource($donation);
+        if ($donation === null) {
+            return response()->json(['message' => 'Donation not found.'], 404);
+        }
+
+        return response()->json(['data' => $donation]);
     }
 
-    public function cancel(Donation $donation): DonationResource
+    public function cancel(int|string $donation, Request $request): JsonResponse
     {
-        Gate::authorize('cancel', $donation);
+        $donationId = is_numeric($donation) ? (int) $donation : 0;
 
-        abort_if(
-            $donation->status !== 'pending',
-            409,
-            'Only pending donations can be cancelled.',
-        );
+        $row = DB::selectOne(<<<'SQL'
+            SELECT donation_id, status FROM donations WHERE donation_id = ?
+        SQL, [$donationId]);
 
-        $donation->update(['status' => 'cancelled']);
+        abort_if($row === null, 404, 'Donation not found.');
+        abort_if($row->status !== 'pending', 409, 'Only pending donations can be cancelled.');
 
-        return new DonationResource($donation->refresh());
+        $now = now();
+
+        DB::update(<<<'SQL'
+            UPDATE donations SET status = 'cancelled', updated_at = ? WHERE donation_id = ?
+        SQL, [$now, $donationId]);
+
+        $updated = DB::selectOne(<<<'SQL'
+            SELECT * FROM donations WHERE donation_id = ?
+        SQL, [$donationId]);
+
+        return response()->json(['data' => $updated]);
     }
 
     /**
