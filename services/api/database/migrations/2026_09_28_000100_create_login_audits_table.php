@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('login_audits', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('ip_address', 45)->nullable();
             $table->string('user_agent', 512)->nullable();
             $table->string('session_token_hash', 64)->nullable()->index();

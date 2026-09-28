@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\SessionResource;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 
 class SessionController extends Controller
 {
@@ -17,61 +15,64 @@ class SessionController extends Controller
      * `login_audits` table so the UI doesn't have to maintain its own
      * "last active" clock.
      */
-    public function show(Request $request): SessionResource
+    public function show(Request $request): JsonResponse
     {
         $user = $request->user();
-
-        Gate::authorize('view-session', $user);
-
         $currentSessionId = $request->session()->getId();
 
         // The most recent successful audit for this user is treated as the
         // active session.
-        $audit = $user->loginAudits()->successful()->latest('signed_in_at')->first();
-        $lastActive = $audit?->signed_in_at?->toIso8601String() ?? now()->toIso8601String();
+        $audit = DB::selectOne(<<<'SQL'
+            SELECT signed_in_at
+            FROM login_audits
+            WHERE user_id = ? AND successful = 1
+            ORDER BY signed_in_at DESC
+            LIMIT 1
+        SQL, [$user->id]);
 
-        $payload = [
-            'id' => $currentSessionId,
-            'ip' => $request->ip() ?? '0.0.0.0',
-            'user_agent' => $request->userAgent() ?? 'unknown',
-            'last_active_at' => $lastActive,
-            'is_current' => true,
-        ];
+        $lastActive = $audit?->signed_in_at ?? now()->toIso8601String();
 
-        return new SessionResource($payload);
+        return response()->json([
+            'data' => [
+                'id' => $currentSessionId,
+                'ip' => $request->ip() ?? '0.0.0.0',
+                'user_agent' => $request->userAgent() ?? 'unknown',
+                'last_active_at' => $lastActive,
+                'is_current' => true,
+            ],
+        ]);
     }
 
     /**
      * List every active session for the current user by reading the
-     * `sessions` table directly. Each row is hydrated into a
-     * `SessionResource` so the UI can render a per-row "This device"
-     * badge.
+     * `sessions` table directly. Each row is hydrated so the UI can
+     * render a per-row "This device" badge.
      */
-    public function index(Request $request): JsonResource
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-
-        Gate::authorize('view-session', $user);
-
         $currentSessionId = $request->session()->getId();
 
-        $rows = DB::table('sessions')
-            ->where('user_id', $user->id)
-            ->orderByDesc('last_activity')
-            ->get()
-            ->map(function ($row) use ($request, $currentSessionId) {
-                $payload = (array) $row;
-                $payload['is_current'] = $payload['id'] === $currentSessionId;
-                $payload['ip'] = $payload['ip_address'] ?? $request->ip() ?? '0.0.0.0';
-                $payload['user_agent'] = $payload['user_agent'] ?? 'unknown';
-                $payload['last_active_at'] = isset($payload['last_activity'])
-                    ? \Carbon\CarbonImmutable::createFromTimestamp($payload['last_activity'])->toIso8601String()
-                    : now()->toIso8601String();
-                return $payload;
-            })
-            ->values();
+        $rows = DB::select(<<<'SQL'
+            SELECT id, ip_address, user_agent, last_activity
+            FROM sessions
+            WHERE user_id = ?
+            ORDER BY last_activity DESC
+        SQL, [$user->id]);
 
-        return SessionResource::collection($rows);
+        $data = array_map(function (object $row) use ($request, $currentSessionId): array {
+            return [
+                'id' => $row->id,
+                'is_current' => $row->id === $currentSessionId,
+                'ip' => $row->ip_address ?? $request->ip() ?? '0.0.0.0',
+                'user_agent' => $row->user_agent ?? 'unknown',
+                'last_active_at' => isset($row->last_activity)
+                    ? CarbonImmutable::createFromTimestamp($row->last_activity)->toIso8601String()
+                    : now()->toIso8601String(),
+            ];
+        }, $rows);
+
+        return response()->json(['data' => $data]);
     }
 
     /**
@@ -81,17 +82,19 @@ class SessionController extends Controller
     public function destroyAll(Request $request): JsonResponse
     {
         $user = $request->user();
-
-        Gate::authorize('view-session', $user);
-
         $currentSessionId = $request->session()->getId();
 
-        $deleted = DB::table('sessions')
-            ->where('user_id', $user->id)
-            ->when($currentSessionId, function ($query, string $id): void {
-                $query->where('id', '!=', $id);
-            })
-            ->delete();
+        if ($currentSessionId) {
+            $deleted = DB::delete(<<<'SQL'
+                DELETE FROM sessions
+                WHERE user_id = ? AND id != ?
+            SQL, [$user->id, $currentSessionId]);
+        } else {
+            $deleted = DB::delete(<<<'SQL'
+                DELETE FROM sessions
+                WHERE user_id = ?
+            SQL, [$user->id]);
+        }
 
         return response()->json([
             'message' => $deleted === 1
@@ -109,9 +112,6 @@ class SessionController extends Controller
     public function destroyOne(Request $request, string $sessionId): JsonResponse
     {
         $user = $request->user();
-
-        Gate::authorize('view-session', $user);
-
         $currentSessionId = $request->session()->getId();
 
         abort_if(
@@ -120,10 +120,10 @@ class SessionController extends Controller
             'Use the account menu to sign out of this device.'
         );
 
-        $deleted = DB::table('sessions')
-            ->where('user_id', $user->id)
-            ->where('id', $sessionId)
-            ->delete();
+        $deleted = DB::delete(<<<'SQL'
+            DELETE FROM sessions
+            WHERE user_id = ? AND id = ?
+        SQL, [$user->id, $sessionId]);
 
         if ($deleted === 0) {
             return response()->json(

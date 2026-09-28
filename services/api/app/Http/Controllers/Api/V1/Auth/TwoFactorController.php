@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 
 class TwoFactorController extends Controller
 {
@@ -19,27 +18,32 @@ class TwoFactorController extends Controller
     public function enable(Request $request): JsonResponse
     {
         $user = $request->user();
+        $now = now();
 
-        Gate::authorize('update', $user);
-
-        $user->forceFill(['two_factor_confirmed_at' => now()])->save();
+        DB::update(<<<'SQL'
+            UPDATE users
+            SET two_factor_confirmed_at = ?, updated_at = ?
+            WHERE id = ?
+        SQL, [$now, $now, $user->id]);
 
         return response()->json([
             'message' => 'Two-factor authentication enabled.',
-            'confirmed_at' => $user->two_factor_confirmed_at?->toIso8601String(),
+            'confirmed_at' => $now->toIso8601String(),
         ]);
     }
 
     public function disable(Request $request): JsonResponse
     {
         $user = $request->user();
+        $now = now();
 
-        Gate::authorize('update', $user);
-
-        $user->forceFill([
-            'two_factor_confirmed_at' => null,
-            'two_factor_secret' => null,
-        ])->save();
+        DB::update(<<<'SQL'
+            UPDATE users
+            SET two_factor_confirmed_at = NULL,
+                two_factor_secret = NULL,
+                updated_at = ?
+            WHERE id = ?
+        SQL, [$now, $user->id]);
 
         return response()->json([
             'message' => 'Two-factor authentication disabled.',

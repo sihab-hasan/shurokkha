@@ -8,6 +8,8 @@ import { GetHelpNextSteps } from "@/features/get-help/components/get-help-next-s
 import { GetHelpPrivacyCard } from "@/features/get-help/components/get-help-privacy-card"
 import { GetHelpRequestCard } from "@/features/get-help/components/get-help-request-card"
 import { GetHelpWarningBanner } from "@/features/get-help/components/get-help-warning-banner"
+import { CitizenEmergencyHistory } from "@/features/assistance/components/citizen-emergency-history"
+import { QuickDisasterTransactionCard } from "@/features/assistance/components/quick-disaster-transaction-card"
 
 export const metadata: Metadata = {
   title: "Get help",
@@ -17,8 +19,7 @@ export const metadata: Metadata = {
 
 /**
  * `/get-help` shell. Page-level composition: header → warning banner
- * → request card + privacy card → next-steps panel. All four
- * child components are called directly as peer renders.
+ * → request card + privacy card → atomic transaction card → CitizenEmergencyHistory → next-steps panel.
  */
 export default function GetHelpPage() {
   return (
@@ -36,6 +37,10 @@ export default function GetHelpPage() {
           <GetHelpRequestCard />
           <GetHelpPrivacyCard />
         </div>
+
+        <QuickDisasterTransactionCard />
+
+        <CitizenEmergencyHistory />
 
         <GetHelpNextSteps />
       </Container>
