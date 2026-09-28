@@ -16,7 +16,9 @@ import { makeSystem } from "../system"
  * reuse a long-lived client) or `ApiClientOptions`, in which case a client is
  * built internally via `createApiClient`.
  */
-export function createShurokkhaApi(clientOrOptions: ApiClient | ApiClientOptions) {
+export function createShurokkhaApi(
+  clientOrOptions: ApiClient | ApiClientOptions
+) {
   const client =
     clientOrOptions instanceof ApiClient
       ? clientOrOptions

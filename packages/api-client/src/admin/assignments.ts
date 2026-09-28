@@ -19,6 +19,5 @@ export const adminAssignments = (client: ApiClient) => ({
       `/v1/admin/assignments/${id}/status`,
       { status }
     ),
-  remove: (id: number) =>
-    client.delete<void>(`/v1/admin/assignments/${id}`),
+  remove: (id: number) => client.delete<void>(`/v1/admin/assignments/${id}`),
 })

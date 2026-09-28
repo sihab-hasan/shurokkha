@@ -1,4 +1,8 @@
-import type { ApiResource, ShelterInput, ShelterRecord } from "@shurokkha/contracts"
+import type {
+  ApiResource,
+  ShelterInput,
+  ShelterRecord,
+} from "@shurokkha/contracts"
 
 import type { ApiClient } from "../client"
 

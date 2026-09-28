@@ -22,7 +22,5 @@ export const publicDisasters = (client: ApiClient) => ({
       }
     >(`/v1/public/disasters${queryString(params)}`),
   get: (id: number) =>
-    client.get<ApiResource<PublicDisasterRecord>>(
-      `/v1/public/disasters/${id}`
-    ),
+    client.get<ApiResource<PublicDisasterRecord>>(`/v1/public/disasters/${id}`),
 })

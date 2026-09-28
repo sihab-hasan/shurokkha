@@ -1,7 +1,4 @@
-import type {
-  ApiResource,
-  PublicProfileRecord,
-} from "@shurokkha/contracts"
+import type { ApiResource, PublicProfileRecord } from "@shurokkha/contracts"
 
 import type { ApiClient } from "../client"
 

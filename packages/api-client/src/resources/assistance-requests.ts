@@ -43,6 +43,5 @@ export const assistanceRequests = (client: ApiClient) => ({
       "/v1/assistance-requests/bulk-cancel",
       { ids }
     ),
-  remove: (id: string) =>
-    client.delete<void>(`/v1/assistance-requests/${id}`),
+  remove: (id: string) => client.delete<void>(`/v1/assistance-requests/${id}`),
 })

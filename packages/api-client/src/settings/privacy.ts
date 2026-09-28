@@ -23,9 +23,7 @@ export const privacy = (client: ApiClient) => ({
     get: () =>
       client.get<ApiResource<DataExportRequest>>("/v1/auth/me/data-export"),
     request: () =>
-      client.post<ApiResource<DataExportRequest>>(
-        "/v1/auth/me/data-export"
-      ),
+      client.post<ApiResource<DataExportRequest>>("/v1/auth/me/data-export"),
   },
   accountDeletion: {
     get: () =>

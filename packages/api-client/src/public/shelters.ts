@@ -21,7 +21,5 @@ export const publicShelters = (client: ApiClient) => ({
       }
     >(`/v1/public/shelters${queryString(params)}`),
   get: (id: number) =>
-    client.get<ApiResource<PublicShelterRecord>>(
-      `/v1/public/shelters/${id}`
-    ),
+    client.get<ApiResource<PublicShelterRecord>>(`/v1/public/shelters/${id}`),
 })
