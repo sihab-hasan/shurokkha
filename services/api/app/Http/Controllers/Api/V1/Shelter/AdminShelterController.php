@@ -96,4 +96,47 @@ class AdminShelterController extends Controller
 
         return response()->json(null, 204);
     }
+
+    /**
+     * STORED PROCEDURE: Update a shelter's occupancy via `sp_update_shelter_occupancy`.
+     *
+     * The stored procedure enforces bounds and status transitions directly in MySQL.
+     */
+    public function updateOccupancy(Request $request, int|string $shelter): JsonResponse
+    {
+        $shelterId = is_numeric($shelter) ? (int) $shelter : 0;
+
+        $validated = $request->validate([
+            'occupancy' => 'required|integer|min:0',
+        ]);
+
+        $occupancy = (int) $validated['occupancy'];
+
+        try {
+            DB::statement('CALL sp_update_shelter_occupancy(?, ?)', [$shelterId, $occupancy]);
+
+            $updated = DB::selectOne(<<<'SQL'
+                SELECT
+                    shelter_id,
+                    shelter_name,
+                    capacity,
+                    occupancy,
+                    (capacity - occupancy) AS available_capacity,
+                    ROUND((occupancy / NULLIF(capacity, 0)) * 100, 2) AS occupancy_percentage,
+                    status
+                FROM shelters
+                WHERE shelter_id = ?
+            SQL, [$shelterId]);
+
+            return response()->json([
+                'message' => 'Shelter occupancy updated successfully via stored procedure.',
+                'data'    => $updated,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to update shelter occupancy.',
+                'error'   => $e->getMessage(),
+            ], 422);
+        }
+    }
 }

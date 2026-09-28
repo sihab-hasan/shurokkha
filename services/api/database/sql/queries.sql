@@ -329,3 +329,114 @@ WHERE affected_population > (
     FROM affected_areas
 )
 ORDER BY affected_population DESC;
+
+
+-- ============================================================================
+-- SECTION 7: VIEWS (Non-Sensitive Dashboard and Public Reporting)
+-- ============================================================================
+
+-- 7.1 Shelter Public Dashboard Summary View
+SELECT
+    shelter_id,
+    shelter_name,
+    capacity,
+    occupancy,
+    available_capacity,
+    occupancy_percentage,
+    shelter_status,
+    area_id,
+    area_severity,
+    created_at
+FROM view_shelter_public_summary
+ORDER BY occupancy_percentage DESC;
+
+-- 7.2 Non-Sensitive Donation Summary View
+SELECT
+    donation_id,
+    donation_kind,
+    amount,
+    currency,
+    campaign_title,
+    donation_status,
+    receipt_number
+FROM view_donation_summary
+ORDER BY created_at DESC;
+
+
+-- ============================================================================
+-- SECTION 8: UNION QUERIES (Unified Facilities and Combined Contacts)
+-- ============================================================================
+
+-- 8.1 Unified Facility Mapping across Shelters and Warehouses
+SELECT
+    s.shelter_id    AS facility_id,
+    s.shelter_name  AS facility_name,
+    'shelter'       AS facility_type,
+    s.status        AS facility_status,
+    s.capacity      AS total_capacity,
+    s.area_id       AS area_reference
+FROM shelters s
+
+UNION ALL
+
+SELECT
+    w.warehouse_id                          AS facility_id,
+    w.warehouse_name                        AS facility_name,
+    'warehouse'                             AS facility_type,
+    'active'                                AS facility_status,
+    COALESCE(SUM(wr.quantity), 0)           AS total_capacity,
+    w.location_id                           AS area_reference
+FROM warehouses w
+LEFT JOIN warehouse_resources wr ON w.warehouse_id = wr.warehouse_id
+GROUP BY w.warehouse_id, w.warehouse_name, w.location_id
+
+ORDER BY facility_type ASC, facility_name ASC;
+
+
+-- ============================================================================
+-- SECTION 9: TRANSACTIONS (Pessimistic Locking & Atomic Inventory Dispatch)
+-- ============================================================================
+
+-- 9.1 Relief Supply Distribution Transaction Script
+START TRANSACTION;
+
+-- Step 1: Read stock with pessimistic write-lock
+SELECT quantity
+FROM warehouse_resources
+WHERE warehouse_id = 1 AND resource_id = 1
+FOR UPDATE;
+
+-- Step 2: Deduct allocated quantity
+UPDATE warehouse_resources
+SET quantity = quantity - 100
+WHERE warehouse_id = 1 AND resource_id = 1;
+
+-- Step 3: Insert master distribution record
+INSERT INTO relief_distributions
+    (shelter_id, area_id, distribution_date, status, created_at, updated_at)
+VALUES
+    (1, 1, NOW(), 'dispatched', NOW(), NOW());
+
+SET @new_dist_id = LAST_INSERT_ID();
+
+-- Step 4: Insert distribution line-item
+INSERT INTO distribution_resources
+    (distribution_id, resource_id, quantity_distributed, created_at, updated_at)
+VALUES
+    (@new_dist_id, 1, 100, NOW(), NOW());
+
+COMMIT;
+
+
+-- ============================================================================
+-- SECTION 10: STORED PROCEDURES (Enforced Logic & Occupancy Updates)
+-- ============================================================================
+
+-- 10.1 Invoke Stored Procedure to Update Shelter Occupancy and Status
+CALL sp_update_shelter_occupancy(1, 1200);
+
+-- Verify updated status (should automatically be 'full' when occupancy >= capacity)
+SELECT shelter_id, shelter_name, capacity, occupancy, status
+FROM shelters
+WHERE shelter_id = 1;
+

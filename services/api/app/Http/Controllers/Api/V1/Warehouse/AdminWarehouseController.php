@@ -88,4 +88,103 @@ class AdminWarehouseController extends Controller
 
         return response()->json(null, 204);
     }
+
+    /**
+     * TRANSACTION: Atomically dispatch relief supplies from a warehouse.
+     *
+     * Executes inside a single DB::transaction():
+     *   1. Pessimistic row write-lock (FOR UPDATE)
+     *   2. Inventory sufficiency check
+     *   3. Deduct from warehouse_resources
+     *   4. INSERT into relief_distributions
+     *   5. INSERT into distribution_resources
+     */
+    public function distributeRelief(Request $request, int|string $warehouse): JsonResponse
+    {
+        $warehouseId = is_numeric($warehouse) ? (int) $warehouse : 0;
+
+        $validated = $request->validate([
+            'area_id'     => 'required|integer|exists:affected_areas,area_id',
+            'shelter_id'  => 'nullable|integer|exists:shelters,shelter_id',
+            'resource_id' => 'required|integer|exists:resources,resource_id',
+            'quantity'    => 'required|numeric|min:0.01',
+        ]);
+
+        $resourceId = (int) $validated['resource_id'];
+        $quantity   = (float) $validated['quantity'];
+        $areaId     = (int) $validated['area_id'];
+        $shelterId  = isset($validated['shelter_id']) ? (int) $validated['shelter_id'] : null;
+
+        try {
+            $result = DB::transaction(function () use ($warehouseId, $areaId, $shelterId, $resourceId, $quantity) {
+                // Step 1: Pessimistic read-lock
+                $stock = DB::selectOne(<<<'SQL'
+                    SELECT quantity
+                    FROM   warehouse_resources
+                    WHERE  warehouse_id = ? AND resource_id = ?
+                    FOR UPDATE
+                SQL, [$warehouseId, $resourceId]);
+
+                if (! $stock || (float) $stock->quantity < $quantity) {
+                    throw new \RuntimeException(
+                        'Insufficient warehouse stock for the requested relief distribution.'
+                    );
+                }
+
+                // Step 2: Deduct inventory
+                DB::update(<<<'SQL'
+                    UPDATE warehouse_resources
+                    SET    quantity = quantity - ?
+                    WHERE  warehouse_id = ? AND resource_id = ?
+                SQL, [$quantity, $warehouseId, $resourceId]);
+
+                // Step 3: Insert master distribution record
+                DB::insert(<<<'SQL'
+                    INSERT INTO relief_distributions
+                        (shelter_id, area_id, distribution_date, status, created_at, updated_at)
+                    VALUES
+                        (?, ?, NOW(), 'dispatched', NOW(), NOW())
+                SQL, [$shelterId, $areaId]);
+
+                $distributionId = (int) DB::getPdo()->lastInsertId();
+
+                // Step 4: Insert line-item record
+                DB::insert(<<<'SQL'
+                    INSERT INTO distribution_resources
+                        (distribution_id, resource_id, quantity_distributed, created_at, updated_at)
+                    VALUES
+                        (?, ?, ?, NOW(), NOW())
+                SQL, [$distributionId, $resourceId, $quantity]);
+
+                $updatedStock = DB::selectOne(<<<'SQL'
+                    SELECT quantity
+                    FROM   warehouse_resources
+                    WHERE  warehouse_id = ? AND resource_id = ?
+                SQL, [$warehouseId, $resourceId]);
+
+                return [
+                    'distribution_id'   => $distributionId,
+                    'warehouse_id'      => $warehouseId,
+                    'resource_id'       => $resourceId,
+                    'quantity_deducted' => $quantity,
+                    'remaining_stock'   => (float) $updatedStock->quantity,
+                    'status'            => 'dispatched',
+                ];
+            });
+
+            return response()->json([
+                'message' => 'Relief supplies distributed successfully via atomic transaction.',
+                'data'    => $result,
+            ], 201);
+        } catch (\RuntimeException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 422);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Transaction failed and all changes were rolled back.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

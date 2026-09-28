@@ -28,16 +28,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('donations', function (Blueprint $table): void {
-            $table->foreignId('user_id')->nullable()->after('donation_id');
-            $table->string('payment_method', 32)->nullable()->after('amount');
-            $table->string('campaign_title')->nullable()->after('payment_method');
-            $table->string('receipt_number', 64)->nullable()->after('campaign_title');
-            $table->string('currency', 3)->default('BDT')->after('receipt_number');
-
-            $table->index('user_id');
-            $table->index('payment_method');
-            $table->index('status');
-            $table->unique('receipt_number');
+            if (!Schema::hasColumn('donations', 'user_id')) {
+                $table->foreignId('user_id')->nullable()->after('donation_id');
+                $table->index('user_id');
+            }
+            if (!Schema::hasColumn('donations', 'payment_method')) {
+                $table->string('payment_method', 32)->nullable()->after('amount');
+                $table->index('payment_method');
+            }
+            if (!Schema::hasColumn('donations', 'campaign_title')) {
+                $table->string('campaign_title')->nullable()->after('payment_method');
+            }
+            if (!Schema::hasColumn('donations', 'receipt_number')) {
+                $table->string('receipt_number', 64)->nullable()->after('campaign_title');
+                $table->unique('receipt_number');
+            }
+            if (!Schema::hasColumn('donations', 'currency')) {
+                $table->string('currency', 3)->default('BDT')->after('receipt_number');
+            }
         });
 
         // Backfill receipt_number for pre-existing rows. Wrap in a

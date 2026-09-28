@@ -105,4 +105,41 @@ class JoinReportController extends Controller
 
         return response()->json(['data' => $data]);
     }
+
+    /**
+     * 5. UNION: Combine Shelters and Warehouses into one unified Facilities list.
+     *
+     * Both branches produce the same number of columns in the same order:
+     *   facility_id | facility_name | facility_type | facility_status | total_capacity | area_reference
+     */
+    public function facilityLocations(): JsonResponse
+    {
+        $data = DB::select(<<<'SQL'
+            SELECT
+                s.shelter_id    AS facility_id,
+                s.shelter_name  AS facility_name,
+                'shelter'       AS facility_type,
+                s.status        AS facility_status,
+                s.capacity      AS total_capacity,
+                s.area_id       AS area_reference
+            FROM shelters s
+
+            UNION ALL
+
+            SELECT
+                w.warehouse_id                          AS facility_id,
+                w.warehouse_name                        AS facility_name,
+                'warehouse'                             AS facility_type,
+                'active'                                AS facility_status,
+                COALESCE(SUM(wr.quantity), 0)           AS total_capacity,
+                w.location_id                           AS area_reference
+            FROM warehouses w
+            LEFT JOIN warehouse_resources wr ON w.warehouse_id = wr.warehouse_id
+            GROUP BY w.warehouse_id, w.warehouse_name, w.location_id
+
+            ORDER BY facility_type ASC, facility_name ASC
+        SQL);
+
+        return response()->json(['data' => $data]);
+    }
 }
