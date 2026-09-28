@@ -30,7 +30,7 @@ export default function PublicFooter() {
             <Button
               nativeButton={false}
               size="lg"
-              render={<Link href={routes.public.getHelp} />}
+              render={<Link href={routes.public?.getHelp || "/get-help"} />}
             >
               <Siren data-icon="inline-start" />
               Request help
@@ -39,7 +39,7 @@ export default function PublicFooter() {
               nativeButton={false}
               variant="outline"
               size="lg"
-              render={<Link href={routes.public.shelters} />}
+              render={<Link href={routes.public?.shelters || "/shelters"} />}
             >
               <MapPinned data-icon="inline-start" />
               Find shelters
@@ -60,7 +60,7 @@ export default function PublicFooter() {
               before, during, and after an emergency.
             </p>
             <Link
-              href={routes.public.howItWorks}
+              href={routes.public?.howItWorks || "/about/how-it-works"}
               className="mt-5 inline-flex min-h-10 items-center gap-1.5 rounded-md text-sm font-semibold text-foreground transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               See how Shurokkha works

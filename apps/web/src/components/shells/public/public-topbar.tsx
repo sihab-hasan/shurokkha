@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { ArrowUpRight, RadioTower } from "lucide-react"
 
@@ -18,9 +20,9 @@ export default function PublicTopbar() {
           aria-label="Emergency information"
           className="ml-auto flex shrink-0 items-center gap-4 text-xs font-semibold sm:text-sm"
         >
-          {publicSiteConfig.utilityItems.map((item) => (
+          {publicSiteConfig.utilityItems.map((item, index) => (
             <Link
-              key={item.href}
+              key={`topbar-${item.label}-${index}`}
               href={item.href}
               className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-primary-foreground/10 focus-visible:ring-2 focus-visible:ring-primary-foreground/40 focus-visible:outline-none"
             >
