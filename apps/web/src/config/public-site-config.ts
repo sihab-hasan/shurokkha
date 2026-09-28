@@ -16,7 +16,6 @@ export const publicSiteConfig = {
   utilityItems: [
     { label: "Emergency alerts", href: "/emergency-alerts" },
     { label: "Live map", href: "/map" },
-    { label: "Operations Admin", href: "/operations" },
   ],
   footerItems: [
     {

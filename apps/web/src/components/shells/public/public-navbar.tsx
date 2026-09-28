@@ -24,6 +24,19 @@ function isActivePath(pathname: string | null, href: string) {
     : pathname === href || pathname.startsWith(`${href}/`)
 }
 
+const DEFAULT_ADMIN_APP_URL = "http://localhost:3001"
+
+function getAdminAppBaseUrl() {
+  const configured = process.env.NEXT_PUBLIC_ADMIN_APP_URL
+  return configured && configured.length > 0
+    ? configured.replace(/\/$/, "")
+    : DEFAULT_ADMIN_APP_URL
+}
+
+function getAdminAppOperationsUrl() {
+  return `${getAdminAppBaseUrl()}/operations`
+}
+
 export default function PublicNavbar() {
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
@@ -71,15 +84,17 @@ export default function PublicNavbar() {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
-          <Link
-            href={routes.public?.operations || "/operations"}
+          <a
+            href={getAdminAppOperationsUrl()}
+            target="_self"
+            rel="noopener noreferrer"
             className={cn(
               buttonVariants({ variant: "outline", size: "sm" }),
               "hidden border-primary/30 text-primary hover:bg-primary/10 md:inline-flex"
             )}
           >
             Admin Panel
-          </Link>
+          </a>
 
           {mounted ? (
             <>
