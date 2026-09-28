@@ -6,7 +6,7 @@ import { cn } from "@shurokkha/ui/lib/utils"
 import { UiProvider } from "@shurokkha/ui/providers/ui-provider"
 
 import { AuthProvider } from "@/components/auth/auth-provider"
-import { ThemeInitScript } from "@/components/theme-init-script"
+import { ThemeInitScript } from "@/components/shared/theme-init-script"
 import { QueryProvider } from "@/components/providers/query-provider"
 
 import "../styles/app.css"
@@ -43,8 +43,10 @@ export default function RootLayout({
         manropeHeading.variable
       )}
     >
-      <body className="flex min-h-full min-w-0 flex-col">
+      <head>
         <ThemeInitScript />
+      </head>
+      <body className="flex min-h-full min-w-0 flex-col">
         <UiProvider>
           <QueryProvider>
             <AuthProvider>

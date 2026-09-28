@@ -35,6 +35,9 @@ importers:
       '@shurokkha/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
+      '@shurokkha/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@shurokkha/ui':
         specifier: workspace:*
         version: link:../../packages/ui

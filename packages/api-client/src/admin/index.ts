@@ -4,9 +4,12 @@ import { adminAffectedAreas } from "./affected-areas"
 import { adminAssignments } from "./assignments"
 import { adminDisasters } from "./disasters"
 import { adminDonations } from "./donations"
+import { adminEmergencyRequests } from "./emergency-requests"
 import { adminRescueTeams } from "./rescue-teams"
 import { adminShelters } from "./shelters"
 import { adminWarehouses } from "./warehouses"
+
+export * from "./emergency-requests"
 
 export const makeAdmin = (client: ApiClient) => ({
   admin: {
@@ -14,6 +17,7 @@ export const makeAdmin = (client: ApiClient) => ({
     affectedAreas: adminAffectedAreas(client),
     rescueTeams: adminRescueTeams(client),
     assignments: adminAssignments(client),
+    emergencyRequests: adminEmergencyRequests(client),
     shelters: adminShelters(client),
     warehouses: adminWarehouses(client),
     donations: adminDonations(client),
