@@ -24,6 +24,7 @@ export const routes = {
     privacy: "/privacy",
     terms: "/terms",
     accessibility: "/accessibility",
+    operations: "/operations",
     user: (username: string) => `/u/${encodeSegment(username)}`,
   },
   auth: {

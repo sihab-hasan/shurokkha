@@ -6,7 +6,6 @@ import { Toaster } from "@shurokkha/ui/components/sonner"
 import { UiProvider } from "@shurokkha/ui/providers/ui-provider"
 import { CommandPalette } from "@/components/command/command-palette"
 import { QueryProvider } from "@/components/providers/query-provider"
-import { ThemeInitScript } from "@/components/theme-init-script"
 import { AuthProvider } from "@/components/auth/auth-provider"
 
 const manropeHeading = Manrope({
@@ -44,7 +43,6 @@ export default function RootLayout({
       )}
     >
       <body className="flex min-h-full min-w-0 flex-col">
-        <ThemeInitScript />
         <UiProvider>
           <AuthProvider>
             {/* QueryProvider wraps both the main children tree and the
