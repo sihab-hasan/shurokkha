@@ -9,7 +9,7 @@ Shurokkha is a disaster-relief and resource-coordination platform built as a pnp
 | Workspace              | Purpose                                                                      | Local URL                     |
 | ---------------------- | ---------------------------------------------------------------------------- | ----------------------------- |
 | `apps/web`             | Public site, authentication flows, citizen/donor/volunteer product areas     | `http://localhost:3000`       |
-| `apps/admin`           | Internal administration and operations workspace                             | `http://localhost:3003/admin` |
+| `apps/admin`           | Internal administration and operations workspace                             | `http://localhost:3001/admin` |
 | `packages/ui`          | Domain-agnostic UI primitives, theme, providers, hooks and utilities         | Internal                      |
 | `packages/ui-patterns` | Reusable application-level layouts, shells and interaction patterns          | Internal                      |
 | `packages/icons`       | Shurokkha-semantic icon aliases                                              | Internal                      |
@@ -75,7 +75,7 @@ Useful focused commands:
 | `pnpm typecheck`          | Run TypeScript checks                            |
 | `pnpm build`              | Build all buildable workspaces                   |
 | `pnpm clean`              | Remove generated build/dependency directories    |
-| `pnpm stop`               | Stop local app servers on ports 3000 and 3003    |
+| `pnpm stop`               | Stop local app servers on ports 3000 and 3001    |
 
 ## Repository architecture
 

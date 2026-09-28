@@ -7,7 +7,7 @@ Shurokkha is a pnpm/Turborepo TypeScript monorepo for disaster-relief coordinati
 | App   | Package            | Purpose                                                   | Dev port |
 | ----- | ------------------ | --------------------------------------------------------- | -------: |
 | Web   | `@shurokkha/web`   | Public site, auth flows and citizen/donor/volunteer areas |     3000 |
-| Admin | `@shurokkha/admin` | Internal operations/admin workspace                       |     3003 |
+| Admin | `@shurokkha/admin` | Internal operations/admin workspace                       |     3001 |
 
 Durable product and design-system documentation lives in the root `docs/` directory.
 

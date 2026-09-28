@@ -60,7 +60,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/admin/:path*",
-        destination: "http://localhost:3003/admin/:path*",
+        destination: "http://localhost:3001/admin/:path*",
       },
     ]
   },

@@ -33,7 +33,7 @@ services/         reserved for real deployable backend services
 | Application | Package            | Dev port | Base path | Responsibility                              |
 | ----------- | ------------------ | -------: | --------- | ------------------------------------------- |
 | Web         | `@shurokkha/web`   |     3000 | `/`       | Public site, auth flows and role workspaces |
-| Admin       | `@shurokkha/admin` |     3003 | `/admin`  | Internal operations and administration      |
+| Admin       | `@shurokkha/admin` |     3001 | `/admin`  | Internal operations and administration      |
 
 The web app proxies `/admin/*` to the local Admin application during development. `/client/*` remains reserved; there is no client app yet. Durable project and design-system documentation lives in the root `docs/` directory.
 
