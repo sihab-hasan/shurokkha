@@ -10,7 +10,7 @@ From the repository root:
 pnpm --filter @shurokkha/admin dev
 ```
 
-Open `http://localhost:3003/admin`. The app uses the `/admin` base path.
+Open `http://localhost:3001/admin`. The app uses the `/admin` base path.
 
 When all apps are running with `pnpm dev`, it is also available through the public web entry point at `http://localhost:3000/admin`.
 
