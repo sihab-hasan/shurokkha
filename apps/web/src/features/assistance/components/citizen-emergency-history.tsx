@@ -63,7 +63,7 @@ export function CitizenEmergencyHistory() {
   }, [])
 
   return (
-    <Card className="border-border/60 shadow-sm mt-8">
+    <Card className="mt-8 border-border/60 shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -73,12 +73,13 @@ export function CitizenEmergencyHistory() {
             <CardTitle className="text-xl font-bold tracking-tight">
               Citizen Emergency History
             </CardTitle>
-            <Badge variant="secondary" className="text-xs uppercase font-mono">
+            <Badge variant="secondary" className="font-mono text-xs uppercase">
               Database View
             </Badge>
           </div>
           <CardDescription>
-            Comprehensive multi-table record joining Users, Roles, Emergency Requests, and Disaster areas.
+            Comprehensive multi-table record joining Users, Roles, Emergency
+            Requests, and Disaster areas.
           </CardDescription>
         </div>
         <Button
@@ -94,19 +95,17 @@ export function CitizenEmergencyHistory() {
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="py-8 text-center text-sm text-muted-foreground animate-pulse">
+          <div className="animate-pulse py-8 text-center text-sm text-muted-foreground">
             Loading emergency history...
           </div>
         ) : error ? (
-          <div className="py-6 text-center text-sm text-danger">
-            {error}
-          </div>
+          <div className="py-6 text-center text-sm text-danger">{error}</div>
         ) : records.length === 0 ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
             No citizen emergency requests found.
           </div>
         ) : (
-          <div className="rounded-md border overflow-x-auto">
+          <div className="overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -136,7 +135,7 @@ export function CitizenEmergencyHistory() {
                         {item.citizen_role}
                       </Badge>
                     </TableCell>
-                    <TableCell className="capitalize text-sm">
+                    <TableCell className="text-sm capitalize">
                       {item.emergency_type}
                     </TableCell>
                     <TableCell>
@@ -153,20 +152,27 @@ export function CitizenEmergencyHistory() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="capitalize text-xs">
+                      <Badge variant="outline" className="text-xs capitalize">
                         {item.request_status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-xs">
                       {item.disaster_name ? (
                         <div className="space-y-0.5">
-                          <p className="font-medium text-foreground">{item.disaster_name}</p>
-                          <Badge variant="outline" className="text-[10px] px-1 py-0">
+                          <p className="font-medium text-foreground">
+                            {item.disaster_name}
+                          </p>
+                          <Badge
+                            variant="outline"
+                            className="px-1 py-0 text-[10px]"
+                          >
                             {item.disaster_severity}
                           </Badge>
                         </div>
                       ) : (
-                        <span className="text-muted-foreground italic">General / Unlinked</span>
+                        <span className="text-muted-foreground italic">
+                          General / Unlinked
+                        </span>
                       )}
                     </TableCell>
                   </TableRow>

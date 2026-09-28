@@ -1,7 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { AlertTriangle, CheckCircle2, Database, Loader2, Sparkles } from "lucide-react"
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Database,
+  Loader2,
+  Sparkles,
+} from "lucide-react"
 
 import { Button } from "@shurokkha/ui/components/button"
 import {
@@ -51,12 +57,16 @@ export function QuickDisasterTransactionCard({
 
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data.message || data.error_details || "Transaction failed")
+        throw new Error(
+          data.message || data.error_details || "Transaction failed"
+        )
       }
 
       setStatus({
         success: true,
-        message: data.message || "Disaster, Area, and Emergency Request saved together.",
+        message:
+          data.message ||
+          "Disaster, Area, and Emergency Request saved together.",
         disasterId: data.new_disaster_id,
         areaId: data.new_area_id,
       })
@@ -65,7 +75,8 @@ export function QuickDisasterTransactionCard({
     } catch (err: any) {
       setStatus({
         success: false,
-        message: err.message || "Atomic transaction rolled back. No data was saved.",
+        message:
+          err.message || "Atomic transaction rolled back. No data was saved.",
       })
     } finally {
       setLoading(false)
@@ -84,7 +95,10 @@ export function QuickDisasterTransactionCard({
           </CardTitle>
         </div>
         <CardDescription>
-          Executes an <strong>Atomic Transaction</strong> across 3 database tables: creates a <code>Disaster</code>, links an <code>Affected Area</code>, and files the citizen&apos;s <code>Emergency Request</code> concurrently with rollback protection.
+          Executes an <strong>Atomic Transaction</strong> across 3 database
+          tables: creates a <code>Disaster</code>, links an{" "}
+          <code>Affected Area</code>, and files the citizen&apos;s{" "}
+          <code>Emergency Request</code> concurrently with rollback protection.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -93,7 +107,7 @@ export function QuickDisasterTransactionCard({
             <Label htmlFor="atomic-disaster-name" className="text-sm">
               Disaster Title / Event Description
             </Label>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <Input
                 id="atomic-disaster-name"
                 placeholder="e.g. Flash Flood Sunamganj or Severe Storm Bogura"
@@ -103,7 +117,11 @@ export function QuickDisasterTransactionCard({
                 className="flex-1"
                 required
               />
-              <Button type="submit" disabled={loading || !disasterName.trim()} className="gap-1.5 shrink-0">
+              <Button
+                type="submit"
+                disabled={loading || !disasterName.trim()}
+                className="shrink-0 gap-1.5"
+              >
                 {loading ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
@@ -122,22 +140,23 @@ export function QuickDisasterTransactionCard({
 
         {status && (
           <div
-            className={`mt-4 rounded-md p-3 text-xs flex items-start gap-2.5 ${
+            className={`mt-4 flex items-start gap-2.5 rounded-md p-3 text-xs ${
               status.success
-                ? "bg-success/10 text-success border border-success/20"
-                : "bg-danger/10 text-danger border border-danger/20"
+                ? "border border-success/20 bg-success/10 text-success"
+                : "border border-danger/20 bg-danger/10 text-danger"
             }`}
           >
             {status.success ? (
-              <CheckCircle2 className="size-4 shrink-0 text-success mt-0.5" />
+              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" />
             ) : (
-              <AlertTriangle className="size-4 shrink-0 text-danger mt-0.5" />
+              <AlertTriangle className="mt-0.5 size-4 shrink-0 text-danger" />
             )}
             <div className="space-y-1">
               <p className="font-semibold">{status.message}</p>
               {status.disasterId && (
                 <p className="text-[11px] opacity-90">
-                  Database commit confirmed: Created Disaster #{status.disasterId} and Area #{status.areaId}.
+                  Database commit confirmed: Created Disaster #
+                  {status.disasterId} and Area #{status.areaId}.
                 </p>
               )}
             </div>

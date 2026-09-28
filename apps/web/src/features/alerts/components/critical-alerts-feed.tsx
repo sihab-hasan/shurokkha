@@ -70,12 +70,16 @@ export function CriticalAlertsFeed() {
             <CardTitle className="text-xl font-bold tracking-tight">
               Unified Critical Alerts Feed
             </CardTitle>
-            <Badge variant="outline" className="text-xs uppercase font-mono tracking-wider">
+            <Badge
+              variant="outline"
+              className="font-mono text-xs tracking-wider uppercase"
+            >
               Live Feed
             </Badge>
           </div>
           <CardDescription>
-            Chronological aggregation combining severe national disasters and critical citizen emergency calls into a unified feed.
+            Chronological aggregation combining severe national disasters and
+            critical citizen emergency calls into a unified feed.
           </CardDescription>
         </div>
         <Button
@@ -91,19 +95,17 @@ export function CriticalAlertsFeed() {
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="py-8 text-center text-sm text-muted-foreground animate-pulse">
+          <div className="animate-pulse py-8 text-center text-sm text-muted-foreground">
             Loading critical alerts...
           </div>
         ) : error ? (
-          <div className="py-6 text-center text-sm text-danger">
-            {error}
-          </div>
+          <div className="py-6 text-center text-sm text-danger">{error}</div>
         ) : alerts.length === 0 ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
             No active critical alerts right now.
           </div>
         ) : (
-          <div className="rounded-md border overflow-x-auto">
+          <div className="overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -145,7 +147,7 @@ export function CriticalAlertsFeed() {
                       {formatDateTime(alert.alert_time)}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="capitalize text-xs">
+                      <Badge variant="outline" className="text-xs capitalize">
                         {alert.current_status}
                       </Badge>
                     </TableCell>

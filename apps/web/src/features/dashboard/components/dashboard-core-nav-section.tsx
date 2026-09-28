@@ -1,12 +1,6 @@
 import * as React from "react"
 import Link from "next/link"
-import {
-  ArrowRight,
-  Database,
-  Flame,
-  History,
-  Zap,
-} from "lucide-react"
+import { ArrowRight, Database, Flame, History, Zap } from "lucide-react"
 
 import { Badge } from "@shurokkha/ui/components/badge"
 import { Button } from "@shurokkha/ui/components/button"
@@ -23,7 +17,8 @@ export function DashboardCoreNavSection() {
     {
       title: "Citizen Emergency History",
       type: "Database View",
-      description: "View unified multi-table records joining Users, Roles, Requests, and Disasters.",
+      description:
+        "View unified multi-table records joining Users, Roles, Requests, and Disasters.",
       href: "/get-help",
       icon: History,
       variant: "primary" as const,
@@ -32,7 +27,8 @@ export function DashboardCoreNavSection() {
     {
       title: "Atomic Disaster & Emergency",
       type: "Transaction (Commit/Rollback)",
-      description: "Concurrently report a disaster, link affected areas, and register emergency assistance.",
+      description:
+        "Concurrently report a disaster, link affected areas, and register emergency assistance.",
       href: "/get-help",
       icon: Database,
       variant: "primary" as const,
@@ -41,7 +37,8 @@ export function DashboardCoreNavSection() {
     {
       title: "Critical Alerts Feed",
       type: "Union Query",
-      description: "Live feed combining severe national disasters and critical citizen emergency calls.",
+      description:
+        "Live feed combining severe national disasters and critical citizen emergency calls.",
       href: "/emergency-alerts",
       icon: Flame,
       variant: "danger" as const,
@@ -50,7 +47,8 @@ export function DashboardCoreNavSection() {
     {
       title: "Escalate Disaster Severity",
       type: "Stored Procedure",
-      description: "Trigger sp_escalate_disaster_and_requests to elevate severity and escalate all requests.",
+      description:
+        "Trigger sp_escalate_disaster_and_requests to elevate severity and escalate all requests.",
       href: "/disasters",
       icon: Zap,
       variant: "warning" as const,
@@ -72,7 +70,8 @@ export function DashboardCoreNavSection() {
               </CardTitle>
             </div>
             <CardDescription>
-              Direct access to system database operations (Views, Transactions, Stored Procedures, and Union feeds).
+              Direct access to system database operations (Views, Transactions,
+              Stored Procedures, and Union feeds).
             </CardDescription>
           </div>
         </div>
@@ -91,21 +90,24 @@ export function DashboardCoreNavSection() {
                     <span className="flex size-8 items-center justify-center rounded-md bg-muted text-foreground">
                       <Icon className="size-4 text-primary" />
                     </span>
-                    <Badge variant="outline" className="text-[10px] uppercase font-mono">
+                    <Badge
+                      variant="outline"
+                      className="font-mono text-[10px] uppercase"
+                    >
                       {op.type}
                     </Badge>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-sm leading-tight text-foreground">
+                    <h4 className="text-sm leading-tight font-semibold text-foreground">
                       {op.title}
                     </h4>
-                    <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                       {op.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-2 border-t">
+                <div className="mt-4 border-t pt-2">
                   <Button
                     size="sm"
                     variant="outline"

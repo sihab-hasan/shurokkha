@@ -1,7 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { AlertTriangle, ArrowUpRight, CheckCircle2, Loader2, Zap } from "lucide-react"
+import {
+  AlertTriangle,
+  ArrowUpRight,
+  CheckCircle2,
+  Loader2,
+  Zap,
+} from "lucide-react"
 
 import { Button } from "@shurokkha/ui/components/button"
 import {
@@ -21,7 +27,11 @@ export function EscalateDisasterAction({
   disasters = [],
   onEscalated,
 }: {
-  disasters?: Array<{ disaster_id: number; disaster_name: string; severity?: string | null }>
+  disasters?: Array<{
+    disaster_id: number
+    disaster_name: string
+    severity?: string | null
+  }>
   onEscalated?: () => void
 }) {
   const [selectedId, setSelectedId] = useState<string>(
@@ -29,7 +39,10 @@ export function EscalateDisasterAction({
   )
   const [severity, setSeverity] = useState<string>("critical")
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
+  const [result, setResult] = useState<{
+    success: boolean
+    message: string
+  } | null>(null)
 
   const handleEscalate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,7 +67,9 @@ export function EscalateDisasterAction({
 
       setResult({
         success: true,
-        message: data.message || "Severity successfully escalated via Stored Procedure.",
+        message:
+          data.message ||
+          "Severity successfully escalated via Stored Procedure.",
       })
       onEscalated?.()
     } catch (err: any) {
@@ -79,13 +94,21 @@ export function EscalateDisasterAction({
           </CardTitle>
         </div>
         <CardDescription>
-          Executes stored procedure <code className="text-xs font-mono font-bold bg-muted px-1.5 py-0.5 rounded">sp_escalate_disaster_and_requests</code> to elevate disaster severity and automatically upgrade all pending citizen requests to Critical.
+          Executes stored procedure{" "}
+          <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs font-bold">
+            sp_escalate_disaster_and_requests
+          </code>{" "}
+          to elevate disaster severity and automatically upgrade all pending
+          citizen requests to Critical.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleEscalate} className="flex flex-wrap items-center gap-3">
+        <form
+          onSubmit={handleEscalate}
+          className="flex flex-wrap items-center gap-3"
+        >
           <div className="min-w-[200px] flex-1">
-            <label className="text-xs font-medium text-muted-foreground block mb-1">
+            <label className="mb-1 block text-xs font-medium text-muted-foreground">
               Select Disaster
             </label>
             <NativeSelect
@@ -96,21 +119,29 @@ export function EscalateDisasterAction({
             >
               {disasters.length > 0 ? (
                 disasters.map((d) => (
-                  <NativeSelectOption key={d.disaster_id} value={String(d.disaster_id)}>
-                    #{d.disaster_id} - {d.disaster_name} ({d.severity || "Current"})
+                  <NativeSelectOption
+                    key={d.disaster_id}
+                    value={String(d.disaster_id)}
+                  >
+                    #{d.disaster_id} - {d.disaster_name} (
+                    {d.severity || "Current"})
                   </NativeSelectOption>
                 ))
               ) : (
                 <>
-                  <NativeSelectOption value="1">#1 - Flash Flood Sylhet</NativeSelectOption>
-                  <NativeSelectOption value="2">#2 - Cyclone Remal</NativeSelectOption>
+                  <NativeSelectOption value="1">
+                    #1 - Flash Flood Sylhet
+                  </NativeSelectOption>
+                  <NativeSelectOption value="2">
+                    #2 - Cyclone Remal
+                  </NativeSelectOption>
                 </>
               )}
             </NativeSelect>
           </div>
 
           <div className="w-44">
-            <label className="text-xs font-medium text-muted-foreground block mb-1">
+            <label className="mb-1 block text-xs font-medium text-muted-foreground">
               New Severity
             </label>
             <NativeSelect
@@ -150,10 +181,10 @@ export function EscalateDisasterAction({
 
         {result && (
           <div
-            className={`mt-4 rounded-md p-3 text-xs flex items-start gap-2 ${
+            className={`mt-4 flex items-start gap-2 rounded-md p-3 text-xs ${
               result.success
-                ? "bg-success/10 text-success border border-success/20"
-                : "bg-danger/10 text-danger border border-danger/20"
+                ? "border border-success/20 bg-success/10 text-success"
+                : "border border-danger/20 bg-danger/10 text-danger"
             }`}
           >
             {result.success ? (
