@@ -4,13 +4,13 @@
 
 ```text
 apps/*
-  -> @shurokkha/ui-patterns
-      -> @shurokkha/ui
-  -> @shurokkha/icons
-  -> framework-agnostic shared packages
+  -> @shurokkha/ui                       (primitives, theme, icons)
+  -> framework-agnostic shared packages  (contracts, auth, api-client, validation)
 ```
 
 Applications never import source from another application. Shared code moves into a focused package only when it has a real cross-application responsibility.
+
+> **Note.** `@shurokkha/ui-patterns`, `@shurokkha/icons`, `@shurokkha/permissions` and `@shurokkha/utils` are described in some legacy docs but do **not** ship as separate workspace packages. Icons ship inside `@shurokkha/ui` (import via `@shurokkha/ui/icons/*`); composition lives inside each app; role checks live inside `@shurokkha/auth`; small generic helpers live alongside their consumers. Do not create stub packages — only lift code into a new package when at least two workspaces need to consume it.
 
 ## Application source layout
 
@@ -29,38 +29,40 @@ Imports use `@/* -> ./src/*`, so application code imports `@/components/...`, ne
 
 ## Component ownership
 
-| Layer                    | Owns                                                                                                                 | Must not own                                           |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `@shurokkha/ui`          | shadcn/Base UI primitives, theme tokens, `cn`, generic hooks, `UiProvider`, generic controls such as `ThemeSwitcher` | product entities, workflows, Shurokkha semantic icons  |
-| `@shurokkha/icons`       | semantic product icon aliases such as `ShelterIcon` and `DonationIcon`                                               | layouts, state, business logic                         |
-| `@shurokkha/ui-patterns` | reusable shells, page structure, collections, entity views, forms, feedback, workflow, reporting, messaging          | route logic, API entities, product-specific cards      |
-| `apps/*/src/components`  | application-specific composition and business-facing UI                                                              | generic primitives already supplied by shared packages |
+| Layer                   | Owns                                                                                                                                                                  | Must not own                                           |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `@shurokkha/ui`         | shadcn/Base UI primitives, theme tokens, `cn`, generic hooks, `UiProvider`, generic controls such as `ThemeSwitcher`, product-semantic icon aliases (under `icons/*`) | route logic, business logic, API entities              |
+| `@shurokkha/contracts`  | Cross-workspace TypeScript contracts (records, inputs, enums)                                                                                                         | Zod schemas that live in `validation.ts`               |
+| `@shurokkha/validation` | Re-export of Zod schemas owned by `@shurokkha/contracts/validation`                                                                                                   | New schemas — add to contracts and re-export           |
+| `@shurokkha/api-client` | Typed transport layer (one slice per backend domain)                                                                                                                  | React components, hooks                                |
+| `@shurokkha/auth`       | `hasRole`, `hasPermission`, `hasAnyPermission`, role/permission helpers                                                                                               | UI components                                          |
+| `apps/*/src/components` | application-specific composition and business-facing UI                                                                                                               | generic primitives already supplied by shared packages |
 
 ## Package imports
 
-`@shurokkha/ui` and `@shurokkha/ui-patterns` intentionally expose focused subpaths instead of large root barrels.
+`@shurokkha/ui` intentionally exposes focused subpaths instead of large root barrels.
 
 ```ts
 import { Button } from "@shurokkha/ui/components/button"
 import { cn } from "@shurokkha/ui/lib/utils"
-import { PageHeader } from "@shurokkha/ui-patterns/navigation"
-import { Container } from "@shurokkha/ui-patterns/layout"
+import { AlertIcon } from "@shurokkha/ui/icons/alert-icon"
+import { Container } from "@shurokkha/ui/layout/container"
 ```
 
 This keeps dependencies explicit and avoids mixing client-heavy modules through a root barrel.
 
 ## Shared package map
 
-- `api-client` — frontend transport boundary when an API exists.
-- `auth` — framework-agnostic auth/role helpers.
-- `contracts` — cross-workspace TypeScript contracts.
-- `icons` — semantic Shurokkha icon aliases.
-- `permissions` — permission/capability helpers.
-- `ui` — primitive visual system and theme infrastructure.
-- `ui-patterns` — reusable application-level composition patterns.
-- `utils` — small framework-agnostic utilities.
-- `validation` — shared Zod schemas.
+The following workspace packages currently exist:
+
+- `api-client` — frontend transport boundary (one typed slice per backend domain).
+- `auth` — framework-agnostic role/permission helpers (`hasRole`, `hasPermission`, `hasAnyPermission`).
+- `contracts` — cross-workspace TypeScript contracts (records, inputs, enums) plus Zod schemas in `validation.ts`.
+- `ui` — primitive visual system, theme tokens, `UiProvider`, generic hooks, and product-semantic icon aliases (under `icons/*`).
+- `validation` — thin re-export of `@shurokkha/contracts/validation` for the documented import path.
 - `tooling/*` — ESLint, Prettier and TypeScript configuration packages.
+
+> **Not shipped as packages today (legacy references in earlier docs):** `icons`, `ui-patterns`, `permissions`, `utils`. See the note at the top of this document.
 
 Do not create placeholder folders/packages. Add a package or service when it has real ownership, an entrypoint and validation scripts.
 
@@ -69,10 +71,10 @@ Do not create placeholder folders/packages. Add a package or service when it has
 Run:
 
 ```bash
-pnpm check:repo
-pnpm check:shells
-pnpm check:web-ui
 pnpm check:architecture
+pnpm check:api-connections
+pnpm check:web-pages
+pnpm verify
 ```
 
-`check:architecture` runs the repository, shell and web UI architecture guards together.
+`pnpm verify` is the aggregator — it runs lint, typecheck, test, format check, build, and all three `check:*` guards. `check:architecture` enforces workspace import boundaries; `check:api-connections` audits api-client ↔ Laravel parity; `check:web-pages` flags `page.tsx` files that do not import from `@shurokkha/api-client` (and are not on the static allowlist).

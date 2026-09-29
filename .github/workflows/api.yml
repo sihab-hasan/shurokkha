@@ -1,0 +1,99 @@
+name: API
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "services/api/**"
+      - "packages/contracts/**"
+      - ".github/workflows/api.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "services/api/**"
+      - "packages/contracts/**"
+      - ".github/workflows/api.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: PHP tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: shurokkha_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, pdo_mysql, intl, bcmath, zip, gd, curl
+          coverage: none
+
+      - name: Composer install
+        working-directory: services/api
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Copy .env
+        working-directory: services/api
+        run: cp .env.example .env
+
+      - name: Generate app key
+        working-directory: services/api
+        run: php artisan key:generate --force
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; then
+              echo "MySQL is up"
+              break
+            fi
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+
+      - name: Run migrations
+        working-directory: services/api
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: shurokkha_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: php artisan migrate --force
+
+      - name: Run tests
+        working-directory: services/api
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: shurokkha_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: php artisan test
