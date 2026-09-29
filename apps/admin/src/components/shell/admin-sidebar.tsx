@@ -33,7 +33,7 @@ export function AdminSidebar() {
           href="/"
           className="flex items-center gap-2.5 text-sm font-semibold tracking-tight transition-opacity hover:opacity-80"
         >
-          <span className="flex size-7 items-center justify-center rounded-md bg-primary font-bold text-xs text-primary-foreground shadow-xs">
+          <span className="flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground shadow-xs">
             SA
           </span>
           <div className="flex flex-col">
@@ -76,7 +76,7 @@ export function AdminSidebar() {
                       className={cn(
                         "group flex items-center justify-between rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
                         active
-                          ? "bg-primary/10 text-primary font-semibold shadow-xs"
+                          ? "bg-primary/10 font-semibold text-primary shadow-xs"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       )}
                     >
@@ -108,7 +108,7 @@ export function AdminSidebar() {
       </nav>
 
       {utility.length > 0 ? (
-        <div className="border-t p-3 bg-muted/20">
+        <div className="border-t bg-muted/20 p-3">
           <div className="px-3 py-1 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase">
             Administration
           </div>
@@ -124,7 +124,7 @@ export function AdminSidebar() {
                   className={cn(
                     "group flex items-center justify-between rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
                     active
-                      ? "bg-primary/10 text-primary font-semibold shadow-xs"
+                      ? "bg-primary/10 font-semibold text-primary shadow-xs"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >

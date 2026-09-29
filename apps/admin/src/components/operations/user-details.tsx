@@ -227,7 +227,6 @@ export function UserDetails({ userId }: { userId: number }) {
               role: user.role === "admin" ? "admin" : "user",
               status: user.status,
             }}
-
           />
         </CardContent>
       </Card>

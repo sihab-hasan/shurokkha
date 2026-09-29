@@ -37,4 +37,3 @@ export type ShelterOccupancyResource = ApiResource<{
   occupancy: number
   available_space?: number
 }>
-

@@ -46,10 +46,10 @@ export default function DashboardHomePage() {
     <Section className="py-6 sm:py-8">
       <Container className="space-y-10">
         {/* ── Header ────────────────────────────────────────────────────── */}
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-6">
+        <header className="flex flex-col gap-4 border-b pb-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="flex size-7 items-center justify-center rounded-md bg-primary font-bold text-xs text-primary-foreground shadow-xs">
+              <span className="flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground shadow-xs">
                 SA
               </span>
               <h1 className="text-2xl font-bold tracking-tight">
@@ -83,7 +83,7 @@ export default function DashboardHomePage() {
 
         {/* ── Quick Domain Jump Cards ───────────────────────────────────── */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-primary/20 shadow-xs hover:border-primary/40 transition-colors">
+          <Card className="border-primary/20 shadow-xs transition-colors hover:border-primary/40">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-semibold">
@@ -107,7 +107,7 @@ export default function DashboardHomePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-primary/20 shadow-xs hover:border-primary/40 transition-colors">
+          <Card className="border-primary/20 shadow-xs transition-colors hover:border-primary/40">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-semibold">
@@ -131,7 +131,7 @@ export default function DashboardHomePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-primary/20 shadow-xs hover:border-primary/40 transition-colors">
+          <Card className="border-primary/20 shadow-xs transition-colors hover:border-primary/40">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-semibold">
@@ -155,7 +155,7 @@ export default function DashboardHomePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-primary/20 shadow-xs hover:border-primary/40 transition-colors">
+          <Card className="border-primary/20 shadow-xs transition-colors hover:border-primary/40">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-semibold">
@@ -206,7 +206,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <MapPin className="size-4" />
                 </div>
                 <div>
@@ -224,7 +224,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <ShieldCheck className="size-4" />
                 </div>
                 <div>
@@ -242,7 +242,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <ClipboardList className="size-4" />
                 </div>
                 <div>
@@ -260,7 +260,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-amber-500/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-amber-500/10 p-2 text-amber-600 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                <div className="rounded-md bg-amber-500/10 p-2 text-amber-600 transition-colors group-hover:bg-amber-500 group-hover:text-white dark:text-amber-400">
                   <AlertTriangle className="size-4" />
                 </div>
                 <div>
@@ -278,7 +278,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <Building2 className="size-4" />
                 </div>
                 <div>
@@ -313,7 +313,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <Users className="size-4" />
                 </div>
                 <div>
@@ -331,7 +331,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <Warehouse className="size-4" />
                 </div>
                 <div>
@@ -349,7 +349,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-emerald-500/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-emerald-500/10 p-2 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                <div className="rounded-md bg-emerald-500/10 p-2 text-emerald-600 transition-colors group-hover:bg-emerald-600 group-hover:text-white dark:text-emerald-400">
                   <Package className="size-4" />
                 </div>
                 <div>
@@ -367,7 +367,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-rose-500/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-rose-500/10 p-2 text-rose-600 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                <div className="rounded-md bg-rose-500/10 p-2 text-rose-600 transition-colors group-hover:bg-rose-600 group-hover:text-white dark:text-rose-400">
                   <HeartHandshake className="size-4" />
                 </div>
                 <div>
@@ -385,7 +385,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <FileText className="size-4" />
                 </div>
                 <div>
@@ -403,7 +403,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <Newspaper className="size-4" />
                 </div>
                 <div>
@@ -438,7 +438,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <BarChart3 className="size-4" />
                 </div>
                 <div>
@@ -456,7 +456,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <FileSearch className="size-4" />
                 </div>
                 <div>
@@ -474,7 +474,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <Database className="size-4" />
                 </div>
                 <div>
@@ -492,7 +492,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <UsersRound className="size-4" />
                 </div>
                 <div>
@@ -510,7 +510,7 @@ export default function DashboardHomePage() {
               className="group flex items-center justify-between rounded-lg border bg-card p-3.5 shadow-xs transition-all hover:border-primary/40 hover:bg-muted/30"
             >
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-primary/10 p-2 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <div className="rounded-md bg-primary/10 p-2 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <ShieldAlert className="size-4" />
                 </div>
                 <div>

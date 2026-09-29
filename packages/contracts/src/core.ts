@@ -12,7 +12,6 @@ export interface ApiResource<T> {
 
 export type ApiListResource<T> = ApiResource<T[]> | PaginatedResource<T>
 
-
 export interface PaginationLinkSet {
   first: string | null
   last: string | null

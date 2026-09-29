@@ -37,13 +37,7 @@ export const coreTvup = (client: ApiClient) => ({
   criticalAlerts: () =>
     client.get<ApiResource<CriticalAlertRow[]>>("/v1/core/union"),
   escalateDisaster: (input: EscalateDisasterInput) =>
-    client.post<ApiResource<unknown>>(
-      "/v1/core/procedure",
-      input
-    ),
+    client.post<ApiResource<unknown>>("/v1/core/procedure", input),
   reportDisasterAndEmergency: (input: ReportDisasterAndEmergencyInput) =>
-    client.post<ApiResource<unknown>>(
-      "/v1/core/transaction",
-      input
-    ),
+    client.post<ApiResource<unknown>>("/v1/core/transaction", input),
 })

@@ -31,4 +31,3 @@ export interface TeamAssignmentInput {
 
 export type AssignmentRecord = TeamAssignmentRecord
 export type AssignmentInput = TeamAssignmentInput
-

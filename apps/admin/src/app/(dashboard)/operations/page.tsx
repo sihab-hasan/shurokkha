@@ -58,7 +58,7 @@ export default function OperationsOverviewPage() {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Affected Areas */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-primary/10 p-2 text-primary">
@@ -95,7 +95,7 @@ export default function OperationsOverviewPage() {
             </Card>
 
             {/* Rescue Teams */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-primary/10 p-2 text-primary">
@@ -132,7 +132,7 @@ export default function OperationsOverviewPage() {
             </Card>
 
             {/* Team Management */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-primary/10 p-2 text-primary">
@@ -169,7 +169,7 @@ export default function OperationsOverviewPage() {
             </Card>
 
             {/* Emergency Alerts */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-amber-500/10 p-2 text-amber-600 dark:text-amber-400">
@@ -178,7 +178,8 @@ export default function OperationsOverviewPage() {
                   <CardTitle className="text-base">Emergency Alerts</CardTitle>
                 </div>
                 <CardDescription>
-                  Real-time broadcast bulletins, warning levels, and siren feeds.
+                  Real-time broadcast bulletins, warning levels, and siren
+                  feeds.
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex gap-2">
@@ -202,7 +203,7 @@ export default function OperationsOverviewPage() {
             </Card>
 
             {/* Evacuation Shelters */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-primary/10 p-2 text-primary">
@@ -248,7 +249,7 @@ export default function OperationsOverviewPage() {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Volunteer Force */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-primary/10 p-2 text-primary">
@@ -265,7 +266,9 @@ export default function OperationsOverviewPage() {
                   size="sm"
                   className="flex-1"
                   nativeButton={false}
-                  render={<Link href={adminRoutes.operations.volunteers.list} />}
+                  render={
+                    <Link href={adminRoutes.operations.volunteers.list} />
+                  }
                 >
                   <Users className="size-4" /> View Volunteers
                 </Button>
@@ -273,7 +276,7 @@ export default function OperationsOverviewPage() {
             </Card>
 
             {/* Aid Warehouses */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-primary/10 p-2 text-primary">
@@ -290,7 +293,9 @@ export default function OperationsOverviewPage() {
                   size="sm"
                   className="flex-1"
                   nativeButton={false}
-                  render={<Link href={adminRoutes.operations.warehouses.list} />}
+                  render={
+                    <Link href={adminRoutes.operations.warehouses.list} />
+                  }
                 >
                   <Users className="size-4" /> View all
                 </Button>
@@ -306,7 +311,7 @@ export default function OperationsOverviewPage() {
             </Card>
 
             {/* Relief Donations */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-600 dark:text-emerald-400">
@@ -339,7 +344,7 @@ export default function OperationsOverviewPage() {
             </Card>
 
             {/* Fundraising Campaigns */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-rose-500/10 p-2 text-rose-600 dark:text-rose-400">
@@ -348,7 +353,8 @@ export default function OperationsOverviewPage() {
                   <CardTitle className="text-base">Fundraisers</CardTitle>
                 </div>
                 <CardDescription>
-                  Public crowdfunding goals, raised milestones, and beneficiaries.
+                  Public crowdfunding goals, raised milestones, and
+                  beneficiaries.
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex gap-2">
@@ -356,7 +362,9 @@ export default function OperationsOverviewPage() {
                   size="sm"
                   className="flex-1"
                   nativeButton={false}
-                  render={<Link href={adminRoutes.operations.fundraises.list} />}
+                  render={
+                    <Link href={adminRoutes.operations.fundraises.list} />
+                  }
                 >
                   <Users className="size-4" /> View all
                 </Button>
@@ -372,7 +380,7 @@ export default function OperationsOverviewPage() {
             </Card>
 
             {/* Preparedness Guides */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-primary/10 p-2 text-primary">
@@ -405,7 +413,7 @@ export default function OperationsOverviewPage() {
             </Card>
 
             {/* News & Updates */}
-            <Card className="border-primary/20 shadow-xs flex flex-col justify-between">
+            <Card className="flex flex-col justify-between border-primary/20 shadow-xs">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <div className="rounded-lg bg-primary/10 p-2 text-primary">
@@ -414,7 +422,8 @@ export default function OperationsOverviewPage() {
                   <CardTitle className="text-base">News & Press</CardTitle>
                 </div>
                 <CardDescription>
-                  Official press statements, situation bulletins, and media releases.
+                  Official press statements, situation bulletins, and media
+                  releases.
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex gap-2">

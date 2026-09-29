@@ -28,7 +28,6 @@ import { statusBadgeClass } from "./badges"
 const formatAmount = (value: number, currency: string = "BDT") =>
   `${currency} ${new Intl.NumberFormat("en-US").format(value)}`
 
-
 export function DonationTable() {
   const { data, isLoading, stats, statsLoading, remove } = useDonations()
 
@@ -157,7 +156,9 @@ export function DonationTable() {
                       <TableCell>
                         <Badge
                           variant="outline"
-                          className={statusBadgeClass(row.status ?? "completed")}
+                          className={statusBadgeClass(
+                            row.status ?? "completed"
+                          )}
                         >
                           {row.status ?? "completed"}
                         </Badge>

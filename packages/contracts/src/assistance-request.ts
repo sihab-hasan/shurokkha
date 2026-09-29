@@ -86,6 +86,4 @@ export type EmergencyRequestRecord = AssistanceRequestRecord & {
 
 export type EmergencyRequestListResource =
   ApiListResource<EmergencyRequestRecord>
-export type EmergencyRequestDetailResource =
-  ApiResource<EmergencyRequestRecord>
-
+export type EmergencyRequestDetailResource = ApiResource<EmergencyRequestRecord>

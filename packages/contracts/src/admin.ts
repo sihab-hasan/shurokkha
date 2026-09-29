@@ -76,8 +76,6 @@ export interface LoginAuditListParams {
   sort?: string
 }
 
-
-
 export type ReportSummaryResource = ApiResource<{
   affected_areas_count: number
   rescue_teams_count: number

@@ -24,7 +24,6 @@ export interface DisasterUpdateInput {
   status?: string
 }
 
-
 export interface AffectedAreaRecord {
   area_id: number
   disaster_id: number

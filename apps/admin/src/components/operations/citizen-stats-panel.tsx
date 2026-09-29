@@ -85,7 +85,6 @@ export function CitizenStatsPanel() {
                   <TableCell className="text-right font-mono text-sm">
                     {row.cancelled?.toLocaleString() ?? 0}
                   </TableCell>
-
                 </TableRow>
               ))
             )}

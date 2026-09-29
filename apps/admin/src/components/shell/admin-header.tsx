@@ -75,10 +75,10 @@ export function AdminHeader() {
                 </Button>
               }
             />
-            <SheetContent side="left" className="w-72 p-0 flex flex-col">
+            <SheetContent side="left" className="flex w-72 flex-col p-0">
               <SheetHeader className="border-b px-5 py-4 text-left">
                 <SheetTitle className="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
-                  <span className="flex size-7 items-center justify-center rounded-md bg-primary font-bold text-xs text-primary-foreground shadow-xs">
+                  <span className="flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground shadow-xs">
                     SA
                   </span>
                   <div className="flex flex-col">
@@ -117,7 +117,7 @@ export function AdminHeader() {
                             className={cn(
                               "group flex items-center justify-between rounded-md px-3 py-2 text-xs font-medium transition-colors",
                               active
-                                ? "bg-primary/10 text-primary font-semibold shadow-xs"
+                                ? "bg-primary/10 font-semibold text-primary shadow-xs"
                                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
                             )}
                           >
@@ -147,7 +147,7 @@ export function AdminHeader() {
                 })}
 
                 {utility.length > 0 ? (
-                  <div className="pt-2 border-t space-y-1">
+                  <div className="space-y-1 border-t pt-2">
                     <div className="px-3 py-1 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase">
                       Administration
                     </div>
@@ -163,7 +163,7 @@ export function AdminHeader() {
                           className={cn(
                             "group flex items-center justify-between rounded-md px-3 py-2 text-xs font-medium transition-colors",
                             active
-                              ? "bg-primary/10 text-primary font-semibold shadow-xs"
+                              ? "bg-primary/10 font-semibold text-primary shadow-xs"
                               : "text-muted-foreground hover:bg-muted hover:text-foreground"
                           )}
                         >
@@ -194,7 +194,7 @@ export function AdminHeader() {
           href="/"
           className="flex items-center gap-2 text-sm font-semibold tracking-tight md:hidden"
         >
-          <span className="flex size-6 items-center justify-center rounded-md bg-primary font-bold text-[11px] text-primary-foreground">
+          <span className="flex size-6 items-center justify-center rounded-md bg-primary text-[11px] font-bold text-primary-foreground">
             SA
           </span>
           <span>Shurokkha Admin</span>

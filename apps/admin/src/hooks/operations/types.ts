@@ -272,7 +272,6 @@ export interface FacilityLocationRow {
   [key: string]: any
 }
 
-
 export interface AffectedAreaAdminRecord {
   area_id: number
   disaster_id: number
@@ -327,4 +326,3 @@ export type AreaSeverityRow = AreaSeverityBreakdownRow
 export type CitizenStatsRow = CitizenRequestStatsRow
 export type JoinRow = JoinReportRow
 export type ShelterSummaryRow = ShelterPublicSummaryRow
-
