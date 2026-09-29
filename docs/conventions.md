@@ -10,20 +10,20 @@
 
 ## UI boundaries
 
-- `@shurokkha/ui`: domain-agnostic primitives, theme infrastructure, providers, generic hooks and UI utilities.
-- `@shurokkha/ui-patterns`: stable reusable application-level layouts and interaction patterns.
-- `@shurokkha/icons`: product-semantic icon aliases.
+- `@shurokkha/ui`: domain-agnostic primitives, theme infrastructure, providers, generic hooks, UI utilities and product-semantic icon aliases (imported from `@shurokkha/ui/icons/*`).
 - Application `src/components`: reusable compositions that still know Shurokkha/product context.
 - Route `_components`: route-private composition only when the UI is not reused elsewhere.
+
+> **Note.** `@shurokkha/icons`, `@shurokkha/ui-patterns`, `@shurokkha/permissions` and `@shurokkha/utils` are referenced in some legacy docs but do **not** ship as separate workspace packages today. Icons ship inside `@shurokkha/ui`; composition lives inside each app; role checks live inside `@shurokkha/auth`; small generic helpers live alongside their consumers. Do not create stub packages — only lift code into a new package when at least two workspaces need to consume it.
 
 Use focused exports:
 
 ```ts
 import { Button } from "@shurokkha/ui/components/button"
-import { PageHeader } from "@shurokkha/ui-patterns/navigation"
+import { AlertIcon } from "@shurokkha/ui/icons/alert-icon"
 ```
 
-Do not add root barrels for `ui` or `ui-patterns`.
+Do not add root barrels for `ui`.
 
 ## Next.js naming
 
@@ -66,8 +66,9 @@ Target a workspace by package name when iterating:
 
 ```bash
 pnpm --filter @shurokkha/web dev
+pnpm --filter @shurokkha/admin dev
 pnpm --filter @shurokkha/ui lint
-pnpm --filter @shurokkha/ui-patterns typecheck
+pnpm --filter @shurokkha/contracts typecheck
 ```
 
 ## Git and pull requests

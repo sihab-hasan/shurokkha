@@ -10,23 +10,22 @@ apps/
   admin/          internal administration workspace
 
 packages/
-  api-client/     future typed transport boundary
-  auth/           shared role/auth helpers
-  contracts/      cross-workspace TypeScript contracts
-  icons/          semantic Shurokkha icon aliases
-  permissions/    shared authorization helpers
-  ui/             primitive UI system, theme and generic UI infrastructure
-  ui-patterns/    reusable application patterns and shells
-  utils/          framework-agnostic utilities
-  validation/     shared runtime validation
+  api-client/     typed transport boundary (one slice per backend domain)
+  auth/           framework-agnostic role/permission helpers
+  contracts/      cross-workspace TypeScript contracts + Zod schemas
+  ui/             primitive UI system, theme infrastructure, product-semantic icons
+  validation/     thin re-export of @shurokkha/contracts/validation
 
 tooling/
   eslint-config/
   prettier-config/
   typescript-config/
 
-services/         reserved for real deployable backend services
+services/
+  api/            Laravel 13 backend (session-cookie auth + JSON API)
 ```
+
+> **Note.** Several packages referenced in older documentation (`icons`, `ui-patterns`, `permissions`, `utils`) are not currently shipped as separate workspace packages. Icons ship inside `@shurokkha/ui/icons/*`; composition lives inside each app; small generic helpers live alongside their consumers. Do not create placeholder packages — only extract into a package when at least two workspaces need to consume it.
 
 ## Applications
 
@@ -42,16 +41,12 @@ The web app proxies `/admin/*` to the local Admin application during development
 ```text
 application-specific composition
         ↓
-@shurokkha/ui-patterns
-        ↓
-@shurokkha/ui
+@shurokkha/ui  (primitives, theme, icons under icons/*)
 ```
 
-`@shurokkha/icons` is a sibling shared package for product-semantic icon aliases. Keeping these icons outside `@shurokkha/ui` prevents the primitive design system from learning domain concepts.
+`@shurokkha/ui` owns shared global Tailwind/theme CSS, primitives, `UiProvider`, `ThemeSwitcher`, generic hooks, utility functions, and product-semantic icon aliases (under `icons/*`). Application-specific composition (shells, entity screens, forms, feedback, reporting) lives inside each app's `src/components` directory.
 
-`@shurokkha/ui` owns shared global Tailwind/theme CSS, primitives, `UiProvider`, `ThemeSwitcher`, generic hooks and utility functions. `@shurokkha/ui-patterns` owns reusable application structure such as workspace shells, collections, entity screens, forms, feedback and reporting. Domain UI remains inside applications.
-
-Every application imports both shared CSS surfaces from its local `src/styles/app.css`.
+Every application imports shared CSS from its local `src/styles/app.css`.
 
 ## Route and shell model
 
@@ -90,9 +85,9 @@ The standardized Laravel backend service is located in `services/api/`. It provi
 
 ## Automated architecture guards
 
-- `pnpm check:repo` — repository/package/component ownership.
-- `pnpm check:shells` — shell and route-group ownership.
-- `pnpm check:web-ui` — public/app/auth page composition rules.
-- `pnpm check:architecture` — runs all architecture guards.
+- `pnpm check:architecture` — workspace import boundaries (no app↔app imports, no package→app imports).
+- `pnpm check:api-connections` — api-client slice ↔ Laravel endpoint parity (heuristic).
+- `pnpm check:web-pages` — every `apps/web` page either imports `@shurokkha/api-client` or is on the static allowlist.
+- `pnpm verify` — aggregator that runs lint, typecheck, test, format check, build, and all three `check:*` guards.
 
 See [Repository organization](repository-organization.md) for placement rules.

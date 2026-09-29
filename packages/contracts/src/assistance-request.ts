@@ -1,4 +1,4 @@
-import type { EntityId } from "./core"
+import type { ApiListResource, ApiResource, EntityId } from "./core"
 
 export type AssistanceRequestType =
   "rescue" | "medical" | "essentials" | "shelter" | "other"
@@ -75,3 +75,15 @@ export interface AssistanceRequestStats {
   /** Raw `status => count` map for advanced consumers. */
   totals_by_status: Partial<Record<AssistanceRequestStatus, number>>
 }
+
+export type EmergencyRequestRecord = AssistanceRequestRecord & {
+  request_id?: number
+  citizen_name?: string
+  citizen_phone?: string
+  citizen_email?: string
+  disaster_id?: number | null
+}
+
+export type EmergencyRequestListResource =
+  ApiListResource<EmergencyRequestRecord>
+export type EmergencyRequestDetailResource = ApiResource<EmergencyRequestRecord>

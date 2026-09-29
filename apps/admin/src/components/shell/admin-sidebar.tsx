@@ -6,72 +6,112 @@ import { usePathname } from "next/navigation"
 import { cn } from "@shurokkha/ui/lib/utils"
 
 import { adminShellConfig } from "@/config/shell-config"
-
-type NavItem = {
-  label: string
-  href: string
-  icon?: React.ComponentType<{ className?: string }>
-}
+import type { AdminNavItem } from "@/config/admin-navigation"
 
 export function AdminSidebar() {
   const pathname = usePathname()
-  const primary: ReadonlyArray<NavItem> = adminShellConfig.primary ?? []
-  const utility: ReadonlyArray<NavItem> = adminShellConfig.utility ?? []
+  const primary: ReadonlyArray<AdminNavItem> = adminShellConfig.primary ?? []
+  const utility: ReadonlyArray<AdminNavItem> = adminShellConfig.utility ?? []
 
   const isActive = (href: string) => {
     if (!pathname) return false
     if (href === "/") return pathname === "/"
+    if (href === "/operations") return pathname === "/operations"
+    if (href === "/reports") return pathname === "/reports"
     return pathname === href || pathname.startsWith(`${href}/`)
   }
+
+  // Group primary items by category
+  const categories = Array.from(
+    new Set(primary.map((item) => item.category ?? "General"))
+  )
 
   return (
     <aside className="hidden h-full w-64 shrink-0 border-r bg-card md:flex md:flex-col">
       <div className="flex h-16 items-center border-b px-5">
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm font-semibold tracking-tight"
+          className="flex items-center gap-2.5 text-sm font-semibold tracking-tight transition-opacity hover:opacity-80"
         >
-          <span className="rounded-md bg-primary px-2 py-1 text-xs text-primary-foreground">
+          <span className="flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground shadow-xs">
             SA
           </span>
-          {adminShellConfig.brand?.name ?? "Shurokkha Admin"}
+          <div className="flex flex-col">
+            <span className="leading-tight">
+              {adminShellConfig.brand?.name ?? "Shurokkha Admin"}
+            </span>
+            <span className="text-[10px] font-normal text-muted-foreground">
+              Command Console
+            </span>
+          </div>
         </Link>
       </div>
 
       <nav
         aria-label="Admin primary navigation"
-        className="flex-1 space-y-1 overflow-y-auto p-3"
+        className="flex-1 space-y-4 overflow-y-auto p-3"
       >
         {primary.length === 0 ? (
           <p className="px-3 py-2 text-xs text-muted-foreground">
             No sections configured.
           </p>
         ) : (
-          primary.map((item) => {
-            const Icon = item.icon
-            const active = isActive(item.href)
+          categories.map((category) => {
+            const items = primary.filter(
+              (item) => (item.category ?? "General") === category
+            )
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  active
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                )}
-              >
-                {Icon ? <Icon className="size-4" /> : null}
-                <span>{item.label}</span>
-              </Link>
+              <div key={category} className="space-y-1">
+                <div className="px-3 py-1 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase">
+                  {category}
+                </div>
+                {items.map((item) => {
+                  const Icon = item.icon
+                  const active = isActive(item.href)
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={cn(
+                        "group flex items-center justify-between rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                        active
+                          ? "bg-primary/10 font-semibold text-primary shadow-xs"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      )}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        {Icon ? (
+                          <Icon
+                            className={cn(
+                              "size-4 shrink-0 transition-colors",
+                              active
+                                ? "text-primary"
+                                : "text-muted-foreground group-hover:text-foreground"
+                            )}
+                          />
+                        ) : null}
+                        <span>{item.label}</span>
+                      </div>
+                      {item.badge != null ? (
+                        <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                          {item.badge}
+                        </span>
+                      ) : null}
+                    </Link>
+                  )
+                })}
+              </div>
             )
           })
         )}
       </nav>
 
       {utility.length > 0 ? (
-        <div className="border-t p-3">
+        <div className="border-t bg-muted/20 p-3">
+          <div className="px-3 py-1 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase">
+            Administration
+          </div>
           <nav aria-label="Admin utility navigation" className="space-y-1">
             {utility.map((item) => {
               const Icon = item.icon
@@ -82,14 +122,30 @@ export function AdminSidebar() {
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    "group flex items-center justify-between rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
                     active
-                      ? "bg-primary/10 text-primary"
+                      ? "bg-primary/10 font-semibold text-primary shadow-xs"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
-                  {Icon ? <Icon className="size-4" /> : null}
-                  <span>{item.label}</span>
+                  <div className="flex items-center gap-2.5">
+                    {Icon ? (
+                      <Icon
+                        className={cn(
+                          "size-4 shrink-0 transition-colors",
+                          active
+                            ? "text-primary"
+                            : "text-muted-foreground group-hover:text-foreground"
+                        )}
+                      />
+                    ) : null}
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge != null ? (
+                    <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                      {item.badge}
+                    </span>
+                  ) : null}
                 </Link>
               )
             })}

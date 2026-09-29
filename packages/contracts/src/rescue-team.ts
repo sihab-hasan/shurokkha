@@ -28,3 +28,6 @@ export interface TeamAssignmentInput {
   request_id: number
   status: "assigned" | "on_route" | "completed" | "cancelled"
 }
+
+export type AssignmentRecord = TeamAssignmentRecord
+export type AssignmentInput = TeamAssignmentInput

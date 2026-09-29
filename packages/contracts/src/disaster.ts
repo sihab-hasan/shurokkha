@@ -1,6 +1,27 @@
+import type { ApiListResource, ApiResource } from "./core"
+
 export interface DisasterRecord {
   disaster_id: number
   disaster_name: string
+  severity?: "Critical" | "High" | "Medium" | "Low" | string
+  status?: string
+  created_at?: string | null
+  updated_at?: string | null
+}
+
+export type DisasterResource = ApiResource<DisasterRecord>
+export type DisasterListResource = ApiListResource<DisasterRecord>
+
+export interface DisasterInput {
+  disaster_name: string
+  severity?: string
+  status?: string
+}
+
+export interface DisasterUpdateInput {
+  disaster_name?: string
+  severity?: string
+  status?: string
 }
 
 export interface AffectedAreaRecord {

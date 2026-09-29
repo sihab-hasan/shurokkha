@@ -4,8 +4,8 @@ import { Container } from "@shurokkha/ui/layout/container"
 import { PageHeader } from "@shurokkha/ui/layout/page-header"
 import { Section } from "@shurokkha/ui/layout/section"
 
+import { NewsFeed } from "@/features/news/components/news-feed"
 import { NewsClarificationCard } from "@/features/news/components/news-clarification-card"
-import { NewsSectionsGrid } from "@/features/news/components/news-sections-grid"
 
 export const metadata: Metadata = {
   title: "News and updates",
@@ -14,8 +14,7 @@ export const metadata: Metadata = {
 }
 
 /**
- * `/news` shell. Page-level composition: header → three lens grid
- * → clarification card.
+ * `/news` shell. Page-level composition: header → live news feed → clarification card.
  */
 export default function NewsPage() {
   return (
@@ -24,10 +23,10 @@ export default function NewsPage() {
         <PageHeader
           eyebrow="News and updates"
           title="Verified response, recovery, and platform updates"
-          description="Shurokkha’s news pages route through three lenses: live response updates, community recovery stories, and platform-level announcements. Each one is tied to a primary source on the rest of the site."
+          description="Shurokkha's news pages route through three lenses: live response updates, community recovery stories, and platform-level announcements."
         />
 
-        <NewsSectionsGrid />
+        <NewsFeed />
         <NewsClarificationCard />
       </Container>
     </Section>
