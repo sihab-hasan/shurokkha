@@ -3,7 +3,6 @@
 import { Laptop, Moon, Sun } from "lucide-react"
 import { cn } from "../lib/utils"
 import { buttonVariants } from "./button"
-import { Tooltip, TooltipTrigger, TooltipContent } from "./tooltip"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,29 +21,24 @@ export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
 
   return (
     <DropdownMenu>
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <DropdownMenuTrigger
-              render={
-                <button
-                  type="button"
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "icon" }),
-                    "relative cursor-pointer",
-                    className
-                  )}
-                >
-                  <Sun className="scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                  <Moon className="absolute scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                  <span className="sr-only">Toggle theme</span>
-                </button>
-              }
-            />
-          }
-        />
-        <TooltipContent side="bottom">Toggle theme</TooltipContent>
-      </Tooltip>
+      <DropdownMenuTrigger
+        render={
+          <button
+            type="button"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "icon" }),
+              "relative cursor-pointer",
+              className
+            )}
+          >
+            <Sun className="scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+            <Moon className="absolute scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+            <span className="sr-only">Toggle theme</span>
+          </button>
+        }
+      />
       <DropdownMenuContent align="end" className="w-44 ring-0">
         <DropdownMenuGroup>
           <DropdownMenuItem

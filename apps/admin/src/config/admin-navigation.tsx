@@ -1,11 +1,39 @@
-export const adminPrimaryNavigation: ReadonlyArray<{
-  label: string
-  href: string
-  icon: unknown
-}> = []
+import {
+  ClipboardList,
+  LayoutDashboard,
+  MapPin,
+  ShieldCheck,
+} from "lucide-react"
 
-export const adminUtilityNavigation: ReadonlyArray<{
+import type { ComponentType } from "react"
+
+export type AdminNavItem = {
   label: string
   href: string
-  icon: unknown
-}> = []
+  icon?: ComponentType<{ className?: string }>
+}
+
+export const adminPrimaryNavigation: ReadonlyArray<AdminNavItem> = [
+  {
+    label: "Overview",
+    href: "/",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Affected Areas",
+    href: "/operations/affected-areas",
+    icon: MapPin,
+  },
+  {
+    label: "Rescue Teams",
+    href: "/operations/rescue-teams",
+    icon: ShieldCheck,
+  },
+  {
+    label: "Team Management",
+    href: "/operations/team-management",
+    icon: ClipboardList,
+  },
+]
+
+export const adminUtilityNavigation: ReadonlyArray<AdminNavItem> = []

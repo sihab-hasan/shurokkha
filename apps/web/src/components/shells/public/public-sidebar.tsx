@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
@@ -22,7 +23,8 @@ import { BrandLogo } from "@/components/brand/brand-logo"
 import { publicSiteConfig } from "@/config/public-site-config"
 import { routes } from "@/config/routes"
 
-function isActivePath(pathname: string, href: string) {
+function isActivePath(pathname: string | null, href: string) {
+  if (!pathname) return false
   return href === "/"
     ? pathname === href
     : pathname === href || pathname.startsWith(`${href}/`)
@@ -30,11 +32,16 @@ function isActivePath(pathname: string, href: string) {
 
 export default function PublicSidebar() {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const { status, user } = useAuth()
   const getHelpHref =
     status === "authenticated"
-      ? routes.account.createAssistance
-      : routes.public.getHelp
+      ? routes.account?.createAssistance || "/account/assistance/new"
+      : routes.public?.getHelp || "/get-help"
 
   return (
     <Sheet>
@@ -69,7 +76,7 @@ export default function PublicSidebar() {
 
         <nav aria-label="Mobile navigation" className="flex flex-col gap-1 p-4">
           {publicSiteConfig.navItems.map((item) => {
-            const isActive = isActivePath(pathname, item.href)
+            const isActive = mounted && isActivePath(pathname, item.href)
 
             return (
               <SheetClose
@@ -99,7 +106,7 @@ export default function PublicSidebar() {
             <p className="mb-3 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
               Account
             </p>
-            <AccountMenu showIdentity />
+            {mounted ? <AccountMenu showIdentity /> : null}
           </div>
 
           <div>
@@ -107,9 +114,9 @@ export default function PublicSidebar() {
               Emergency tools
             </p>
             <div className="mb-4 flex flex-wrap gap-2">
-              {publicSiteConfig.utilityItems.map((item) => (
+              {publicSiteConfig.utilityItems.map((item, index) => (
                 <SheetClose
-                  key={item.href}
+                  key={`sidebar-util-${item.label}-${index}`}
                   nativeButton={false}
                   render={
                     <Link

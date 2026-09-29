@@ -2,7 +2,7 @@
 
 $frontendOrigins = array_values(array_filter(array_map(
     static fn (string $origin): string => trim($origin),
-    explode(',', (string) env('FRONTEND_URLS', 'http://localhost:3000,http://127.0.0.1:3000')),
+    explode(',', (string) env('FRONTEND_URLS', 'http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001')),
 )));
 
 return [

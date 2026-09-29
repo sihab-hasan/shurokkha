@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -16,19 +17,38 @@ import { routes } from "@/config/routes"
 import { PublicContainer } from "./public-container"
 import PublicSidebar from "./public-sidebar"
 
-function isActivePath(pathname: string, href: string) {
+function isActivePath(pathname: string | null, href: string) {
+  if (!pathname) return false
   return href === "/"
     ? pathname === href
     : pathname === href || pathname.startsWith(`${href}/`)
 }
 
+const DEFAULT_ADMIN_APP_URL = "http://localhost:3001"
+
+function getAdminAppBaseUrl() {
+  const configured = process.env.NEXT_PUBLIC_ADMIN_APP_URL
+  return configured && configured.length > 0
+    ? configured.replace(/\/$/, "")
+    : DEFAULT_ADMIN_APP_URL
+}
+
+function getAdminAppOperationsUrl() {
+  return `${getAdminAppBaseUrl()}/operations`
+}
+
 export default function PublicNavbar() {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const { status, user } = useAuth()
   const getHelpHref =
     status === "authenticated"
-      ? routes.account.createAssistance
-      : routes.public.getHelp
+      ? routes.account?.createAssistance || "/account/assistance/new"
+      : routes.public?.getHelp || "/get-help"
 
   return (
     <header className="sticky top-0 z-40 w-full bg-background/92 shadow-[0_10px_30px_-24px_rgba(0,0,0,0.35)] backdrop-blur-xl supports-[backdrop-filter]:bg-background/82">
@@ -43,7 +63,7 @@ export default function PublicNavbar() {
           className="hidden min-w-0 flex-1 items-center justify-center gap-1 xl:flex"
         >
           {publicSiteConfig.navItems.map((item) => {
-            const isActive = isActivePath(pathname, item.href)
+            const isActive = mounted && isActivePath(pathname, item.href)
 
             return (
               <Link
@@ -64,8 +84,26 @@ export default function PublicNavbar() {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
-          <ThemeSwitcher />
-          <AccountMenu />
+          <a
+            href={getAdminAppOperationsUrl()}
+            target="_self"
+            rel="noopener noreferrer"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "sm" }),
+              "hidden border-primary/30 text-primary hover:bg-primary/10 md:inline-flex"
+            )}
+          >
+            Admin Panel
+          </a>
+
+          {mounted ? (
+            <>
+              <ThemeSwitcher />
+              <AccountMenu />
+            </>
+          ) : (
+            <div className="h-9 w-16" />
+          )}
 
           <Link
             href={getHelpHref}

@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3003",
+    "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -13,7 +13,10 @@
   },
   "dependencies": {
     "@shurokkha/api-client": "workspace:*",
+    "@shurokkha/contracts": "workspace:*",
     "@shurokkha/ui": "workspace:*",
+    "@tanstack/react-query": "^5.103.2",
+    "@tanstack/react-query-devtools": "^5.103.2",
     "lucide-react": "^1.24.0",
     "next": "16.2.6",
     "react": "19.2.4",

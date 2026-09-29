@@ -148,6 +148,24 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
                 Route::post('/rescue-teams', [AdminRescueTeamController::class, 'store'])->name('rescue-teams.store');
                 Route::delete('/rescue-teams/{rescueTeam}', [AdminRescueTeamController::class, 'destroy'])->name('rescue-teams.destroy');
 
+                Route::get('/emergency-requests', function () {
+                    $requests = \Illuminate\Support\Facades\DB::select(<<<'SQL'
+                        SELECT 
+                            er.request_id, 
+                            er.user_id, 
+                            er.area_id, 
+                            er.priority, 
+                            er.status, 
+                            er.request_at, 
+                            u.full_name AS citizen_name, 
+                            u.phone AS citizen_phone
+                        FROM emergency_requests er 
+                        LEFT JOIN users u ON er.user_id = u.user_id 
+                        ORDER BY er.request_id ASC
+                    SQL);
+                    return response()->json(['data' => $requests]);
+                })->name('emergency-requests.index');
+
                 Route::get('/assignments', [AdminTeamManagementController::class, 'index'])->name('assignments.index');
                 Route::post('/assignments', [AdminTeamManagementController::class, 'store'])->name('assignments.store');
                 Route::patch('/assignments/{assignment}/status', [AdminTeamManagementController::class, 'updateStatus'])->name('assignments.updateStatus');
@@ -192,4 +210,4 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('/transaction', [\App\Http\Controllers\Api\V1\Admin\TVUPDisasterEmergencyController::class, 'reportDisasterAndEmergency']);
         });
     });
-
+});
