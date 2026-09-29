@@ -5,11 +5,20 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Creates the MySQL Stored Procedure used by AdminShelterController::updateOccupancy().
+ *
+ * This migration is MySQL-only. The application code paths that invoke
+ * the procedure are also MySQL-only; on the sqlite `:memory:` test
+ * driver we record the migration as a no-op so the test suite can
+ * exercise the Laravel/PHP layers without the SQL server features.
  */
 return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::unprepared('DROP PROCEDURE IF EXISTS sp_update_shelter_occupancy;');
         DB::unprepared(<<<'SQL'
             CREATE PROCEDURE sp_update_shelter_occupancy(
@@ -52,6 +61,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::unprepared('DROP PROCEDURE IF EXISTS sp_update_shelter_occupancy;');
     }
 };

@@ -119,35 +119,65 @@ return new class extends Migration
     /**
      * Detect whether an index covering the given columns (in order)
      * already exists on the table. Laravel doesn't expose this directly,
-     * so we read the connection's index metadata.
+     * so we read the connection's index metadata. Dispatches on the
+     * driver so the migration runs on both MySQL and SQLite (tests).
      */
     private function indexExists(string $table, array $columns, bool $unique = false): bool
     {
-        $database = DB::connection()->getDatabaseName();
+        $driver = DB::connection()->getDriverName();
 
-        $rows = DB::select(
-            'SHOW INDEX FROM ' . $table . ' FROM `' . $database . '`'
-        );
+        if ($driver === 'mysql') {
+            $database = DB::connection()->getDatabaseName();
 
-        $byName = [];
-        foreach ($rows as $row) {
-            $key = (array) $row;
-            $byName[$key['Key_name']][$key['Seq_in_index']] = $key['Column_name'];
-        }
+            $rows = DB::select(
+                'SHOW INDEX FROM ' . $table . ' FROM `' . $database . '`'
+            );
 
-        foreach ($byName as $name => $seq) {
-            ksort($seq);
-            $cols = array_values($seq);
-
-            // MySQL's unique index shows up as `Key_name = <name>` with
-            // `Non_unique = 0`. Plain indexes have Non_unique = 1.
-            $isUnique = $this->isUniqueIndex($rows, $name);
-
-            if ($cols === $columns && $isUnique === $unique) {
-                return true;
+            $byName = [];
+            foreach ($rows as $row) {
+                $key = (array) $row;
+                $byName[$key['Key_name']][$key['Seq_in_index']] = $key['Column_name'];
             }
+
+            foreach ($byName as $name => $seq) {
+                ksort($seq);
+                $cols = array_values($seq);
+
+                // MySQL's unique index shows up as `Key_name = <name>` with
+                // `Non_unique = 0`. Plain indexes have Non_unique = 1.
+                $isUnique = $this->isUniqueIndex($rows, $name);
+
+                if ($cols === $columns && $isUnique === $unique) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
+        if ($driver === 'sqlite') {
+            // PRAGMA index_list / index_info give us column order; SQLite
+            // names unique indexes the same as the auto-generated `sqlite_autoindex_*`
+            // for UNIQUE constraints, so we compare by column list first and
+            // fall back to uniqueness from `index_list`.
+            $names = DB::select('PRAGMA index_list(' . $table . ')');
+            foreach ($names as $row) {
+                $r = (array) $row;
+                $info = DB::select('PRAGMA index_info(' . $r['name'] . ')');
+                $cols = array_map(
+                    static fn ($c) => ((array) $c)['name'],
+                    $info
+                );
+                $isUnique = ((int) $r['unique']) === 1;
+                if ($cols === $columns && $isUnique === $unique) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Unknown driver — assume missing index so the unique() call runs.
         return false;
     }
 
