@@ -221,12 +221,13 @@ export function UserDetails({ userId }: { userId: number }) {
             initial={{
               id: user.id,
               name: user.name,
-              full_name: user.full_name,
+              full_name: user.full_name ?? user.name,
               email: user.email,
-              phone: user.phone,
-              role: user.role,
+              phone: user.phone ?? null,
+              role: user.role === "admin" ? "admin" : "user",
               status: user.status,
             }}
+
           />
         </CardContent>
       </Card>

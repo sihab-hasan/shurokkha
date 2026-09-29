@@ -27,7 +27,7 @@ import { useFundraises } from "@/hooks/operations/use-fundraises"
 import { Can } from "@/components/auth/can"
 import { statusBadgeClass } from "./badges"
 
-const formatAmount = (value: number, currency: string) => {
+const formatAmount = (value: number, currency: string = "BDT") => {
   const formatter = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 0,
   })

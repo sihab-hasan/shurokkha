@@ -74,17 +74,18 @@ export function CitizenStatsPanel() {
                     </div>
                   </TableCell>
                   <TableCell className="text-right font-mono text-sm">
-                    {row.total_requests.toLocaleString()}
+                    {row.total_requests?.toLocaleString() ?? 0}
                   </TableCell>
                   <TableCell className="text-right font-mono text-sm">
-                    {row.resolved.toLocaleString()}
+                    {row.resolved?.toLocaleString() ?? 0}
                   </TableCell>
                   <TableCell className="text-right font-mono text-sm">
-                    {row.pending.toLocaleString()}
+                    {row.pending?.toLocaleString() ?? 0}
                   </TableCell>
                   <TableCell className="text-right font-mono text-sm">
-                    {row.cancelled.toLocaleString()}
+                    {row.cancelled?.toLocaleString() ?? 0}
                   </TableCell>
+
                 </TableRow>
               ))
             )}

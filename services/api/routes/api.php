@@ -340,7 +340,6 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
                     Route::get('/facility-locations', [\App\Http\Controllers\Api\V1\Admin\JoinReportController::class, 'facilityLocations'])->name('facility-locations');
                 });
             });
-        });
 
         // TVUP Core Operations (Moved outside auth for easy frontend demo)
         Route::prefix('core')->name('core.')->group(function (): void {
@@ -351,3 +350,4 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         });
     });
 });
+

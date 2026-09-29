@@ -45,6 +45,21 @@ const AVAILABILITY_CLASS: Record<RescueTeamAvailability, string> = {
   offline: "text-muted-foreground",
 }
 
+const SHELTER_STATUS_CLASS: Record<string, string> = {
+  open: "border-emerald-500/30 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
+  full: "border-amber-500/30 bg-amber-500/15 text-amber-700 dark:text-amber-400",
+  closed: "text-muted-foreground",
+}
+
+/** Tailwind class string for a shelter status pill. */
+export function statusBadgeClass(status: string): string {
+  const key = (status ?? "").toLowerCase()
+  return (
+    SHELTER_STATUS_CLASS[key] ??
+    "border-muted-foreground/30 bg-muted text-muted-foreground"
+  )
+}
+
 /** Tailwind class string for a team availability pill (table use). */
 export function availabilityBadgeClass(
   availability: string | RescueTeamAvailability

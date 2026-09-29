@@ -1,7 +1,9 @@
 "use client"
 
-import { LogOut, ShieldCheck } from "lucide-react"
+import { useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { LogOut, Menu, ShieldCheck } from "lucide-react"
 
 import { Button } from "@shurokkha/ui/components/button"
 import {
@@ -12,12 +14,40 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@shurokkha/ui/components/dropdown-menu"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@shurokkha/ui/components/sheet"
 import { ThemeSwitcher } from "@shurokkha/ui/components/theme-switcher"
+import { cn } from "@shurokkha/ui/lib/utils"
 
 import { useAuth } from "@/components/auth/auth-provider"
+import { adminShellConfig } from "@/config/shell-config"
+import type { AdminNavItem } from "@/config/admin-navigation"
 
 export function AdminHeader() {
   const { status, user, signOut } = useAuth()
+  const pathname = usePathname()
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  const primary: ReadonlyArray<AdminNavItem> = adminShellConfig.primary ?? []
+  const utility: ReadonlyArray<AdminNavItem> = adminShellConfig.utility ?? []
+
+  const isActive = (href: string) => {
+    if (!pathname) return false
+    if (href === "/") return pathname === "/"
+    if (href === "/operations") return pathname === "/operations"
+    if (href === "/reports") return pathname === "/reports"
+    return pathname === href || pathname.startsWith(`${href}/`)
+  }
+
+  const categories = Array.from(
+    new Set(primary.map((item) => item.category ?? "General"))
+  )
+
   const initials =
     user?.name
       ?.split(/\s+/)
@@ -30,12 +60,146 @@ export function AdminHeader() {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background px-4 sm:px-6">
       <div className="flex items-center gap-3">
+        {/* Mobile Navigation Drawer */}
+        <div className="md:hidden">
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-9"
+                  aria-label="Open navigation menu"
+                >
+                  <Menu className="size-5" />
+                </Button>
+              }
+            />
+            <SheetContent side="left" className="w-72 p-0 flex flex-col">
+              <SheetHeader className="border-b px-5 py-4 text-left">
+                <SheetTitle className="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
+                  <span className="flex size-7 items-center justify-center rounded-md bg-primary font-bold text-xs text-primary-foreground shadow-xs">
+                    SA
+                  </span>
+                  <div className="flex flex-col">
+                    <span className="leading-tight">
+                      {adminShellConfig.brand?.name ?? "Shurokkha Admin"}
+                    </span>
+                    <span className="text-[10px] font-normal text-muted-foreground">
+                      Command Console
+                    </span>
+                  </div>
+                </SheetTitle>
+              </SheetHeader>
+
+              <nav
+                aria-label="Admin mobile navigation"
+                className="flex-1 space-y-4 overflow-y-auto p-4"
+              >
+                {categories.map((category) => {
+                  const items = primary.filter(
+                    (item) => (item.category ?? "General") === category
+                  )
+                  return (
+                    <div key={category} className="space-y-1">
+                      <div className="px-3 py-1 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase">
+                        {category}
+                      </div>
+                      {items.map((item) => {
+                        const Icon = item.icon
+                        const active = isActive(item.href)
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setMobileOpen(false)}
+                            aria-current={active ? "page" : undefined}
+                            className={cn(
+                              "group flex items-center justify-between rounded-md px-3 py-2 text-xs font-medium transition-colors",
+                              active
+                                ? "bg-primary/10 text-primary font-semibold shadow-xs"
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                            )}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              {Icon ? (
+                                <Icon
+                                  className={cn(
+                                    "size-4 shrink-0 transition-colors",
+                                    active
+                                      ? "text-primary"
+                                      : "text-muted-foreground group-hover:text-foreground"
+                                  )}
+                                />
+                              ) : null}
+                              <span>{item.label}</span>
+                            </div>
+                            {item.badge != null ? (
+                              <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                                {item.badge}
+                              </span>
+                            ) : null}
+                          </Link>
+                        )
+                      })}
+                    </div>
+                  )
+                })}
+
+                {utility.length > 0 ? (
+                  <div className="pt-2 border-t space-y-1">
+                    <div className="px-3 py-1 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase">
+                      Administration
+                    </div>
+                    {utility.map((item) => {
+                      const Icon = item.icon
+                      const active = isActive(item.href)
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setMobileOpen(false)}
+                          aria-current={active ? "page" : undefined}
+                          className={cn(
+                            "group flex items-center justify-between rounded-md px-3 py-2 text-xs font-medium transition-colors",
+                            active
+                              ? "bg-primary/10 text-primary font-semibold shadow-xs"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          )}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            {Icon ? (
+                              <Icon
+                                className={cn(
+                                  "size-4 shrink-0 transition-colors",
+                                  active
+                                    ? "text-primary"
+                                    : "text-muted-foreground group-hover:text-foreground"
+                                )}
+                              />
+                            ) : null}
+                            <span>{item.label}</span>
+                          </div>
+                        </Link>
+                      )
+                    })}
+                  </div>
+                ) : null}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+
         <Link
           href="/"
-          className="text-sm font-semibold tracking-tight md:hidden"
+          className="flex items-center gap-2 text-sm font-semibold tracking-tight md:hidden"
         >
-          Shurokkha Admin
+          <span className="flex size-6 items-center justify-center rounded-md bg-primary font-bold text-[11px] text-primary-foreground">
+            SA
+          </span>
+          <span>Shurokkha Admin</span>
         </Link>
+
         <div className="hidden items-center gap-2 text-xs text-muted-foreground md:flex">
           <ShieldCheck className="size-3.5 text-primary" />
           <span>Internal operations workspace</span>

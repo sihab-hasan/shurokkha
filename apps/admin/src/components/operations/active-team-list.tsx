@@ -82,9 +82,10 @@ export function ActiveTeamList() {
                   </TableCell>
                   <TableCell>
                     <span
-                      className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium ${assignmentStatusBadgeClass(row.status)}`}
+                      className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium ${assignmentStatusBadgeClass(row.status ?? "")}`}
                     >
                       {row.status}
+
                     </span>
                   </TableCell>
                   <TableCell className="text-right font-mono text-xs">

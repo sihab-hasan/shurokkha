@@ -83,6 +83,78 @@ class AdminShelterController extends Controller
     }
 
     /**
+     * Show shelter details by ID.
+     */
+    public function show(int|string $shelter): JsonResponse
+    {
+        $shelterId = is_numeric($shelter) ? (int) $shelter : 0;
+
+        $record = DB::selectOne(<<<'SQL'
+            SELECT 
+                s.shelter_id,
+                s.area_id,
+                s.shelter_name,
+                s.capacity,
+                s.occupancy,
+                s.status,
+                s.created_at,
+                s.updated_at,
+                aa.severity AS area_severity,
+                aa.affected_population
+            FROM shelters s
+            LEFT JOIN affected_areas aa ON s.area_id = aa.area_id
+            WHERE s.shelter_id = ?
+        SQL, [$shelterId]);
+
+        if (! $record) {
+            return response()->json(['message' => 'Shelter not found.'], 404);
+        }
+
+        return response()->json(['data' => $record]);
+    }
+
+    /**
+     * Update shelter details by ID.
+     */
+    public function update(Request $request, int|string $shelter): JsonResponse
+    {
+        $shelterId = is_numeric($shelter) ? (int) $shelter : 0;
+
+        $validated = $request->validate([
+            'area_id' => 'nullable|integer|exists:affected_areas,area_id',
+            'shelter_name' => 'nullable|string|max:150',
+            'capacity' => 'nullable|integer|min:0',
+            'occupancy' => 'nullable|integer|min:0',
+            'status' => 'nullable|string|max:50',
+        ]);
+
+        $updates = array_filter($validated, fn ($val) => $val !== null);
+        $updates['updated_at'] = now();
+
+        DB::table('shelters')
+            ->where('shelter_id', $shelterId)
+            ->update($updates);
+
+        $record = DB::selectOne(<<<'SQL'
+            SELECT 
+                s.shelter_id,
+                s.area_id,
+                s.shelter_name,
+                s.capacity,
+                s.occupancy,
+                s.status,
+                s.created_at,
+                s.updated_at,
+                aa.severity AS area_severity
+            FROM shelters s
+            LEFT JOIN affected_areas aa ON s.area_id = aa.area_id
+            WHERE s.shelter_id = ?
+        SQL, [$shelterId]);
+
+        return response()->json(['data' => $record]);
+    }
+
+    /**
      * Delete shelter via raw SQL DELETE.
      */
     public function destroy(int|string $shelter): JsonResponse

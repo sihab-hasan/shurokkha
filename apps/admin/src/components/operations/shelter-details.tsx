@@ -207,7 +207,7 @@ export function ShelterDetails({ shelterId }: { shelterId: number }) {
               capacity: shelter.capacity,
               occupancy: shelter.occupancy,
               status: shelter.status,
-              area_id: shelter.area_id,
+              area_id: shelter.area_id ?? null,
             }}
           />
         </CardContent>
